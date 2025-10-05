@@ -1,264 +1,430 @@
 #!/usr/bin/env python3
-import os
-import re
+"""
+Simplified pre-build script.
+
+This script walks the Projects/<Domain> folders, reads existing project JSON files
+(prefer `_project.json`), and if a project object contains an `id` and a
+`thumbnail` filename, it copies that thumbnail from the project folder into
+`public/projects/<id>/` (creating the folder if needed).
+
+This script no longer creates or edits any JSON files and does not write logs.
+"""
+
 import json
-from pathlib import Path
-from datetime import datetime
-from typing import Optional
-
-# --- Logging for undo ---
-LOG_PATH = Path(__file__).parent / "pre_build_log.json"
-log_data = {"created": [], "edited": []}
-
-# --- Config ---
-
-import types
+import re
+import shutil
+import tempfile
+import os
 import sys
+import time
+from pathlib import Path
+from typing import Optional
 import argparse
+from urllib.parse import urlparse, unquote
 
-parser = argparse.ArgumentParser(description="Pre-build project JSON generator.")
-parser.add_argument("root", nargs="?", default="Projects", help="Root directory containing project domains.")
-args = parser.parse_args()
-
-ROOT = Path(args.root)
-DOMAINS = {"Technology", "Creative", "Expository"}
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".tiff"}
+DOMAINS = {"Technology", "Creative", "Expository"}
 
-# --- Helpers ---
+
 def slugify(name: str) -> str:
-    s = name.strip().lower()
+    s = (name or "").strip().lower()
     s = re.sub(r"[^\w\s-]", "", s)
     s = re.sub(r"[\s-]+", "_", s).strip("_")
     return s or "untitled"
 
-def iso(ts: float) -> str:
-    return datetime.fromtimestamp(ts).astimezone().isoformat()
 
-def detect_thumbnail(dirpath: Path) -> Optional[str]:
-    # Only accept explicit "thumbnail.*" image
-    for p in sorted(dirpath.iterdir()):
-        if p.is_file() and p.stem.lower() == "thumbnail" and p.suffix.lower() in IMAGE_EXTS:
-            return str(p.name)
+def find_project_json(proj_dir: Path) -> Optional[Path]:
+    # Prefer exact filename then fall back to any .json file in the folder
+    candidates = [proj_dir / "_project.json", proj_dir / "_project_auto.json"]
+    for p in candidates:
+        if p.exists():
+            return p
+
+    for p in proj_dir.iterdir():
+        if p.is_file() and p.suffix.lower() == ".json":
+            return p
     return None
 
-def read_summary_from_overview(md_path: Path) -> str:
-    try:
-        for line in md_path.read_text(encoding="utf-8").splitlines():
-            line = line.strip()
-            if line and not line.startswith("# "):
-                return line
-        return ""
-    except FileNotFoundError:
-        return ""
 
-from typing import Any
+def copy_thumbnail_for_project(proj_dir: Path, project_obj: dict, public_projects_root: Path) -> Optional[Path]:
+    """If project_obj has id and thumbnail, copy thumbnail into public/projects/<id>/ and return dest path."""
+    if not isinstance(project_obj, dict):
+        return None
+    project_id = project_obj.get("id")
+    thumb_name = project_obj.get("thumbnail")
+    if not project_id or not thumb_name:
+        return None
 
-def default_project_obj(domain: str, title: str, summary: str, thumbnail: Optional[str], is_idea: bool, stat: Any, project_id: str) -> dict:
-    base = {
-        "id": project_id,
-        "domain": domain,
-        "title": title,
-        "summary": summary or "",
-        "visibility": "private",
-        "tags": [],
-        "resources": [],
-        "createdAt": iso(stat.st_ctime),
-        "updatedAt": iso(stat.st_mtime),
-        "reviewed": False,
-    }
-    if thumbnail:
-        base["thumbnail"] = thumbnail
-
-    if is_idea:
-        # Use the cross-domain IdeaProject shape
-        base.update({"status": "idea"})
-        return base
-
-    # Outside IDEAS: choose minimal valid per-domain structures
-    if domain == "Technology":
-        # Choose the most generic tech shape with empty mediums
-        base.update({"status": "in_progress", "category": "Software", "mediums": []})
-    elif domain == "Creative":
-        # Pick CreativeOther to avoid extra required fields
-        base.update({"status": "in_progress", "category": "Other"})
-    elif domain == "Expository":
-        base.update({"status": "in_progress", "category": "Article"})
-    else:
-        # Fallback to IdeaProject if somehow unknown
-        base.update({"status": "idea"})
-    return base
-
-def is_project_dir(d: Path) -> bool:
-    if not d.is_dir():
-        return False
-    # A project dir is any leaf dir under a domain, either directly or inside IDEAS
-    return True
-
-# --- New helpers for recursive timestamps ---
-def get_recursive_timestamps(dirpath: Path) -> tuple[float, float]:
-    """
-    Returns (oldest_ctime, newest_mtime) for all files in dirpath and subdirs.
-    """
-    oldest_ctime = float('inf')
-    newest_mtime = 0.0
-    for root, dirs, files in os.walk(dirpath):
-        for fname in files:
-            fpath = Path(root) / fname
-            try:
-                stat = fpath.stat()
-                if stat.st_ctime < oldest_ctime:
-                    oldest_ctime = stat.st_ctime
-                if stat.st_mtime > newest_mtime:
-                    newest_mtime = stat.st_mtime
-            except Exception:
-                continue
-    # Fallback to dir itself if no files
-    if oldest_ctime == float('inf'):
-        stat = dirpath.stat()
-        oldest_ctime = stat.st_ctime
-        newest_mtime = stat.st_mtime
-    return oldest_ctime, newest_mtime
-
-# --- Main walk ---
-all_projects: list[dict] = []
-created_json_files: list[str] = []
-
-if not ROOT.exists():
-    raise SystemExit(f"Root directory not found: {ROOT.resolve()}")
-
-for domain_dir in ROOT.iterdir():
-    if not domain_dir.is_dir() or domain_dir.name not in DOMAINS:
-        continue
-    domain = domain_dir.name
-
-    # Collect candidate project folders:
-    candidate_dirs: list[tuple[Path, bool]] = []  # (path, is_idea_folder)
-
-    for child in domain_dir.iterdir():
-        if not child.is_dir():
-            continue
-        if child.name == "_IDEAS_":
-            # Only operate on subfolders inside _IDEAS_, not _IDEAS_ itself
-            for proj in child.iterdir():
-                if proj.is_dir():
-                    candidate_dirs.append((proj, True))
-            # Do NOT create .json or overview.md directly in _IDEAS_
-        elif child.name in {"_INSPIRATION_", "_REFERENCES_"}:
-            # Skip these directories entirely
-            continue
+    src = proj_dir / thumb_name
+    if not src.exists() or not src.is_file():
+        # If thumbnail value isn't present as-is, check for a 'thumbnail.*' file
+        for p in proj_dir.iterdir():
+            if p.is_file() and p.stem.lower() == "thumbnail" and p.suffix.lower() in IMAGE_EXTS:
+                src = p
+                break
         else:
-            candidate_dirs.append((child, False))
+            return None
 
-    for proj_dir, is_idea in candidate_dirs:
-        if not is_project_dir(proj_dir):
+    dest_dir = public_projects_root / project_id
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    dest = dest_dir / src.name
+    shutil.copy2(src, dest)
+    return dest
+
+
+def copy_images_for_project(proj_dir: Path, project_obj: dict, public_projects_root: Path) -> list[str]:
+    """Copy all images listed in `project_obj['images']` into public/projects/<id>/.
+    Uses `images.directory` (relative to proj_dir) if present to locate files.
+    Returns list of destination paths copied (strings).
+    """
+    out: list[str] = []
+    if not isinstance(project_obj, dict):
+        return out
+    images = project_obj.get("images")
+    project_id = project_obj.get("id")
+    if not images or not isinstance(images, dict) or not project_id:
+        return out
+
+    # Determine where image files live. If images.directory is present, prefer that
+    # directory (relative to the project folder). Otherwise, use the project folder.
+    images_dir = proj_dir
+    dir_param = images.get("directory")
+    if isinstance(dir_param, str) and dir_param.strip():
+        candidate = proj_dir / dir_param
+        if candidate.exists() and candidate.is_dir():
+            images_dir = candidate
+
+    dest_dir = public_projects_root / project_id
+    dest_dir.mkdir(parents=True, exist_ok=True)
+
+    for key, val in list(images.items()):
+        # skip the directory key itself
+        if key == "directory":
+            continue
+        if not val:
+            continue
+        # val is expected to be a filename (possibly with subpath)
+        src = images_dir / str(val)
+        found = None
+        if src.exists() and src.is_file():
+            found = src
+        else:
+            # try finding a file in images_dir or proj_dir with the same stem
+            stem = Path(str(val)).stem.lower()
+            for p in images_dir.iterdir():
+                if p.is_file() and p.stem.lower() == stem and p.suffix.lower() in IMAGE_EXTS:
+                    found = p
+                    break
+            if not found:
+                for p in proj_dir.iterdir():
+                    if p.is_file() and p.stem.lower() == stem and p.suffix.lower() in IMAGE_EXTS:
+                        found = p
+                        break
+
+        if not found:
+            # nothing to copy for this key
             continue
 
-        title = proj_dir.name
-        project_id = slugify(title)
-        # Always use '_project.json' as the filename
-        json_path = proj_dir / "_project.json"
-        overview_path = proj_dir / "overview.md"
-
-        # Create overview.md if missing
-        if not overview_path.exists():
-            overview_content = f"# {title}\n\nBrief overview.\n"
-            overview_path.write_text(overview_content, encoding="utf-8")
-            log_data["created"].append(str(overview_path.resolve()))
-
-        # Determine summary
-        summary = read_summary_from_overview(overview_path)
-
-        # Detect thumbnail filename relative to project dir (only if named 'thumbnail.*')
-        thumb_name = detect_thumbnail(proj_dir)
-
-        # Get recursive timestamps for createdAt/updatedAt
-        oldest_ctime, newest_mtime = get_recursive_timestamps(proj_dir)
-
-        # If json exists, read it; else create a new object
-        project_obj = None
-        if json_path.exists():
-            try:
-                # Backup before edit
-                backup_path = json_path.with_suffix(json_path.suffix + ".bak_prebuild")
-                if not backup_path.exists():
-                    backup_bytes = json_path.read_bytes()
-                    backup_path.write_bytes(backup_bytes)
-                    log_data["edited"].append({"path": str(json_path.resolve()), "backup": str(backup_path.resolve())})
-                project_obj = json.loads(json_path.read_text(encoding="utf-8"))
-            except Exception:
-                # If unreadable, do not overwrite; create sidecar with suffix
-                json_path = proj_dir / "_project_auto.json"
-                project_obj = None
-
-        # If creating for the first time, set createdAt to oldest file ctime
-        if project_obj is None and not json_path.exists():
-            # Use a local class to mimic os.stat_result for default_project_obj
-            class StatStub:
-                def __init__(self, st_ctime, st_mtime):
-                    self.st_ctime = st_ctime
-                    self.st_mtime = st_mtime
-            stat = StatStub(oldest_ctime, newest_mtime)
-            # Only set thumbnail if there is a valid thumbnail image
-            thumbnail_to_set = thumb_name if thumb_name else None
-            project_obj = default_project_obj(
-                domain=domain,
-                title=title,
-                summary=summary,
-                thumbnail=thumbnail_to_set,
-                is_idea=is_idea,
-                stat=stat,
-                project_id=project_id,
-            )
-            # Ensure reviewed is always present and False
-            project_obj["reviewed"] = False
-            json_path.write_text(json.dumps(project_obj, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-            created_json_files.append(str(json_path.relative_to(ROOT)))
-            log_data["created"].append(str(json_path.resolve()))
-
-            # If there is a thumbnail, copy it to public/projects/{id}/
-            if thumbnail_to_set:
-                src_thumb = proj_dir / thumbnail_to_set
-                dest_dir = Path(__file__).parent.parent / "public" / "projects" / project_id
-                dest_dir.mkdir(parents=True, exist_ok=True)
-                dest_thumb = dest_dir / src_thumb.name
-                import shutil
-                shutil.copy2(src_thumb, dest_thumb)
-                # Log the created folder and file for undo
-                log_data.setdefault("created_project_folders", []).append(str(dest_dir.resolve()))
-                log_data.setdefault("created_project_thumbnails", []).append(str(dest_thumb.resolve()))
-
-        # Ensure we add whatever exists now
+        dest = dest_dir / found.name
         try:
-            obj = json.loads(json_path.read_text(encoding="utf-8"))
+            shutil.copy2(found, dest)
+            # normalize the project object to reference the filename only
+            project_obj.setdefault("images", {})[key] = found.name
+            out.append(str(dest))
         except Exception:
-            # Skip if still unreadable
-            obj = None
+            # skip failures but continue
+            continue
 
-        if isinstance(obj, dict):
-            # Always update updatedAt to newest_mtime
-            obj = dict(obj)
-            obj["updatedAt"] = iso(newest_mtime)
-            # Only set thumbnail if there is a valid thumbnail image and it is not already set
-            if "thumbnail" not in obj and thumb_name:
-                obj["thumbnail"] = thumb_name
-            # Ensure reviewed is always present and False in the output
-            obj["reviewed"] = False
-            # Ensure id is present and correct
-            obj["id"] = slugify(obj.get("title", title))
-            all_projects.append(obj)
+    return out
 
-# --- Output ---
-output_dir = Path(__file__).parent.parent / "public" / "projects"
-output_dir.mkdir(parents=True, exist_ok=True)
-output_path = output_dir / "projects.json"
-output_path.write_text(json.dumps(all_projects, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-# Write log file for undo
-with LOG_PATH.open("w", encoding="utf-8") as f:
-    json.dump(log_data, f, indent=2, ensure_ascii=False)
+def copy_resources_for_project(proj_dir: Path, project_obj: dict, public_projects_root: Path) -> list[str]:
+    """Copy files for resources with type 'local-download' into public/projects/<id>/.
+    Updates each resource's 'url' to point to the public path ("/projects/<id>/<filename>").
+    Returns list of destination paths copied (strings).
+    """
+    out: list[str] = []
+    if not isinstance(project_obj, dict):
+        return out
+    resources = project_obj.get("resources")
+    project_id = project_obj.get("id")
+    if not resources or not isinstance(resources, list) or not project_id:
+        return out
 
-print(json.dumps(all_projects, ensure_ascii=False))
-if created_json_files:
-    print("\nCREATED JSON FILES:")
-    for p in created_json_files:
-        print(p)
+    dest_dir = public_projects_root / project_id
+    dest_dir.mkdir(parents=True, exist_ok=True)
+
+    for res in resources:
+        if not isinstance(res, dict):
+            continue
+        if res.get("type") != "local-download":
+            continue
+        url_val = res.get("url")
+        if not url_val:
+            continue
+
+        # First, try to handle absolute file:// URIs and percent-encoded paths.
+        found = None
+        try:
+            if isinstance(url_val, str) and url_val.startswith("file://"):
+                # file:///absolute/path or file://localhost/absolute/path
+                parsed = urlparse(url_val)
+                candidate = Path(unquote(parsed.path))
+                if candidate.exists() and candidate.is_file():
+                    found = candidate
+            else:
+                # If url_val is an absolute path (possibly percent-encoded), use it directly
+                if isinstance(url_val, str):
+                    maybe = Path(unquote(url_val))
+                    if maybe.is_absolute() and maybe.exists() and maybe.is_file():
+                        found = maybe
+        except Exception:
+            # fall back to existing heuristics on any error
+            found = None
+
+        # If not found yet, try to resolve the source file relative to the project directory
+        if not found:
+            src = proj_dir / str(unquote(str(url_val)))
+            if src.exists() and src.is_file():
+                found = src
+            else:
+                # try finding a file with the same stem in the project dir
+                stem = Path(unquote(str(url_val))).stem.lower()
+                for p in proj_dir.iterdir():
+                    if p.is_file() and p.stem.lower() == stem:
+                        found = p
+                        break
+                # also walk subdirectories as a last resort
+                if not found:
+                    for root, dirs, files in os.walk(proj_dir):
+                        for f in files:
+                            p = Path(root) / f
+                            if p.stem.lower() == stem:
+                                found = p
+                                break
+                        if found:
+                            break
+
+        if not found:
+            # nothing to copy for this resource
+            continue
+
+        dest = dest_dir / found.name
+        try:
+            shutil.copy2(found, dest)
+            # update the project object to reference the public path
+            res["url"] = f"/projects/{project_id}/{dest.name}"
+            out.append(str(dest))
+        except Exception:
+            # skip failures but continue
+            continue
+
+    return out
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Copy thumbnails for projects into public/projects/<id>/")
+    parser.add_argument("root", nargs="?", default="Projects", help="Root directory containing project domains.")
+    args = parser.parse_args()
+
+    root = Path(args.root)
+    if not root.exists() or not root.is_dir():
+        raise SystemExit(f"Root directory not found: {root.resolve()}")
+
+    # Build into a temporary directory inside public/ so the existing
+    # `public/projects` remains available until the pre-build completes
+    public_root = Path(__file__).parent.parent / "public"
+    public_root.mkdir(parents=True, exist_ok=True)
+    target_public_projects = public_root / "projects"
+
+    # Create a temp directory sibling to `projects`, e.g. public/projects_tmp_xxx
+    tmp_dir_path = Path(tempfile.mkdtemp(prefix="projects_tmp_", dir=str(public_root)))
+    temp_public_projects_root = tmp_dir_path
+
+    copied = []
+    skipped = []
+    all_projects: list[dict] = []
+    backup_path = None
+
+    for domain_dir in sorted(root.iterdir()):
+        if not domain_dir.is_dir() or domain_dir.name not in DOMAINS:
+            continue
+
+        def collect_project_dirs(d: Path):
+            # Yields (proj_dir)
+            for child in sorted(d.iterdir()):
+                if not child.is_dir():
+                    continue
+                if child.name == "_IDEAS_":
+                    for proj in sorted(child.iterdir()):
+                        if proj.is_dir():
+                            yield proj
+                elif child.name in {"_INSPIRATION_", "_REFERENCES_"}:
+                    continue
+                else:
+                    yield child
+
+        for proj_dir in collect_project_dirs(domain_dir):
+            json_path = find_project_json(proj_dir)
+            if not json_path:
+                skipped.append((str(proj_dir), "no json"))
+                continue
+            try:
+                raw = json_path.read_text(encoding="utf-8")
+                parsed = json.loads(raw)
+                # If file contains an array, try to find first object with id
+                objs = parsed if isinstance(parsed, list) else [parsed]
+                acted_any = False
+                for obj in objs:
+                    if not isinstance(obj, dict):
+                        continue
+                    # Inclusion rules: skip if reviewed === False (or string "false")
+                    if "reviewed" in obj and (obj.get("reviewed") is False or obj.get("reviewed") == "false"):
+                        skipped.append((str(json_path), f"skipped id={obj.get('id') or obj.get('title')} reviewed_false"))
+                        continue
+                    # Skip if visibility exists and is not public
+                    if "visibility" in obj and obj.get("visibility") != "public":
+                        skipped.append((str(json_path), f"skipped id={obj.get('id') or obj.get('title')} visibility_{obj.get('visibility')}") )
+                        continue
+
+                    # Ensure id exists
+                    if not obj.get("id"):
+                        obj["id"] = slugify(obj.get("title") or proj_dir.name)
+
+                    # Ensure thumbnail is present by checking filesystem; attempt to find thumbnail.* if missing
+                    thumb = obj.get("thumbnail")
+                    if thumb:
+                        src = proj_dir / str(thumb)
+                        if not src.exists() or not src.is_file():
+                            # try find thumbnail.* in folder
+                            found = None
+                            for p in proj_dir.iterdir():
+                                if p.is_file() and p.stem.lower() == "thumbnail" and p.suffix.lower() in IMAGE_EXTS:
+                                    found = p
+                                    break
+                            if found:
+                                obj["thumbnail"] = found.name
+                                dest = copy_thumbnail_for_project(proj_dir, obj, temp_public_projects_root)
+                                if dest:
+                                    copied.append(str(dest))
+                                # attempt to copy other images declared in images/
+                                img_copied = copy_images_for_project(proj_dir, obj, temp_public_projects_root)
+                                if img_copied:
+                                    copied.extend(img_copied)
+                                # copy local-download resources and update their urls
+                                res_copied = copy_resources_for_project(proj_dir, obj, temp_public_projects_root)
+                                if res_copied:
+                                    copied.extend(res_copied)
+                            else:
+                                # no thumbnail file present
+                                # still attempt to copy any other images, then include the project
+                                img_copied = copy_images_for_project(proj_dir, obj, temp_public_projects_root)
+                                if img_copied:
+                                    copied.extend(img_copied)
+                                # copy local-download resources and update their urls
+                                res_copied = copy_resources_for_project(proj_dir, obj, temp_public_projects_root)
+                                if res_copied:
+                                    copied.extend(res_copied)
+                                skipped.append((str(json_path), f"no thumbnail for id={obj.get('id') or obj.get('title')}"))
+                                # still include the project without copying a thumbnail
+                                all_projects.append(obj)
+                                acted_any = True
+                                continue
+                        else:
+                            dest = copy_thumbnail_for_project(proj_dir, obj, temp_public_projects_root)
+                            if dest:
+                                copied.append(str(dest))
+                            # copy other images when thumbnail exists
+                            img_copied = copy_images_for_project(proj_dir, obj, temp_public_projects_root)
+                            if img_copied:
+                                copied.extend(img_copied)
+                            # copy local-download resources and update their urls
+                            res_copied = copy_resources_for_project(proj_dir, obj, temp_public_projects_root)
+                            if res_copied:
+                                copied.extend(res_copied)
+
+                    else:
+                        # try find thumbnail.* in folder
+                        found = None
+                        for p in proj_dir.iterdir():
+                            if p.is_file() and p.stem.lower() == "thumbnail" and p.suffix.lower() in IMAGE_EXTS:
+                                found = p
+                                break
+                        if found:
+                            obj["thumbnail"] = found.name
+                            dest = copy_thumbnail_for_project(proj_dir, obj, temp_public_projects_root)
+                            if dest:
+                                copied.append(str(dest))
+                            # also copy any other images declared
+                            img_copied = copy_images_for_project(proj_dir, obj, temp_public_projects_root)
+                            if img_copied:
+                                copied.extend(img_copied)
+                            # copy local-download resources and update their urls
+                            res_copied = copy_resources_for_project(proj_dir, obj, temp_public_projects_root)
+                            if res_copied:
+                                copied.extend(res_copied)
+
+                    # Finally, include the project object in the aggregated list
+                    all_projects.append(obj)
+                    acted_any = True
+                if not acted_any:
+                    skipped.append((str(json_path), "no valid project objects found"))
+            except Exception as e:
+                skipped.append((str(json_path), f"error:{e}"))
+
+    # Write aggregated projects.json into the temp dir
+    output_path = temp_public_projects_root / "projects.json"
+
+    try:
+        output_path.write_text(json.dumps(all_projects, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(f"Wrote {len(all_projects)} projects to {output_path}")
+
+        # Successfully finished building into temp dir. Now atomically replace
+        # the existing `public/projects` directory. We remove the old one first
+        # to ensure a clean rename.
+        try:
+            backup_path = None
+            # If the existing target exists, move it aside to a backup name so we can
+            # restore it if the next rename fails. This preserves the old folder until
+            # the new one is successfully in place.
+            if target_public_projects.exists():
+                backup_path = public_root / f"projects_backup_{int(time.time())}"
+                target_public_projects.rename(backup_path)
+
+            # Move temp into place
+            temp_public_projects_root.rename(target_public_projects)
+            print(f"Replaced {target_public_projects} with {temp_public_projects_root}")
+
+            # Remove backup if present
+            if backup_path and backup_path.exists():
+                try:
+                    shutil.rmtree(backup_path)
+                except Exception:
+                    print(f"Warning: failed to remove backup at {backup_path}; leaving it in place.")
+        except Exception as e:
+            print(f"Failed to replace {target_public_projects} with temp build: {e}")
+            # Attempt to roll back: if we created a backup and the target doesn't exist,
+            # try restoring the backup back to the original target path.
+            try:
+                if 'backup_path' in locals() and backup_path and backup_path.exists() and not target_public_projects.exists():
+                    backup_path.rename(target_public_projects)
+                    print(f"Restored original projects folder from backup: {backup_path} -> {target_public_projects}")
+            except Exception as e2:
+                print(f"Failed to restore original projects folder from backup: {e2}")
+            print(f"Temp build left at: {temp_public_projects_root}")
+
+    except Exception as e:
+        print(f"Failed to write projects.json into temp dir: {e}")
+        # Clean up temp dir to avoid clutter, but preserve original target
+        try:
+            if temp_public_projects_root.exists():
+                shutil.rmtree(temp_public_projects_root)
+        except Exception:
+            pass
+
+    # Summary
+    print(json.dumps({"copied": copied, "skipped": skipped, "written": str(output_path)}, ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()

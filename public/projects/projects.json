@@ -1,0 +1,265 @@
+[
+  {
+    "category": "Story",
+    "createdAt": "2025-09-30T23:08:36Z",
+    "domain": "Creative",
+    "genres": [
+      "Thriller",
+      "Horror"
+    ],
+    "id": "ah",
+    "images": {
+      "directory": "images",
+      "posterPortrait": "poster-portrait.png",
+      "thumbnail": "thumbnail.png"
+    },
+    "mediums": [
+      "Novel"
+    ],
+    "resources": [
+      {
+        "id": "84EA042A-488E-4D06-AEF2-E7D4E27DB280",
+        "label": "Shadow Brother",
+        "type": "local-download",
+        "url": "/projects/ah/Shadow Brother.md"
+      }
+    ],
+    "reviewed": "2025-10-05T00:31:01Z",
+    "status": "in_progress",
+    "subtitle": "When dreams bleed into reality",
+    "summary": "A boy named Zach begins having violent dreams that seem to alter reality, unleashing a vengeful spirit—his unborn twin—whose actions spiral into chaos, danger, and a fight for survival. The story blends childhood fears with supernatural horror and psychological suspense.",
+    "tags": [],
+    "thumbnail": "thumbnail.png",
+    "title": "Shadow Brother",
+    "topics": [],
+    "updatedAt": "2025-10-05T00:31:01Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Story",
+    "createdAt": "2025-09-16T13:40:15Z",
+    "domain": "Creative",
+    "genres": [
+      "Fantasy",
+      "Action",
+      "Adventure"
+    ],
+    "id": "timeline_7",
+    "mediums": [
+      "Novel"
+    ],
+    "resources": [
+      {
+        "id": "7BC3D260-22EA-4CDF-9937-6AD0CF2BBD87",
+        "label": "Amazon",
+        "type": "url:website",
+        "url": "https://www.amazon.com/Timeline-7-Zachary-Sturman/dp/1521044708/ref=sr_1_3?dib=eyJ2IjoiMSJ9.moIyAbtgDyKp4PiC3-aXm9cvD8dMP8OZnZmeUMKFcF8.i19sZwQ4XkEfcdh7CWluSMPMz8Vm5OdrgGxUfb_f2N0&dib_tag=se&qid=1759622151&refinements=p_27%3AZachary+Sturman&s=books&sr=1-3&utm_source=chatgpt.com#customerReviews"
+      }
+    ],
+    "reviewed": "2025-10-05T00:00:25Z",
+    "status": "done",
+    "subStatus": "published",
+    "subtitle": "",
+    "summary": "Timeline 7 is a post-apocalyptic science fiction novel set centuries after a devastating war that wiped out most land life. The story follows Sam, a manipulated soldier sent into forbidden lands to stop an approaching conflict between the authoritarian city of Krielmopolis and a freer civilization. As new life forms called Anti-Species emerge from past biological warfare, Sam must decide whether to unleash a devastating ultimate weapon to save humanity.",
+    "tags": [],
+    "title": "Timeline 7 ",
+    "topics": [],
+    "updatedAt": "2025-10-05T00:00:25Z",
+    "visibility": "public"
+  },
+  {
+    "createdAt": "2025-10-01T14:03:57Z",
+    "domain": "Technology",
+    "genres": [],
+    "id": "compressionapp",
+    "mediums": [
+      "CLI"
+    ],
+    "planning": {
+      "kanban": {
+        "columns": {
+          "backlog": [],
+          "blocked": [],
+          "doing": [],
+          "done": []
+        },
+        "dependencies": []
+      },
+      "questions": {
+        "Next milestone": ""
+      }
+    },
+    "resources": [],
+    "reviewed": "2025-10-04T22:43:46Z",
+    "status": "in_progress",
+    "subtitle": "",
+    "summary": "A focused command-line utility that shrinks large videos while preserving visual quality, supports all common formats through FFmpeg, and enables precise control via flags to match platform requirements and professional pipelines.",
+    "tags": [
+      "Python",
+      "CLI",
+      "Video"
+    ],
+    "title": "Video Compression & Conversion CLI",
+    "topics": [],
+    "updatedAt": "2025-10-04T22:43:46Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2025-07-25T13:15:49Z",
+    "domain": "Technology",
+    "genres": [],
+    "id": "ope_formerly_pma",
+    "mediums": [
+      "Desktop"
+    ],
+    "resources": [
+      {
+        "id": "300BFBCD-36B0-460C-90FA-0AF49B307965",
+        "label": "GitHub: Portfolio-Organizer",
+        "type": "repository:github",
+        "url": "https://github.com/ZSturman/Portfolio-Organizer"
+      }
+    ],
+    "reviewed": "2025-10-04T22:50:32Z",
+    "status": "in_progress",
+    "subtitle": "",
+    "summary": "Portfolio Organizer is a MacOS app that centralizes all your project files and ideas. It automatically generates structured JSON metadata, keeping everything consistent and ready for use across personal workflows.",
+    "tags": [],
+    "title": "Portfolio Organizer",
+    "topics": [],
+    "updatedAt": "2025-10-04T22:50:32Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2025-09-30T14:10:30Z",
+    "domain": "Technology",
+    "genres": [],
+    "id": "top_note",
+    "images": {
+      "banner": "banner.png",
+      "directory": "images",
+      "iconCircle": "icon-circle.png",
+      "iconSquare": "icon-square.png",
+      "posterLandscape": "poster-landscape.png",
+      "posterPortrait": "poster-portrait.png",
+      "thumbnail": "thumbnail.png"
+    },
+    "mediums": [
+      "Mobile",
+      "Desktop"
+    ],
+    "resources": [
+      {
+        "id": "64C13611-0B40-485C-9044-D183AB7469F8",
+        "label": "GitHub: TopNote",
+        "type": "repository:github",
+        "url": "https://github.com/ZSturman/TopNote"
+      },
+      {
+        "id": "D7F0C6A2-9192-4942-A4F7-B99430C42BE0",
+        "label": "App Store",
+        "type": "app:iosAppStore",
+        "url": "https://apps.apple.com/us/app/top-note/id6742725271"
+      }
+    ],
+    "reviewed": "2025-10-04T11:56:27Z",
+    "status": "done",
+    "subtitle": "",
+    "summary": "Top Note is a widget-first productivity app that keeps you focused on what's next-literally one thing at a time. Instead of endless to-do lists you never look at, Top Note presents you with a single reminder, flashcard, or note right on your Home Screen widget.",
+    "tags": [],
+    "thumbnail": "thumbnail.png",
+    "title": "Top Note",
+    "topics": [],
+    "updatedAt": "2025-10-04T11:56:27Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2025-07-25T15:03:06Z",
+    "domain": "Technology",
+    "genres": [],
+    "id": "vault_llm",
+    "mediums": [
+      "Desktop"
+    ],
+    "resources": [],
+    "reviewed": "2025-10-04T22:56:58Z",
+    "status": "in_progress",
+    "subtitle": "A Retrieval-Augmented Generation Pipeline",
+    "summary": "A Retrieval-Augmented Generation pipeline for natural language querying over custom document sets.",
+    "tags": [
+      "Python",
+      "AI",
+      "RAG",
+      "LLM"
+    ],
+    "title": "Vault LLM",
+    "topics": [],
+    "updatedAt": "2025-10-04T22:56:58Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2025-07-25T04:22:12Z",
+    "domain": "Technology",
+    "genres": [],
+    "id": "youtube_to_audio_python",
+    "images": {
+      "directory": "images",
+      "thumbnail": "thumbnail.png"
+    },
+    "mediums": [
+      "CLI"
+    ],
+    "resources": [],
+    "reviewed": "2025-10-04T12:12:29Z",
+    "status": "in_progress",
+    "subtitle": "",
+    "summary": "This project provides a command-line utility for downloading YouTube videos and extracting their audio in MP3 format. It is lightweight, reliable, and avoids the need for online converters.",
+    "tags": [
+      "Python",
+      "CLI"
+    ],
+    "thumbnail": "thumbnail.png",
+    "title": "YouTube to Audio",
+    "topics": [],
+    "updatedAt": "2025-10-04T12:12:29Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2025-03-16T21:19:54Z",
+    "domain": "Technology",
+    "genres": [],
+    "id": "zsdynamics",
+    "images": {
+      "banner": "banner.png",
+      "directory": "images",
+      "posterLandscape": "poster-landscape.png",
+      "thumbnail": "thumbnail.png"
+    },
+    "mediums": [],
+    "resources": [],
+    "reviewed": "2025-10-04T23:24:30Z",
+    "status": "archived",
+    "subtitle": "",
+    "summary": "My old Portfolio Pages",
+    "tags": [
+      "Flask",
+      "Python",
+      "Web Development",
+      "Portfolio",
+      "React",
+      "JavaScript",
+      "TypeScript",
+      "Next.js"
+    ],
+    "thumbnail": "thumbnail.png",
+    "title": "ZSDynamics",
+    "topics": [],
+    "updatedAt": "2025-10-04T23:24:30Z",
+    "visibility": "public"
+  }
+]

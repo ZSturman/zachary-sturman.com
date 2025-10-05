@@ -1,31 +1,30 @@
-export type ResourceType =
-  | "github"
-  | "gitlab"
-  | "overleaf"
-  | "gdoc"
-  | "gslide"
-  | "pdf"
-  | "markdown"
-  | "video"
-  | "audio"
-  | "image"
-  | "dataset"
-  | "download"
-  | "website"
-  | "blog";
+// Resource types are namespaced in some content (e.g. "repository:github", "app:iosAppStore").
+// Keep this as an open string so callers can pass namespaced values, but individual
+// consumers can split on ':' to show icons/labels.
+export type ResourceType = string;
 
 export interface Resource {
-  type: ResourceType;
+  id?: string;
+  type: ResourceType; // e.g. "repository:github" or "app:iosAppStore" or "github"
   label: string;
   url: string;
 }
 
 // -------------------- Core discriminants --------------------
-export type Domain = "Technology" | "Creative" | "Expository" 
+export type Domain = "Technology" | "Creative" | "Expository";
 export type Visibility = "private" | "unlisted" | "public" | "restricted";
 
 // -------------------- Status models --------------------
-type CommonStatus = "idea" | "in_progress" | "on_hold" | "cancelled" | "archived" | "completed";
+type CommonStatus =
+  | "idea"
+  | "in_progress"
+  | "on_hold"
+  | "cancelled"
+  | "needs_review"
+  | "archived"
+  | "needs_refactor"
+  | "scrap_for_parts"
+  | "done";
 
 export type TechStatus =
   | CommonStatus
@@ -36,7 +35,8 @@ export type TechStatus =
   | "released_stable"
   | "maintenance"
   | "deprecated"
-  | "end_of_life";
+  | "end_of_life"
+  | "live"
 
 export type CreativeStatus =
   | CommonStatus
@@ -142,13 +142,26 @@ interface BaseProject {
   domain: Domain;
   title: string;
   summary: string;
-  thumbnail?: string;     // optional thumbnail
+  images?: {
+    directory?: string;
+    banner?: string;
+    iconCircle?: string;
+    iconSquare?: string;
+    posterLandscape?: string;
+    posterPortrait?: string;
+    thumbnail?: string;
+    [k: string]: string | undefined | undefined;
+  };
   visibility: Visibility;    // required visibility
   tags?: string[];
-  resources: Resource[];     // required resources collection
+  resources?: Resource[]; // optional collection (may be empty)
   createdAt: string;        // ISO 8601
   updatedAt: string;        // ISO 8601
   metadata?: Record<string, unknown>; // extensibility
+  subtitle?: string;
+  genres?: string[];
+  topics?: string[];
+  substatus?: string
 }
 
 // -------------------- Domain payloads --------------------
@@ -246,7 +259,6 @@ export const ALLOWED_STATUS: {
     "maintenance",
     "deprecated",
     "end_of_life",
-    "completed",
     "archived",
   ] as const,
   Creative: [
@@ -261,7 +273,6 @@ export const ALLOWED_STATUS: {
     "published_provisional",
     "released",
     "definitive_edition",
-    "completed",
     "archived",
   ] as const,
   Expository: [
@@ -276,7 +287,6 @@ export const ALLOWED_STATUS: {
     "published_provisional",
     "final_published",
     "living_document",
-    "completed",
     "archived",
   ] as const,
 };

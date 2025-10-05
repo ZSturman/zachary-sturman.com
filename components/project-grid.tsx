@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { ProjectCard } from "@/components/project-card"
 import { ProjectListItem } from "@/components/project-list-item"
-import { ProjectModal } from "./project-model"
+import { ProjectModal } from "./project-modal"
 
 import type { Project } from "@/types"
 
@@ -18,9 +18,9 @@ export function ProjectGrid({ viewMode = "list", projects }: ProjectGridProps) {
   return (
     <>
       {viewMode === "grid" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {projects.map((project, idx) => (
-            <ProjectCard key={project.id + idx} project={project} onClick={() => setSelectedProject(project)} />
+            <ProjectCard key={project.id + idx} project={project} onClick={() => setSelectedProject(project)} compact />
           ))}
         </div>
       ) : (

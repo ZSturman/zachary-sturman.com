@@ -26,15 +26,16 @@ export interface ProjectListItemProps {
 export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
   // Pick icon based on domain
   const DomainIcon = domainIcons[project.domain as keyof typeof domainIcons] || Code;
-  const primaryLink = project.resources[0];
+  const primaryLink = Array.isArray(project.resources) && project.resources.length > 0 ? project.resources[0] : undefined;
+  const projectWithMediums = project as Project & { mediums?: string[] }
   return (
     <Card className="p-6 hover:shadow-md transition-all duration-200 cursor-pointer group" onClick={onClick}>
       <div className="flex gap-6">
         {/* Thumbnail */}
         <div className="flex-shrink-0">
-          <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-muted">
+          <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-muted aspect-square">
             <Image
-              src={project.thumbnail || "/placeholder.svg"}
+              src={`/projects/${project.id}/${project.images?.thumbnail}` || "/placeholder.svg"}
               alt={`${project.title} thumbnail`}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-200"
@@ -50,9 +51,14 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
               </h3>
               <div className="flex items-center gap-2">
                 <DomainIcon className="h-4 w-4 text-muted-foreground" />
-                <Badge variant="outline" className={STATUS_COLOR[project.status]}>
-                  {project.status}
-                </Badge>
+                  <Badge variant="outline" className={STATUS_COLOR[project.status] || "bg-gray-100"}>
+                    {project.substatus ?? project.status}
+                  </Badge>
+                  {projectWithMediums.mediums && projectWithMediums.mediums.length > 0 && (
+                    <Badge variant="secondary" className="text-xs">
+                      {projectWithMediums.mediums[0]}
+                    </Badge>
+                  )}
               </div>
             </div>
             {/* Optionally display year if present in metadata */}
