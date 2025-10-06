@@ -222,6 +222,123 @@ def copy_resources_for_project(proj_dir: Path, project_obj: dict, public_project
     return out
 
 
+def copy_collection_for_project(proj_dir: Path, project_obj: dict, public_projects_root: Path) -> list[str]:
+    """Copy collection items into public/projects/<collection_id>/<item_id>/.
+    Updates each item's `path` and `thumbnail` (when copied) to the public path
+    "/projects/<collection_id>/<item_id>/<filename>".
+    Returns list of destination paths copied (strings).
+    """
+    out: list[str] = []
+    if not isinstance(project_obj, dict):
+        return out
+    collection = project_obj.get("collection")
+    project_id = project_obj.get("id")
+    if not collection or not isinstance(collection, dict) or not project_id:
+        return out
+
+    items = collection.get("items")
+    if not items or not isinstance(items, list):
+        return out
+
+    dest_root = public_projects_root / project_id
+    dest_root.mkdir(parents=True, exist_ok=True)
+
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+
+        # Ensure item has an id
+        item_id = item.get("id") or slugify(item.get("label") or item.get("path") or "")
+        item["id"] = item_id
+
+        item_dir = dest_root / item_id
+        item_dir.mkdir(parents=True, exist_ok=True)
+
+        # Copy main file referenced by `path` if present
+        path_val = item.get("path")
+        found = None
+        if path_val:
+            try:
+                src = proj_dir / unquote(str(path_val))
+                if src.exists() and src.is_file():
+                    found = src
+            except Exception:
+                found = None
+
+        if not found and path_val:
+            # search for matching stem in project directory and subdirs
+            stem = Path(unquote(str(path_val))).stem.lower()
+            for root, dirs, files in os.walk(proj_dir):
+                for f in files:
+                    p = Path(root) / f
+                    if p.stem.lower() == stem:
+                        found = p
+                        break
+                if found:
+                    break
+
+        if found:
+            try:
+                dest = item_dir / found.name
+                shutil.copy2(found, dest)
+                out.append(str(dest))
+                # update path to public URL
+                item["path"] = f"/projects/{project_id}/{item_id}/{dest.name}"
+            except Exception:
+                pass
+
+        # Copy thumbnail if present, else attempt to find one
+        thumb_val = item.get("thumbnail")
+        tfound = None
+        if thumb_val:
+            try:
+                tsrc = proj_dir / unquote(str(thumb_val))
+                if tsrc.exists() and tsrc.is_file():
+                    tfound = tsrc
+            except Exception:
+                tfound = None
+
+        if not tfound:
+            # prefer _collection_thumbnails or any file matching stem
+            candidate_name = None
+            if thumb_val:
+                candidate_name = Path(unquote(str(thumb_val))).name
+            # search for exact filename first, then by stem
+            for p in proj_dir.rglob("*"):
+                if not p.is_file():
+                    continue
+                if candidate_name and p.name == candidate_name and p.suffix.lower() in IMAGE_EXTS:
+                    tfound = p
+                    break
+            if not tfound and thumb_val:
+                tstem = Path(unquote(str(thumb_val))).stem.lower()
+                for p in proj_dir.rglob("*"):
+                    if p.is_file() and p.stem.lower() == tstem and p.suffix.lower() in IMAGE_EXTS:
+                        tfound = p
+                        break
+
+        if not tfound:
+            # as a last resort look for a file named <item_id>_thumbnail or thumbnail
+            for p in proj_dir.rglob("*"):
+                if not p.is_file():
+                    continue
+                if p.suffix.lower() in IMAGE_EXTS and p.stem.lower() in {f"{item_id}_thumbnail", "thumbnail", item_id}:
+                    tfound = p
+                    break
+
+        if tfound:
+            try:
+                tdest = item_dir / tfound.name
+                shutil.copy2(tfound, tdest)
+                out.append(str(tdest))
+                # update thumbnail to public URL
+                item["thumbnail"] = f"/projects/{project_id}/{item_id}/{tdest.name}"
+            except Exception:
+                pass
+
+    return out
+
+
 def main():
     parser = argparse.ArgumentParser(description="Copy thumbnails for projects into public/projects/<id>/")
     parser.add_argument("root", nargs="?", default="Projects", help="Root directory containing project domains.")
@@ -251,18 +368,55 @@ def main():
             continue
 
         def collect_project_dirs(d: Path):
-            # Yields (proj_dir)
-            for child in sorted(d.iterdir()):
-                if not child.is_dir():
+            # Recursively find project JSON files and yield their containing folder.
+            # We look for both `_project.json` and `_project_auto.json` and yield the
+            # parent directory for each match. Results are deduplicated and yielded in
+            # sorted order by path to provide deterministic behavior.
+
+            # Directories to ignore while scanning. These are common large or
+            # irrelevant folders that shouldn't be walked.
+            IGNORE_DIRS = {
+                "node_modules",
+                ".git",
+                "__pycache__",
+                "venv",
+                "env",
+                "dist",
+                "build",
+                ".next",
+                "public",
+            }
+
+            def is_in_ignored_path(p: Path) -> bool:
+                # return True if any ancestor directory (or the path itself) should be ignored
+                for ancestor in [p, *p.parents]:
+                    name = ancestor.name
+                    if not name:
+                        continue
+                    if name.startswith("."):
+                        return True
+                    if name in IGNORE_DIRS:
+                        return True
+                return False
+
+            seen = set()
+            matches = []
+            for pattern in ("_project.json", "_project_auto.json"):
+                for p in d.rglob(pattern):
+                    if not p.is_file():
+                        continue
+                    # skip matches that live under ignored dirs
+                    if is_in_ignored_path(p.parent):
+                        continue
+                    matches.append(p)
+
+            # sort by parent path string to keep order deterministic
+            for p in sorted(matches, key=lambda x: str(x.parent)):
+                parent = p.parent
+                if parent in seen:
                     continue
-                if child.name == "_IDEAS_":
-                    for proj in sorted(child.iterdir()):
-                        if proj.is_dir():
-                            yield proj
-                elif child.name in {"_INSPIRATION_", "_REFERENCES_"}:
-                    continue
-                else:
-                    yield child
+                seen.add(parent)
+                yield parent
 
         for proj_dir in collect_project_dirs(domain_dir):
             json_path = find_project_json(proj_dir)
@@ -315,6 +469,10 @@ def main():
                                 res_copied = copy_resources_for_project(proj_dir, obj, temp_public_projects_root)
                                 if res_copied:
                                     copied.extend(res_copied)
+                                # copy collection items if this project contains a collection
+                                col_copied = copy_collection_for_project(proj_dir, obj, temp_public_projects_root)
+                                if col_copied:
+                                    copied.extend(col_copied)
                             else:
                                 # no thumbnail file present
                                 # still attempt to copy any other images, then include the project
@@ -325,6 +483,10 @@ def main():
                                 res_copied = copy_resources_for_project(proj_dir, obj, temp_public_projects_root)
                                 if res_copied:
                                     copied.extend(res_copied)
+                                # still attempt to copy any collection items even if thumbnail missing
+                                col_copied = copy_collection_for_project(proj_dir, obj, temp_public_projects_root)
+                                if col_copied:
+                                    copied.extend(col_copied)
                                 skipped.append((str(json_path), f"no thumbnail for id={obj.get('id') or obj.get('title')}"))
                                 # still include the project without copying a thumbnail
                                 all_projects.append(obj)
@@ -363,6 +525,11 @@ def main():
                             res_copied = copy_resources_for_project(proj_dir, obj, temp_public_projects_root)
                             if res_copied:
                                 copied.extend(res_copied)
+
+                    # If this object contains a collection, copy the collection items
+                    col_copied = copy_collection_for_project(proj_dir, obj, temp_public_projects_root)
+                    if col_copied:
+                        copied.extend(col_copied)
 
                     # Finally, include the project object in the aggregated list
                     all_projects.append(obj)

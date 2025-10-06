@@ -79,7 +79,7 @@ export function ProjectFilters({ projects = [], onFilterChange, viewMode = "grid
     }
     if (map[s]) return map[s]
     // fallback: prettify snake_case or kebab-case
-    return s.replace(/[_-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    return s.replace(/[_-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   }
 
   const handleFilterChange = () => {

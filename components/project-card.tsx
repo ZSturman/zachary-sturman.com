@@ -11,7 +11,7 @@ import { bestIconPath, STATUS_COLOR } from "@/lib/resource-map"
 
 interface ProjectCardProps {
   project: Project
-  onClick: () => void
+  onClick?: () => void
   compact?: boolean
 }
 
@@ -26,7 +26,7 @@ export function ProjectCard({ project, onClick, compact = false }: ProjectCardPr
     ? `/projects/${project.id}/${project.images.posterLandscape}`
     : null
 
-  const thumb = project.images?.thumbnail
+  const thumb = project.images && typeof project.images.thumbnail === "string" && project.images.thumbnail
     ? `/projects/${project.id}/${project.images.thumbnail}`
     : "/placeholder.svg"
 
@@ -42,7 +42,7 @@ export function ProjectCard({ project, onClick, compact = false }: ProjectCardPr
 
 
   const formatDate = (s?: string) =>
-    s ? new Date(s).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) : "N/A"
+    s ? new Date(s).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "N/A"
 
 
   return (

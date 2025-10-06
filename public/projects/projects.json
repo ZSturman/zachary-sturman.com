@@ -24,7 +24,7 @@
         "url": "/projects/ah/Shadow Brother.md"
       }
     ],
-    "reviewed": "2025-10-05T00:31:01Z",
+    "reviewed": "2025-10-06T10:03:43Z",
     "status": "in_progress",
     "subtitle": "When dreams bleed into reality",
     "summary": "A boy named Zach begins having violent dreams that seem to alter reality, unleashing a vengeful spirit—his unborn twin—whose actions spiral into chaos, danger, and a fight for survival. The story blends childhood fears with supernatural horror and psychological suspense.",
@@ -32,7 +32,8 @@
     "thumbnail": "thumbnail.png",
     "title": "Shadow Brother",
     "topics": [],
-    "updatedAt": "2025-10-05T00:31:01Z",
+    "type": "project",
+    "updatedAt": "2025-10-06T10:03:43Z",
     "visibility": "public"
   },
   {
@@ -65,6 +66,61 @@
     "title": "Timeline 7 ",
     "topics": [],
     "updatedAt": "2025-10-05T00:00:25Z",
+    "visibility": "public"
+  },
+  {
+    "category": "3D",
+    "collection": {
+      "items": [
+        {
+          "id": "blender_and_sciencestairspng",
+          "label": "Blender and Science",
+          "path": "/projects/3d/blender_and_sciencestairspng/stairs.png",
+          "summary": "Here’s an image of some blender and Stairs. ",
+          "thumbnail": "/projects/3d/blender_and_sciencestairspng/blender_and_sciencestairspng_thumbnail.png",
+          "type": "png"
+        },
+        {
+          "id": "robotglb",
+          "label": "Moving Robot",
+          "path": "/projects/3d/robotglb/Robot.glb",
+          "summary": "This is a moving and grooving robot",
+          "thumbnail": "/projects/3d/robotglb/robotglb_thumbnail.png",
+          "type": "glb"
+        },
+        {
+          "id": "robotplayeranimationsmov",
+          "label": "Here's a Robot Anim",
+          "path": "/projects/3d/robotplayeranimationsmov/RobotPlayerAnimations.mov",
+          "summary": "This is a robot animating movie",
+          "type": "mov"
+        },
+        {
+          "id": "unnamed_main_characterglb",
+          "label": "Unamed Main Character",
+          "path": "/projects/3d/unnamed_main_characterglb/Unnamed Main Character.glb",
+          "summary": "some guy ",
+          "type": "glb"
+        }
+      ],
+      "updatedAt": "2025-10-06T10:29:59Z"
+    },
+    "createdAt": "2015-12-24T08:54:46Z",
+    "domain": "Creative",
+    "genres": [],
+    "id": "3d",
+    "mediums": [],
+    "resources": [],
+    "reviewed": "2025-10-06T10:40:13Z",
+    "status": "done",
+    "subStatus": "on_display",
+    "subtitle": "",
+    "summary": "My collection of 3D models and stuff",
+    "tags": [],
+    "title": "3D",
+    "topics": [],
+    "type": "collection",
+    "updatedAt": "2025-10-06T10:40:13Z",
     "visibility": "public"
   },
   {

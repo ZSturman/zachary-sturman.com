@@ -20,7 +20,7 @@ const domainIcons = {
 
 export interface ProjectListItemProps {
   project: Project;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
@@ -34,12 +34,20 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
         {/* Thumbnail */}
         <div className="flex-shrink-0">
           <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-muted aspect-square">
-            <Image
-              src={`/projects/${project.id}/${project.images?.thumbnail}` || "/placeholder.svg"}
-              alt={`${project.title} thumbnail`}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-200"
-            />
+            {/* Avoid creating "/projects/<id>/undefined" when thumbnail is missing */}
+            {(() => {
+              const thumbSrc = project.images?.thumbnail
+                ? `/projects/${project.id}/${project.images.thumbnail}`
+                : "/placeholder.svg";
+              return (
+                <Image
+                  src={thumbSrc}
+                  alt={`${project.title} thumbnail`}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-200"
+                />
+              )
+            })()}
           </div>
         </div>
         {/* Content */}

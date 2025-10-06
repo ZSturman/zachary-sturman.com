@@ -1,6 +1,15 @@
+"use client"
+
+import dynamic from "next/dynamic"
+
+const ThemeToggle = dynamic(() => import("@/components/theme-toggle").then((m) => m.ThemeToggle))
+
 export function PortfolioHeader() {
   return (
     <header className="mb-12 text-center">
+      <div className="max-w-4xl mx-auto px-4 flex items-center justify-end">
+        <ThemeToggle />
+      </div>
       <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance">
         Zachary Sturman
       </h1>
