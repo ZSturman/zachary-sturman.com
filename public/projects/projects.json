@@ -1,39 +1,162 @@
 [
   {
-    "category": "Story",
-    "createdAt": "2025-09-30T23:08:36Z",
+    "createdAt": "2025-09-30T23:33:29Z",
+    "description": "",
     "domain": "Creative",
-    "genres": [
-      "Thriller",
-      "Horror"
-    ],
-    "id": "ah",
-    "images": {
-      "directory": "images",
-      "posterPortrait": "poster-portrait.png",
-      "thumbnail": "thumbnail.png"
-    },
-    "mediums": [
-      "Novel"
-    ],
-    "resources": [
-      {
-        "id": "84EA042A-488E-4D06-AEF2-E7D4E27DB280",
-        "label": "Shadow Brother",
-        "type": "local-download",
-        "url": "/projects/ah/Shadow Brother.md"
-      }
-    ],
-    "reviewed": "2025-10-06T10:03:43Z",
-    "status": "in_progress",
-    "subtitle": "When dreams bleed into reality",
-    "summary": "A boy named Zach begins having violent dreams that seem to alter reality, unleashing a vengeful spirit—his unborn twin—whose actions spiral into chaos, danger, and a fight for survival. The story blends childhood fears with supernatural horror and psychological suspense.",
+    "genres": [],
+    "id": "broken_time_machine",
+    "mediums": [],
+    "requiresFollowUp": true,
+    "resources": [],
+    "reviewed": "2025-10-15T07:27:42Z",
+    "starred": false,
+    "status": "on_hold",
+    "story": "",
+    "subStatus": "blocked",
+    "subtitle": "",
+    "summary": "Video game that follows a science assistant as he goes back in time to fix a time machine.",
     "tags": [],
-    "thumbnail": "thumbnail.png",
-    "title": "Shadow Brother",
+    "title": "Broken Time Machine",
     "topics": [],
-    "type": "project",
-    "updatedAt": "2025-10-06T10:03:43Z",
+    "updatedAt": "2025-10-15T07:27:42Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Other",
+    "createdAt": "2025-09-17T10:37:52Z",
+    "description": "This project is a coloring book that traces the major moments in history through a series of hand-drawn illustrations. Each page is designed to be both informative and interactive, offering a way to learn by engaging directly with the content. The drawings were made in the Sketch app on an iPad using an Apple Pencil, combining the precision of digital tools with the personal rhythm of hand-drawing. The idea was simple: to create something that made the vast scope of history more approachable, and maybe a little easier to remember through the act of coloring. It’s meant for anyone curious about how everything fits together, from the beginnings of life to the stories that shaped our world.",
+    "domain": "Creative",
+    "genres": [],
+    "id": "coloring_book",
+    "mediums": [],
+    "requiresFollowUp": false,
+    "resources": [],
+    "reviewed": "2025-10-15T07:20:59Z",
+    "starred": false,
+    "status": "archived",
+    "story": "This project began after I finished working on my TV pilot, at a time when I was watching a lot of PBS Eons and reading about science and early life. I missed drawing, especially the slower work of creating backgrounds for Greenhorn, but I’ve always struggled to make art just for relaxation. I like having a purpose, something that builds toward an idea. The coloring book came out of that mix of curiosity and restlessness. I thought it might be interesting to make something that catalogues the history of everything, page by page, in a form people could participate in. For a while it was deeply satisfying—the research, the drawing, the sense of watching time unfold visually. Eventually, though, it started to feel less like exploration and more like obligation, so I stopped. Looking back, I think it served its purpose. It gave me a reason to draw again, to think about history in a different way, and to let the process be enough, even if the project itself remains unfinished.",
+    "subStatus": "abandoned",
+    "subtitle": "A Coloring Book\nA Coloring Book\nA Coloring Book\nA Coloring Book",
+    "summary": "A coloring book that traces the major moments in history through a series of hand-drawn illustrations",
+    "tags": [],
+    "title": "History of everything",
+    "topics": [],
+    "updatedAt": "2025-10-15T07:20:59Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Other",
+    "createdAt": "2025-09-15T01:45:12Z",
+    "description": "This project was my first screenplay after film school, written as part of an application to the NBC Writing Program. The story centers on three homeless men who find discarded suit jackets and decide to act as if they belong in the world of those who wear them. What begins as a simple idea about pretending to fit in grows into a reflection on how much of society is built on appearance and performance. The script looks at identity from the outside in—how clothing, confidence, and perception can briefly bridge the gap between exclusion and belonging. It’s a small, contained story, but it held the beginnings of what I wanted to explore as a writer: the tension between how people are seen and who they really are.",
+    "domain": "Creative",
+    "genres": [],
+    "id": "down_n_out",
+    "mediums": [],
+    "requiresFollowUp": false,
+    "resources": [],
+    "reviewed": "2025-10-15T07:22:58Z",
+    "starred": false,
+    "status": "archived",
+    "story": " I wrote this not long after finishing film school, at a point when I was still figuring out what kind of stories I wanted to tell. I heard about the NBC Writing Program and needed a screenplay to apply, so I started writing without much of a plan. The idea came quickly—two homeless men find suit jackets and start pretending to be someone else. It felt honest at the time, maybe because I was also trying to figure out my own place in the world. Later, after moving to New York and then to Anchorage, I met more people living on the streets and saw how complicated their lives were. I realized my story hadn’t touched that depth. If I were to write it now, I’d approach it differently—with more awareness, more care for what I didn’t understand back then. Still, that first script mattered. It taught me how to take an idea from nothing, how to finish something imperfect, and how experience keeps reshaping the way I see what I once thought I knew.",
+    "subStatus": "on_hold_indefinitely",
+    "subtitle": "",
+    "summary": "Brief overview.",
+    "tags": [],
+    "title": "Down n' out",
+    "topics": [],
+    "updatedAt": "2025-10-15T07:22:58Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Other",
+    "createdAt": "2025-09-15T01:45:12Z",
+    "description": "",
+    "domain": "Creative",
+    "genres": [],
+    "id": "for_you",
+    "mediums": [],
+    "requiresFollowUp": false,
+    "resources": [],
+    "reviewed": "2025-10-15T07:27:59Z",
+    "starred": false,
+    "status": "on_hold",
+    "story": "",
+    "subStatus": "blocked",
+    "subtitle": "",
+    "summary": "Brief overview.",
+    "tags": [],
+    "title": "For You",
+    "topics": [],
+    "updatedAt": "2025-10-15T07:27:59Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Other",
+    "createdAt": "2025-09-15T01:45:12Z",
+    "description": "",
+    "domain": "Creative",
+    "genres": [],
+    "id": "gideon_mantell_vs_richard_owen",
+    "mediums": [],
+    "requiresFollowUp": false,
+    "resources": [],
+    "reviewed": "2025-10-15T07:27:15Z",
+    "starred": false,
+    "status": "on_hold",
+    "story": "",
+    "subStatus": "blocked",
+    "subtitle": "",
+    "summary": "Brief overview.",
+    "tags": [],
+    "title": "Gideon Mantell vs Richard Owen",
+    "topics": [],
+    "updatedAt": "2025-10-15T07:27:15Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Other",
+    "createdAt": "2025-09-17T03:45:57Z",
+    "description": "",
+    "domain": "Creative",
+    "genres": [],
+    "id": "greenhorn",
+    "mediums": [],
+    "requiresFollowUp": true,
+    "resources": [],
+    "reviewed": "2025-10-15T07:25:21Z",
+    "starred": true,
+    "status": "done",
+    "story": "",
+    "subStatus": "released",
+    "subtitle": "Pilot Episode",
+    "summary": "Brief overview.",
+    "tags": [],
+    "title": "Greenhorn",
+    "topics": [],
+    "updatedAt": "2025-10-15T07:25:21Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Other",
+    "createdAt": "2025-09-15T01:45:12Z",
+    "description": "This project began as an early attempt to tell a story about family, loyalty, and the uneasy choices that come with protecting someone you love. At its core, it follows a family drawn into covering up a crime committed by one of their own, each member forced to confront what they’re willing to sacrifice for the others. It was the first piece of writing I ever registered for copyright, and in many ways, it marked the start of taking storytelling seriously. I wrote it before film school, before I knew much about process or pacing or revision, but it carried the first signs of wanting to understand people through story. Though I never finished a proper edit, the drafts taught me what it means to shape an idea beyond instinct—to sit with it, rework it, and see where it resists.",
+    "domain": "Creative",
+    "genres": [],
+    "id": "pressure",
+    "mediums": [],
+    "requiresFollowUp": true,
+    "resources": [],
+    "reviewed": "2025-10-15T07:22:04Z",
+    "starred": false,
+    "status": "archived",
+    "story": "When I started writing this, I didn’t know what I was doing, only that I wanted to see where the idea could go. The story came from a question that stayed with me: what would a family do to protect one of their own, and how far would that loyalty stretch before it broke? I wrote draft after draft, each one a little different, not because I had a plan but because I was learning what rewriting meant. At the time, I thought finishing a draft was the finish line, not the midpoint. It was also the first time I went through the process of copyrighting something, which made it feel strangely official, like proof that it existed beyond my computer. Looking back, it’s rough and unfinished, but it’s also where I began to understand how stories take shape—slowly, unevenly, and often before you know what kind of storyteller you’re trying to become.",
+    "subStatus": "migrated",
+    "subtitle": "",
+    "summary": "Brief overview.",
+    "tags": [],
+    "title": "Pressure",
+    "topics": [],
+    "updatedAt": "2025-10-15T07:22:04Z",
     "visibility": "public"
   },
   {
@@ -78,7 +201,7 @@
           "path": "/projects/3d/blender_and_sciencestairspng/stairs.png",
           "summary": "Here’s an image of some blender and Stairs. ",
           "thumbnail": "/projects/3d/blender_and_sciencestairspng/blender_and_sciencestairspng_thumbnail.png",
-          "type": "png"
+          "type": "image"
         },
         {
           "id": "robotglb",
@@ -86,110 +209,351 @@
           "path": "/projects/3d/robotglb/Robot.glb",
           "summary": "This is a moving and grooving robot",
           "thumbnail": "/projects/3d/robotglb/robotglb_thumbnail.png",
-          "type": "glb"
+          "type": "3d-model"
         },
         {
           "id": "robotplayeranimationsmov",
           "label": "Here's a Robot Anim",
           "path": "/projects/3d/robotplayeranimationsmov/RobotPlayerAnimations.mov",
           "summary": "This is a robot animating movie",
-          "type": "mov"
+          "type": "video"
         },
         {
           "id": "unnamed_main_characterglb",
           "label": "Unamed Main Character",
           "path": "/projects/3d/unnamed_main_characterglb/Unnamed Main Character.glb",
           "summary": "some guy ",
-          "type": "glb"
+          "type": "3d-model"
         }
       ],
       "updatedAt": "2025-10-06T10:29:59Z"
     },
     "createdAt": "2015-12-24T08:54:46Z",
+    "description": "",
     "domain": "Creative",
     "genres": [],
     "id": "3d",
     "mediums": [],
+    "requiresFollowUp": true,
     "resources": [],
-    "reviewed": "2025-10-06T10:40:13Z",
-    "status": "done",
-    "subStatus": "on_display",
+    "reviewed": "2025-10-15T07:24:24Z",
+    "starred": true,
+    "status": "in_progress",
+    "story": "",
     "subtitle": "",
     "summary": "My collection of 3D models and stuff",
     "tags": [],
-    "title": "3D",
+    "title": "3D Models",
     "topics": [],
-    "type": "collection",
-    "updatedAt": "2025-10-06T10:40:13Z",
+    "updatedAt": "2025-10-15T07:24:24Z",
     "visibility": "public"
   },
   {
-    "createdAt": "2025-10-01T14:03:57Z",
+    "category": "Animation Tests",
+    "collection": {
+      "items": [
+        {
+          "path": "/projects/animation_tests/alex_testmov/alex test.mov",
+          "type": "video",
+          "id": "alex_testmov"
+        },
+        {
+          "path": "/projects/animation_tests/alexmov/Alex.mov",
+          "type": "video",
+          "id": "alexmov"
+        },
+        {
+          "path": "/projects/animation_tests/bass_ackward_lip_sync_testmov/Bass_Ackward_Lip_Sync_Test.mov",
+          "type": "video",
+          "id": "bass_ackward_lip_sync_testmov"
+        },
+        {
+          "path": "/projects/animation_tests/channel_5_newsmov/Channel 5 news.mov",
+          "type": "video",
+          "id": "channel_5_newsmov"
+        },
+        {
+          "path": "/projects/animation_tests/cheap_t7mov/Cheap T7.mov",
+          "type": "video",
+          "id": "cheap_t7mov"
+        },
+        {
+          "path": "/projects/animation_tests/cheap_timeline_7_s1mov/Cheap_Timeline_7_S1.mov",
+          "type": "video",
+          "id": "cheap_timeline_7_s1mov"
+        },
+        {
+          "path": "/projects/animation_tests/fireavi/Fire.avi",
+          "type": "video",
+          "id": "fireavi"
+        },
+        {
+          "path": "/projects/animation_tests/focus_test_1mov/focus test 1.mov",
+          "type": "video",
+          "id": "focus_test_1mov"
+        },
+        {
+          "path": "/projects/animation_tests/focus_test_2mov/focus test 2.mov",
+          "type": "video",
+          "id": "focus_test_2mov"
+        },
+        {
+          "path": "/projects/animation_tests/greenhorn_character_test_3mov/Greenhorn Character Test 3.mov",
+          "type": "video",
+          "id": "greenhorn_character_test_3mov"
+        },
+        {
+          "path": "/projects/animation_tests/greenhorn_character_test2mov/Greenhorn Character Test.2.mov",
+          "type": "video",
+          "id": "greenhorn_character_test2mov"
+        },
+        {
+          "path": "/projects/animation_tests/greenhorn_character_testmov/Greenhorn Character Test.mov",
+          "type": "video",
+          "id": "greenhorn_character_testmov"
+        },
+        {
+          "path": "/projects/animation_tests/greenhorn_character_test4mov/Greenhorn Character Test4.mov",
+          "type": "video",
+          "id": "greenhorn_character_test4mov"
+        },
+        {
+          "path": "/projects/animation_tests/greenhorn_clipmov/Greenhorn Clip.mov",
+          "type": "video",
+          "id": "greenhorn_clipmov"
+        },
+        {
+          "path": "/projects/animation_tests/greenhorn_new_copymov/Greenhorn New copy.mov",
+          "type": "video",
+          "id": "greenhorn_new_copymov"
+        },
+        {
+          "path": "/projects/animation_tests/greenhorn_s01_e_01mov/Greenhorn S01-E-01.mov",
+          "type": "video",
+          "id": "greenhorn_s01_e_01mov"
+        },
+        {
+          "path": "/projects/animation_tests/greenhorn_storyboardmov/Greenhorn Storyboard.mov",
+          "type": "video",
+          "id": "greenhorn_storyboardmov"
+        },
+        {
+          "path": "/projects/animation_tests/greenhorn_version_1mov/Greenhorn version 1.mov",
+          "type": "video",
+          "id": "greenhorn_version_1mov"
+        },
+        {
+          "path": "/projects/animation_tests/greenhorn_clipmov/Greenhorn_Clip.mov",
+          "type": "video",
+          "id": "greenhorn_clipmov"
+        },
+        {
+          "path": "/projects/animation_tests/particle_testmov/Particle Test.mov",
+          "type": "video",
+          "id": "particle_testmov"
+        },
+        {
+          "path": "/projects/animation_tests/the_vortexmov/The Vortex.mov",
+          "type": "video",
+          "id": "the_vortexmov"
+        },
+        {
+          "path": "/projects/animation_tests/vortexmov/Vortex.mov",
+          "type": "video",
+          "id": "vortexmov"
+        },
+        {
+          "path": "/projects/animation_tests/wateravi/Water.avi",
+          "type": "video",
+          "id": "wateravi"
+        },
+        {
+          "path": "/projects/animation_tests/waves_copymov/Waves copy.mov",
+          "type": "video",
+          "id": "waves_copymov"
+        },
+        {
+          "path": "/projects/animation_tests/wavesmov/Waves.mov",
+          "type": "video",
+          "id": "wavesmov"
+        },
+        {
+          "path": "/projects/animation_tests/xfei2030mov/XFEI2030.MOV",
+          "type": "video",
+          "id": "xfei2030mov"
+        }
+      ]
+    },
+    "createdAt": "2025-10-06T00:39:28Z",
+    "description": "",
+    "domain": "Creative",
+    "genres": [],
+    "id": "animation_tests",
+    "mediums": [],
+    "requiresFollowUp": false,
+    "resources": [],
+    "reviewed": "2025-10-15T07:23:54Z",
+    "starred": true,
+    "status": "in_progress",
+    "story": "",
+    "subtitle": "",
+    "summary": "A collection of the 2D and 3D animations I've created",
+    "tags": [],
+    "title": "Animations",
+    "topics": [],
+    "updatedAt": "2025-10-15T07:23:54Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2025-09-16T14:16:59Z",
+    "description": "",
     "domain": "Technology",
     "genres": [],
-    "id": "compressionapp",
-    "mediums": [
-      "CLI"
-    ],
-    "planning": {
-      "kanban": {
-        "columns": {
-          "backlog": [],
-          "blocked": [],
-          "doing": [],
-          "done": []
-        },
-        "dependencies": []
-      },
-      "questions": {
-        "Next milestone": ""
-      }
-    },
+    "id": "hows_my_eating",
+    "mediums": [],
+    "requiresFollowUp": false,
     "resources": [],
-    "reviewed": "2025-10-04T22:43:46Z",
+    "reviewed": "2025-10-15T07:31:41Z",
+    "starred": true,
     "status": "in_progress",
+    "story": "",
     "subtitle": "",
-    "summary": "A focused command-line utility that shrinks large videos while preserving visual quality, supports all common formats through FFmpeg, and enables precise control via flags to match platform requirements and professional pipelines.",
-    "tags": [
-      "Python",
-      "CLI",
-      "Video"
-    ],
-    "title": "Video Compression & Conversion CLI",
+    "summary": "Brief overview.",
+    "tags": [],
+    "title": "Hows My Eating",
     "topics": [],
-    "updatedAt": "2025-10-04T22:43:46Z",
+    "updatedAt": "2025-10-15T07:31:41Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2024-06-26T02:49:14Z",
+    "description": "",
+    "domain": "Technology",
+    "genres": [],
+    "id": "lost_paws",
+    "mediums": [],
+    "requiresFollowUp": true,
+    "resources": [],
+    "reviewed": "2025-10-15T07:18:12Z",
+    "starred": true,
+    "status": "in_progress",
+    "story": "",
+    "subtitle": "",
+    "summary": "Brief overview.",
+    "tags": [],
+    "title": "Lost Paws",
+    "topics": [],
+    "updatedAt": "2025-10-15T07:18:12Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2025-03-24T20:33:58Z",
+    "description": "",
+    "domain": "Technology",
+    "genres": [],
+    "id": "medtracker",
+    "mediums": [],
+    "requiresFollowUp": false,
+    "resources": [],
+    "reviewed": "2025-10-15T07:31:19Z",
+    "starred": true,
+    "status": "in_progress",
+    "story": "",
+    "subtitle": "A widget-first iOS app to help users keep track of their medication intake and reserves.",
+    "summary": "Brief overview.",
+    "tags": [],
+    "title": "MediLedger",
+    "topics": [],
+    "updatedAt": "2025-10-15T07:31:19Z",
     "visibility": "public"
   },
   {
     "category": "Software",
     "createdAt": "2025-07-25T13:15:49Z",
+    "description": "",
     "domain": "Technology",
     "genres": [],
     "id": "ope_formerly_pma",
     "mediums": [
       "Desktop"
     ],
+    "requiresFollowUp": true,
     "resources": [
       {
         "id": "300BFBCD-36B0-460C-90FA-0AF49B307965",
-        "label": "GitHub: Portfolio-Organizer",
+        "label": "Portfolio-Organizer",
         "type": "repository:github",
         "url": "https://github.com/ZSturman/Portfolio-Organizer"
       }
     ],
-    "reviewed": "2025-10-04T22:50:32Z",
+    "reviewed": "2025-10-11T00:48:08Z",
+    "starred": true,
     "status": "in_progress",
+    "story": "",
     "subtitle": "",
     "summary": "Portfolio Organizer is a MacOS app that centralizes all your project files and ideas. It automatically generates structured JSON metadata, keeping everything consistent and ready for use across personal workflows.",
-    "tags": [],
+    "tags": [
+      "MacOS",
+      "Automation",
+      "File Management"
+    ],
     "title": "Portfolio Organizer",
     "topics": [],
-    "updatedAt": "2025-10-04T22:50:32Z",
+    "updatedAt": "2025-10-11T00:48:08Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2025-05-28T13:24:30Z",
+    "description": "",
+    "domain": "Technology",
+    "genres": [],
+    "id": "rodssheets",
+    "mediums": [],
+    "requiresFollowUp": false,
+    "resources": [],
+    "reviewed": "2025-10-15T07:33:38Z",
+    "starred": true,
+    "status": "in_progress",
+    "story": "",
+    "subtitle": "",
+    "summary": "Brief overview.",
+    "tags": [],
+    "title": "Rods Sheets",
+    "topics": [],
+    "updatedAt": "2025-10-15T07:33:38Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2024-06-25T21:36:07Z",
+    "description": "",
+    "domain": "Technology",
+    "genres": [],
+    "id": "the_2nd_best_obsidian_collection",
+    "mediums": [],
+    "requiresFollowUp": false,
+    "resources": [],
+    "reviewed": "2025-10-15T07:29:51Z",
+    "starred": true,
+    "status": "done",
+    "story": "",
+    "subStatus": "live",
+    "subtitle": "",
+    "summary": "Brief overview.",
+    "tags": [],
+    "title": "Obsidian Toolkit",
+    "topics": [],
+    "updatedAt": "2025-10-15T07:29:51Z",
     "visibility": "public"
   },
   {
     "category": "Software",
     "createdAt": "2025-09-30T14:10:30Z",
+    "description": "",
     "domain": "Technology",
     "genres": [],
     "id": "top_note",
@@ -206,10 +570,11 @@
       "Mobile",
       "Desktop"
     ],
+    "requiresFollowUp": true,
     "resources": [
       {
         "id": "64C13611-0B40-485C-9044-D183AB7469F8",
-        "label": "GitHub: TopNote",
+        "label": "TopNote",
         "type": "repository:github",
         "url": "https://github.com/ZSturman/TopNote"
       },
@@ -220,102 +585,385 @@
         "url": "https://apps.apple.com/us/app/top-note/id6742725271"
       }
     ],
-    "reviewed": "2025-10-04T11:56:27Z",
+    "reviewed": "2025-10-15T07:29:17Z",
+    "starred": true,
     "status": "done",
+    "story": "",
     "subtitle": "",
     "summary": "Top Note is a widget-first productivity app that keeps you focused on what's next-literally one thing at a time. Instead of endless to-do lists you never look at, Top Note presents you with a single reminder, flashcard, or note right on your Home Screen widget.",
-    "tags": [],
+    "tags": [
+      "iOS",
+      "Productivity",
+      "Widgets"
+    ],
     "thumbnail": "thumbnail.png",
     "title": "Top Note",
     "topics": [],
-    "updatedAt": "2025-10-04T11:56:27Z",
+    "updatedAt": "2025-10-15T07:29:17Z",
     "visibility": "public"
   },
   {
-    "category": "Software",
-    "createdAt": "2025-07-25T15:03:06Z",
-    "domain": "Technology",
-    "genres": [],
-    "id": "vault_llm",
-    "mediums": [
-      "Desktop"
-    ],
-    "resources": [],
-    "reviewed": "2025-10-04T22:56:58Z",
-    "status": "in_progress",
-    "subtitle": "A Retrieval-Augmented Generation Pipeline",
-    "summary": "A Retrieval-Augmented Generation pipeline for natural language querying over custom document sets.",
-    "tags": [
-      "Python",
-      "AI",
-      "RAG",
-      "LLM"
-    ],
-    "title": "Vault LLM",
-    "topics": [],
-    "updatedAt": "2025-10-04T22:56:58Z",
-    "visibility": "public"
-  },
-  {
-    "category": "Software",
-    "createdAt": "2025-07-25T04:22:12Z",
-    "domain": "Technology",
-    "genres": [],
-    "id": "youtube_to_audio_python",
-    "images": {
-      "directory": "images",
-      "thumbnail": "thumbnail.png"
+    "collection": {
+      "items": [
+        {
+          "path": "https://zsturman.github.io/ZSDynamics-V1.0/",
+          "thumbnail": "/projects/zsdynamics_collection/httpszsturmangithubiozsdynamics_v10/httpszsturmangithubiozsdynamics_v10_thumbnail.png",
+          "type": "url-link",
+          "id": "httpszsturmangithubiozsdynamics_v10"
+        },
+        {
+          "path": "https://zsturman.github.io/ZSDynamics-V1.1/",
+          "thumbnail": "/projects/zsdynamics_collection/httpszsturmangithubiozsdynamics_v11/httpszsturmangithubiozsdynamics_v11_thumbnail.png",
+          "type": "url-link",
+          "id": "httpszsturmangithubiozsdynamics_v11"
+        },
+        {
+          "path": "https://zsturman.github.io/ZSDynamics-V2.0/",
+          "thumbnail": "/projects/zsdynamics_collection/httpszsturmangithubiozsdynamics_v20/httpszsturmangithubiozsdynamics_v20_thumbnail.png",
+          "type": "url-link",
+          "id": "httpszsturmangithubiozsdynamics_v20"
+        },
+        {
+          "path": "https://zsturman.github.io/ZSDynamics-V3.0/",
+          "thumbnail": "/projects/zsdynamics_collection/httpszsturmangithubiozsdynamics_v30/httpszsturmangithubiozsdynamics_v30_thumbnail.png",
+          "type": "url-link",
+          "id": "httpszsturmangithubiozsdynamics_v30"
+        },
+        {
+          "path": "https://zsturman.github.io/ZSDynamics-V4.0/",
+          "thumbnail": "/projects/zsdynamics_collection/httpszsturmangithubiozsdynamics_v40/httpszsturmangithubiozsdynamics_v40_thumbnail.png",
+          "type": "url-link",
+          "id": "httpszsturmangithubiozsdynamics_v40"
+        }
+      ],
+      "thumbnails": "_collection_thumbnails"
     },
-    "mediums": [
-      "CLI"
-    ],
-    "resources": [],
-    "reviewed": "2025-10-04T12:12:29Z",
-    "status": "in_progress",
-    "subtitle": "",
-    "summary": "This project provides a command-line utility for downloading YouTube videos and extracting their audio in MP3 format. It is lightweight, reliable, and avoids the need for online converters.",
-    "tags": [
-      "Python",
-      "CLI"
-    ],
-    "thumbnail": "thumbnail.png",
-    "title": "YouTube to Audio",
-    "topics": [],
-    "updatedAt": "2025-10-04T12:12:29Z",
-    "visibility": "public"
-  },
-  {
-    "category": "Software",
-    "createdAt": "2025-03-16T21:19:54Z",
+    "createdAt": "2021-09-17T05:40:51Z",
+    "description": "Across these versions, the portfolio moves from early experiments with web servers and deployment to a more deliberate exploration of interaction and user experience. What began as a way to learn the basics of web development gradually became a study in how software grows through iteration. Each update introduced something new—whether a backend feature, a visualization tool, or an experiment with motion and layout—and together they form a record of learning that values progress over perfection. The result is less a single polished site and more a map of how understanding takes shape through making, breaking, and rebuilding.",
     "domain": "Technology",
     "genres": [],
-    "id": "zsdynamics",
+    "id": "zsdynamics_collection",
     "images": {
       "banner": "banner.png",
       "directory": "images",
       "posterLandscape": "poster-landscape.png",
       "thumbnail": "thumbnail.png"
     },
-    "mediums": [],
+    "mediums": [
+      "Web"
+    ],
+    "requiresFollowUp": true,
     "resources": [],
-    "reviewed": "2025-10-04T23:24:30Z",
+    "reviewed": "2025-10-26T16:41:12Z",
+    "starred": true,
+    "status": "in_progress",
+    "story": "When I first started learning Python, I wanted a way to show what I could do, even if it wasn’t much. Building the portfolio gave me that space. The early versions were slow and uncertain, full of mistakes that later became lessons. Over time, each new version taught me something different—not just about frameworks or syntax, but about patience, problem-solving, and how design decisions can change the way a project feels to use. By the time I reached the latest version, the portfolio had become less about proving skill and more about documenting growth. It’s a record of learning in motion, shaped by curiosity and the steady work of figuring things out, one version at a time.",
+    "subtitle": "A collection of my personal website versions",
+    "summary": "This collection showcases versions of my personal portfolio. Each version documents how my design, presentation style, skill and career path have evolved over time.",
+    "tags": [],
+    "thumbnail": "thumbnail.png",
+    "title": "ZSDynamics (Collection)",
+    "topics": [],
+    "updatedAt": "2025-10-26T16:41:12Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2021-10-20T23:25:16Z",
+    "description": "The first version of my portfolio was built with Flask, following Corey Schafer’s tutorials as a starting point. It was my introduction to web development and a way to learn how all the pieces of a site come together. I set up my own server, configured Nginx, and handled deployment myself, not realizing that most people used simpler options. It was a long process, full of trial and error, but it gave me a deep understanding of how a web application actually runs. I designed my own SVG graphics and added simple hover animations to make it feel personal. It wasn’t perfect, but it worked, and I was proud of it.",
+    "domain": "Technology",
+    "genres": [],
+    "id": "zsdynamics_v10",
+    "mediums": [
+      "Desktop"
+    ],
+    "requiresFollowUp": true,
+    "resources": [
+      {
+        "id": "CE3E6BFC-E8ED-4E09-AA48-4AE8A03293F7",
+        "label": "Version 1.0",
+        "type": "url:website",
+        "url": "https://zsturman.github.io/ZSDynamics-V1.0/"
+      },
+      {
+        "id": "E3335C94-DF85-471E-9EB9-497CAA18213A",
+        "label": "GitHub: ZSDynamics-V1",
+        "type": "repository:github",
+        "url": "https://github.com/ZSturman/ZSDynamics-V1.0"
+      },
+      {
+        "id": "E1317073-EA05-4408-B7C7-FB967471485C",
+        "label": "ZSDynamics Collection",
+        "type": "local-link:zsdynamics",
+        "url": "zsdynamics"
+      }
+    ],
+    "reviewed": "2025-10-23T02:29:02Z",
+    "starred": false,
     "status": "archived",
-    "subtitle": "",
-    "summary": "My old Portfolio Pages",
+    "story": "I went on indeed.com and looked for a job that I could see myself liking while also feeling satisfied with my pay. I found data scientist. Hoping to skip the formal education I started learned python. After I had somewhat of an idea of what I was doing I needed a way to advertise myself. I followed Corey Schafer’s Flask tutorials and tried to piece together my own version, learning about servers, Nginx, and deployment along the way. I didn’t know how complicated I was making things, but it taught me more than any tutorial could. When it finally worked, it felt less like finishing a project and more like understanding a language for the first time.",
+    "subStatus": "deprecated",
+    "subtitle": "Built with Flask",
+    "summary": "The initial version used Flask and manual deployment with Nginx, teaching web app fundamentals. It was basic but personal, with custom SVGs and animations, resembling a complete first build. Inspired by Corey Schafer’s tutorials, it was a personal portfolio built from scratch with Flask.",
+    "tags": [
+      "Portfolio",
+      "Flask",
+      "Python",
+      "Web Development"
+    ],
+    "title": "ZSDynamics-V1.0",
+    "topics": [],
+    "updatedAt": "2025-10-23T02:29:02Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2022-11-21T00:26:14Z",
+    "description": "After spending time learning more about data science, I wanted the portfolio to do more than just display my work. I added a subscription feature that let visitors sign up and receive updates by email. I also integrated Dashly to bring in some data visualization and a bit of in-app analytics. It felt like a step forward—not just technically, but in how I thought about connecting with an audience.",
+    "domain": "Technology",
+    "genres": [],
+    "id": "zsdynamics_v11",
+    "mediums": [
+      "Desktop"
+    ],
+    "requiresFollowUp": false,
+    "resources": [
+      {
+        "id": "EA734311-1B3E-4120-991F-D34FDDF9BB39",
+        "label": "Version 1.1",
+        "type": "url:website",
+        "url": "https://zsturman.github.io/ZSDynamics-V1.1/"
+      },
+      {
+        "id": "72B8C869-39AF-46A7-8048-5BDD411832CC",
+        "label": "GitHub: ZSDynamics-v1",
+        "type": "repository:github",
+        "url": "https://github.com/ZSturman/ZSDynamics-v1.1"
+      },
+      {
+        "id": "E1115787-D70A-49D0-B6C6-CD8EEE75EC98",
+        "label": "ZSDynamics Collection",
+        "type": "local-link:zsdynamics",
+        "url": "zsdynamics"
+      }
+    ],
+    "reviewed": "2025-10-23T02:27:09Z",
+    "starred": false,
+    "status": "archived",
+    "story": "After the first version went live, I wanted to make it more than a static showcase. I added ways for visitors to subscribe and receive updates, and I built simple tools for tracking engagement. I was thinking more like a developer by then—less about how the code looked and more about how people might use it. It was a small shift, but it made me realize that I enjoyed thinking about users and data together.",
+    "subStatus": "deprecated",
+    "subtitle": "Built with Flask",
+    "summary": "Introduced subscription features and integrated Dashly analytics. Shifted focus from showcasing projects to engaging users and understanding data-driven design. Upgraded Flask portfolio to be interactive and communicative.",
     "tags": [
       "Flask",
       "Python",
       "Web Development",
+      "Portfolio"
+    ],
+    "title": "ZSDynamics-V1.1",
+    "topics": [],
+    "updatedAt": "2025-10-23T02:27:09Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2023-11-10T10:23:31Z",
+    "description": "During a year in Australia on a working holiday visa, I started paying closer attention to what skills employers were asking for. React came up almost everywhere. I didn’t want to abandon what I’d learned in Python, so I rebuilt the portfolio with a Python backend and a React frontend. It became a bridge between what I already knew and what I still needed to learn, and it gave me a clearer picture of how modern web stacks fit together.",
+    "domain": "Technology",
+    "genres": [],
+    "id": "zsdynamics_v20",
+    "mediums": [
+      "Desktop"
+    ],
+    "requiresFollowUp": true,
+    "resources": [
+      {
+        "id": "9FCD8800-C0C3-404C-9490-22BE469E872E",
+        "label": "Version 2.0",
+        "type": "url:website",
+        "url": "https://zsturman.github.io/ZSDynamics-V2.0/"
+      },
+      {
+        "id": "073288DF-165F-4BA5-8380-910C3420BCEF",
+        "label": "GitHub: ZSDynamics-V2",
+        "type": "repository:github",
+        "url": "https://github.com/ZSturman/ZSDynamics-V2.0"
+      },
+      {
+        "id": "4F9293F2-9979-484F-880E-8B33BA23D755",
+        "label": "ZSDynamics Collection",
+        "type": "local-link:zsdynamics",
+        "url": "zsdynamics"
+      }
+    ],
+    "reviewed": "2025-10-23T02:23:46Z",
+    "starred": false,
+    "status": "archived",
+    "story": "While living in Australia, I started paying attention to what companies actually wanted in new hires. React kept appearing on job listings, so I decided to learn it by rebuilding my site. I didn’t drop Python; instead, I used it for the backend and let React handle the frontend. This version wasn’t just about learning a new framework—it was about learning how technologies talk to each other. It made the portfolio feel more modern, but also more grounded in how real-world applications are built.",
+    "subStatus": "deprecated",
+    "subtitle": "Built with Python and React",
+    "summary": "Rebuilt with a Python backend and React frontend to meet modern tech demands while abroad. This version integrated prior Python experience with new frontend skills, emphasizing full-stack integration. Built during a working holiday in Australia, it modernized the stack while maintaining Python for server-side logic.",
+    "tags": [
+      "TypeScript",
+      "Portfolio",
+      "Python",
+      "React",
+      "JavaScript"
+    ],
+    "title": "ZSDynamics-V2.0",
+    "topics": [],
+    "updatedAt": "2025-10-23T02:23:46Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2023-11-21T00:41:06Z",
+    "description": "Once the basics were in place, I began to explore how to make the site more interactive. I added a theme selector that let users change the site’s colors and fonts in real time. It wasn’t great for SEO, but it was a good way to practice state management and user interface logic. This version felt like a sandbox for experimentation, a way to keep learning while trying out ideas that didn’t need to be perfect.",
+    "domain": "Technology",
+    "genres": [],
+    "id": "zsdynamics_v30",
+    "mediums": [
+      "Desktop"
+    ],
+    "requiresFollowUp": true,
+    "resources": [
+      {
+        "id": "A86E991A-F912-4676-9AFA-3515B83969F8",
+        "label": "Version 3.0",
+        "type": "url:website",
+        "url": "https://zsturman.github.io/ZSDynamics-V3.0/"
+      },
+      {
+        "id": "DEBE5E65-8870-40AE-999E-3684C80B1820",
+        "label": "GitHub: ZSDynamics-V3",
+        "type": "repository:github",
+        "url": "https://github.com/ZSturman/ZSDynamics-V3.0"
+      },
+      {
+        "id": "094E764B-BE36-402E-A784-720DA0819A81",
+        "label": "ZSDynamics Collection",
+        "type": "local-link:zsdynamics",
+        "url": "zsdynamics"
+      }
+    ],
+    "reviewed": "2025-10-23T02:16:22Z",
+    "starred": false,
+    "status": "archived",
+    "story": "Once I felt more comfortable with React, I began exploring how design and interactivity could shape the experience. I added a feature that let users switch between different themes and fonts. It wasn’t practical in every sense, but it was interesting, and it made me curious about how design choices affect usability. That curiosity drove most of my learning at that stage.",
+    "subStatus": "deprecated",
+    "subtitle": "Built with React",
+    "summary": "Added interactive elements like a theme selector to explore state management and UI logic. It served as a testing ground for experimentation and deepening frontend understanding. An experimental version explored front-end flexibility and user customization.",
+    "tags": [
       "Portfolio",
       "React",
-      "JavaScript",
       "TypeScript",
-      "Next.js"
+      "Web Development"
     ],
-    "thumbnail": "thumbnail.png",
-    "title": "ZSDynamics",
+    "title": "ZSDynamics-V3.0",
     "topics": [],
-    "updatedAt": "2025-10-04T23:24:30Z",
+    "updatedAt": "2025-10-23T02:16:22Z",
+    "visibility": "public"
+  },
+  {
+    "category": "Software",
+    "createdAt": "2024-10-20T23:42:56Z",
+    "description": "The most recent version focused on movement and refinement. I spent time experimenting with parallax effects and smoother animations, learning how small design decisions could change the way a page feels. I created an SVG character version of myself whose colors shifted with light and dark mode, which gave the site a more personal touch. By this point, the portfolio had become less about showing finished work and more about tracing how far I’d come in learning to build and design thoughtfully.",
+    "domain": "Technology",
+    "genres": [],
+    "id": "zsdynamics_v40",
+    "mediums": [
+      "Desktop"
+    ],
+    "requiresFollowUp": true,
+    "resources": [
+      {
+        "id": "425B218B-D838-4745-B363-602FA695C25B",
+        "label": "Version 4.0",
+        "type": "url:website",
+        "url": "https://zsturman.github.io/ZSDynamics-V4.0/"
+      },
+      {
+        "id": "405832B9-0EA9-4265-80BF-61527BED7932",
+        "label": "GitHub: ZSDynamics-V4",
+        "type": "repository:github",
+        "url": "https://github.com/ZSturman/ZSDynamics-V4.0"
+      },
+      {
+        "id": "A1255086-291C-4EB6-B875-19BB8C919BE0",
+        "label": "ZSDynamics Collection",
+        "type": "local-link:zsdynamics",
+        "url": "zsdynamics"
+      }
+    ],
+    "reviewed": "2025-10-23T02:19:59Z",
+    "starred": false,
+    "status": "archived",
+    "story": "For the latest version, I focused on detail. I added parallax effects, smoother animations, and an SVG self-portrait that adapted to light and dark mode. It was a chance to connect everything I’d learned—Python, React, animation, and design—into one project that felt cohesive. Each version of this portfolio marks a stage in my learning, not just in coding, but in understanding how to build something that grows with me.",
+    "subStatus": "deprecated",
+    "subtitle": "Built with React",
+    "summary": "Focused on refined motion, polish, parallax effects, smoother animations, and an adaptive SVG avatar. It unified previous learning into a cohesive, expressive, and technically mature portfolio. The latest iteration emphasizes design and motion, introducing smooth parallax scrolling, layered animation effects, and a self-designed SVG character whose colors shift with light and dark mode.",
+    "tags": [
+      "Portfolio",
+      "Web Development",
+      "React",
+      "TypeScript"
+    ],
+    "title": "ZSDynamics-V4.0",
+    "topics": [],
+    "updatedAt": "2025-10-23T02:19:59Z",
+    "visibility": "public"
+  },
+  {
+    "createdAt": "2025-09-16T19:33:29Z",
+    "description": "",
+    "domain": "Technology",
+    "genres": [],
+    "id": "ai_fix_to_shallow_reasoning",
+    "mediums": [],
+    "requiresFollowUp": true,
+    "resources": [],
+    "reviewed": "2025-10-11T11:04:29Z",
+    "starred": false,
+    "status": "idea",
+    "story": "",
+    "subStatus": "concept",
+    "subtitle": "",
+    "summary": "This project investigates a second-layer vector space that groups recurring patterns into higher-level concepts, inspired by how humans organize knowledge. The goal is to reduce shallow reasoning and improve cross-task generalization.",
+    "tags": [
+      "AI",
+      "Machine Learning",
+      "NLP"
+    ],
+    "title": "AI fix to shallow reasoning",
+    "topics": [],
+    "updatedAt": "2025-10-11T11:04:29Z",
+    "visibility": "public"
+  },
+  {
+    "createdAt": "2025-09-16T14:03:54Z",
+    "description": "",
+    "domain": "Technology",
+    "genres": [],
+    "id": "ai_to_monitor_itself",
+    "mediums": [],
+    "requiresFollowUp": true,
+    "resources": [],
+    "reviewed": "2025-10-11T11:03:59Z",
+    "starred": false,
+    "status": "idea",
+    "story": "",
+    "subStatus": "jumping_off_point",
+    "subtitle": "",
+    "summary": "This project explores AI systems that regulate themselves using the 16 personalities model as an internal feedback mechanism. It draws inspiration from how societies rely on diverse human perspectives to evaluate shared experiences.",
+    "tags": [
+      "AI",
+      "16 Personalities",
+      "Self-Monitoring",
+      "Adaptive Systems"
+    ],
+    "title": "AI to monitor itself",
+    "topics": [],
+    "updatedAt": "2025-10-11T11:03:59Z",
     "visibility": "public"
   }
 ]

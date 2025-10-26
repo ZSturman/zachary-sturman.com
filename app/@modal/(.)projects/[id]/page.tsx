@@ -1,12 +1,12 @@
 "use client"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { ProjectModal } from "@/components/project-modal"
 import type { Project } from "@/types"
 
-export default function InterceptedProjectModal(props: unknown) {
-  const { params } = props as { params: { id: string } }
-  const id = params.id
+export default function InterceptedProjectModal() {
+  const params = useParams() as { id?: string }
+  const id = String(params?.id ?? "")
   const [project, setProject] = useState<Project | null>(null)
   const router = useRouter()
 
@@ -28,7 +28,12 @@ export default function InterceptedProjectModal(props: unknown) {
     return () => { mounted = false }
   }, [id])
 
+
   return (
-    <ProjectModal project={project} isOpen={!!project} onClose={() => router.back()} />
+    <ProjectModal
+      project={project}
+      isOpen={!!project}
+      onClose={() => router.back()}
+    />
   )
 }

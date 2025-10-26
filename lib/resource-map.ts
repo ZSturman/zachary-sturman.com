@@ -1,6 +1,39 @@
 import type { ResourceType } from "@/types";
 
 
+  // human-friendly labels for common status keys
+export const friendlyStatusLabel = (s: string) => {
+    const map: Record<string, string> = {
+      idea: "Idea",
+      draft: "Draft",
+      prototype: "Prototype",
+      alpha: "Alpha",
+      beta: "Beta",
+      early_access: "Early Access",
+      released_stable: "Released (Stable)",
+      maintenance: "Maintenance",
+      deprecated: "Deprecated",
+      end_of_life: "End of Life",
+      editing: "Editing",
+      in_review: "In Review",
+      released_preview: "Released (Preview)",
+      published_provisional: "Published (Provisional)",
+      released: "Released",
+      definitive_edition: "Definitive Edition",
+      submitted: "Submitted",
+      preprint: "Preprint",
+      under_review: "Under Review",
+      final_published: "Final Published",
+      living_document: "Living Document",
+      finished: "Finished",
+      archived: "Archived",
+    }
+    if (map[s]) return map[s]
+    // fallback: prettify snake_case or kebab-case
+    return s.replace(/[_-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
+
 // lib/resourceMap.ts
 export const RESOURCE_LABEL: Record<string, string> = {
   "github": "GitHub",
@@ -40,9 +73,11 @@ const ICON_MAP: Record<ResourceType | string, string> = {
   image: "image",
   dataset: "dataset",
   download: "download",
+  "local-download": "download",
+  "local-link": "website",
   website: "website",
   blog: "blog",
-  "app:iosAppStore": "google", // fallback icon (no appstore icon available) - uses google icon asset
+  "app:iosAppStore": "apple", 
   "app:androidPlayStore": "google",
   // mediums (legacy, for compatibility)
   code: "code",

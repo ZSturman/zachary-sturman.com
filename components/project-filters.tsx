@@ -1,34 +1,104 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import type { Project } from "@/types"
+import { Search, ChevronDown, Grid3X3, List, SlidersHorizontal, ChevronUp } from "lucide-react"
+import { friendlyStatusLabel } from "@/lib/resource-map"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
-import { Search, X, Grid3X3, List } from "lucide-react"
-import type { Project } from "@/types"
-// We'll derive domains and statuses from the incoming `projects` prop
+
+type SearchScope = "all" | "tags" | "title"
+type SortField = "title" | "createdAt" | "updatedAt"
+type SortOrder = "asc" | "desc"
 
 interface ProjectFiltersProps {
-  projects?: Project[]
+  projects?: Project[];
   onFilterChange?: (filters: {
-    search: string
-    medium: string[]
-    status: string[]
-    tags: string[]
-  }) => void
-  viewMode?: "grid" | "list"
-  onViewModeChange?: (mode: "grid" | "list") => void
-  onSortChange?: (s: "newest" | "oldest" | "title-asc" | "title-desc") => void
-  sort?: "newest" | "oldest" | "title-asc" | "title-desc"
-  totalCount?: number
-  visibleCount?: number
+    search: string;
+    // domain = Technology / Creative / Expository
+    domain: string[];
+    // medium = e.g. Mobile, Desktop, CLI, Novel, etc.
+    medium: string[];
+    status: string[];
+    tags: string[];
+    // which scope to search within: any/title/tags
+    searchScope?: "all" | "title" | "tags";
+  }) => void;
+  viewMode?: "grid" | "list";
+  onViewModeChange?: (mode: "grid" | "list") => void;
+  onSortChange?: (s: "newest" | "oldest" | "title-asc" | "title-desc") => void;
+  sort?: "newest" | "oldest" | "title-asc" | "title-desc";
+  // optional counts for callers to pass for display; component derives its own counts if not used
+  totalCount?: number;
+  visibleCount?: number;
+  // totalCount and visibleCount intentionally omitted — derived from `projects` and filters
+  // show starred-only initial view vs all public
+  showAll?: boolean;
+  onShowAllToggle?: (v: boolean) => void;
+  // initial / controlled seeds (used to initialize internal UI state)
+  initialSearch?: string;
+  initialMedium?: string[];
+  initialStatus?: string[];
+  initialTags?: string[];
+  initialSearchScope?: "all" | "title" | "tags";
 }
 
-export function ProjectFilters({ projects = [], onFilterChange, viewMode = "grid", onViewModeChange, onSortChange, sort = "newest", totalCount, visibleCount }: ProjectFiltersProps) {
-  const [search, setSearch] = useState("")
-  const [selectedMedium, setSelectedMedium] = useState<string[]>(["all"])
-  const [selectedStatus, setSelectedStatus] = useState<string[]>(["all"])
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
+export function ProjectFilters({
+  projects = [],
+  onFilterChange,
+  viewMode = "grid",
+  onViewModeChange,
+  onSortChange,
+  sort = "newest",
+  showAll = false,
+  onShowAllToggle,
+  initialSearch = "",
+  initialMedium = ["all"],
+  initialStatus = ["all"],
+  initialTags = [],
+  initialSearchScope = "all",
+}: ProjectFiltersProps) {
+  // ui state
+  const [isExpanded, setIsExpanded] = useState(true)
+  // viewMode is driven by prop via onViewModeChange
+  const [searchScope, setSearchScope] = useState<SearchScope>(
+    initialSearchScope
+  )
+  const [searchQuery, setSearchQuery] = useState<string>(initialSearch)
+  const [sortField, setSortField] = useState<SortField>(
+    sort === "title-asc" || sort === "title-desc" ? "title" : "updatedAt"
+  )
+  const [sortOrder, setSortOrder] = useState<SortOrder>(
+    sort === "title-asc" || sort === "oldest" || sort === "title-desc"
+      ? sort === "title-asc" || sort === "oldest"
+        ? "asc"
+        : "desc"
+      : "desc"
+  )
+
+  // Multi-select filter states (kept names similar to original new-filters)
+  const [selectedDomains, setSelectedDomains] = useState<string[]>(initialMedium)
+  const [selectedMediums, setSelectedMediums] = useState<string[]>(["all"])
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(initialStatus)
+  const [selectedTags, setSelectedTags] = useState<string[]>(initialTags)
+
+  // from project-filters: control refs/menus (kept for parity)
+  const [, setOpenMenu] = useState<null | "show" | "domain" | "medium" | "status" | "tags">(null)
+  const showRef = useRef<HTMLDivElement | null>(null)
+  const domainRef = useRef<HTMLDivElement | null>(null)
+  const mediumRef = useRef<HTMLDivElement | null>(null)
+  const statusRef = useRef<HTMLDivElement | null>(null)
 
   // derive domains and statuses from provided projects prop if present
   const domains = useMemo(() => {
@@ -36,6 +106,21 @@ export function ProjectFilters({ projects = [], onFilterChange, viewMode = "grid
     set.add("all")
     projects.forEach((p) => {
       if (p?.domain) set.add(String(p.domain))
+    })
+    return Array.from(set)
+  }, [projects])
+
+  // derive explicit mediums from projects where available
+  const mediums = useMemo(() => {
+    const set = new Set<string>()
+    set.add("all")
+    projects.forEach((p) => {
+      const maybeMediums = (p as unknown as { mediums?: unknown }).mediums
+      if (Array.isArray(maybeMediums)) (maybeMediums as string[]).forEach((m) => m && set.add(String(m)))
+      const maybeScript = (p as unknown as { scriptMediums?: unknown }).scriptMediums
+      if (Array.isArray(maybeScript)) (maybeScript as string[]).forEach((m) => m && set.add(String(m)))
+      const maybeGame = (p as unknown as { gameMediums?: unknown }).gameMediums
+      if (Array.isArray(maybeGame)) (maybeGame as string[]).forEach((m) => m && set.add(String(m)))
     })
     return Array.from(set)
   }, [projects])
@@ -50,211 +135,418 @@ export function ProjectFilters({ projects = [], onFilterChange, viewMode = "grid
     return Array.from(set)
   }, [projects])
 
-  // human-friendly labels for common status keys
-  const friendlyStatusLabel = (s: string) => {
-    const map: Record<string, string> = {
-      idea: "Idea",
-      draft: "Draft",
-      prototype: "Prototype",
-      alpha: "Alpha",
-      beta: "Beta",
-      early_access: "Early Access",
-      released_stable: "Released (Stable)",
-      maintenance: "Maintenance",
-      deprecated: "Deprecated",
-      end_of_life: "End of Life",
-      editing: "Editing",
-      in_review: "In Review",
-      released_preview: "Released (Preview)",
-      published_provisional: "Published (Provisional)",
-      released: "Released",
-      definitive_edition: "Definitive Edition",
-      submitted: "Submitted",
-      preprint: "Preprint",
-      under_review: "Under Review",
-      final_published: "Final Published",
-      living_document: "Living Document",
-      finished: "Finished",
-      archived: "Archived",
-    }
-    if (map[s]) return map[s]
-    // fallback: prettify snake_case or kebab-case
-    return s.replace(/[_-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  }
+  const totalProjects = projects.length
 
-  const handleFilterChange = () => {
-    onFilterChange?.({
-      search,
-      medium: selectedMedium,
-      status: selectedStatus,
-      tags: selectedTags,
-    })
-  }
+  // compute filtered projects count using current UI filters
+  const filteredProjects = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase()
+    return projects.filter((p) => {
+      // featured/starred filter - when showAll is false show only starred/featured
+      if (!showAll && !p.starred) return false
 
-  // ensure filters are propagated when any individual filter changes
+      // domain filter
+      if (selectedDomains.length > 0 && !(selectedDomains.length === 1 && selectedDomains[0] === "all")) {
+        if (!selectedDomains.includes(String(p.domain))) return false
+      }
+
+      // medium filter
+      if (selectedMediums.length > 0 && !(selectedMediums.length === 1 && selectedMediums[0] === "all")) {
+        const projectMediums = [
+          ...(p.mediums || []),
+          ...( (p as unknown as { scriptMediums?: string[] }).scriptMediums || [] ),
+          ...( (p as unknown as { gameMediums?: string[] }).gameMediums || [] ),
+        ].map(String)
+        const matchesMedium = selectedMediums.some((m) => projectMediums.includes(m))
+        if (!matchesMedium) return false
+      }
+
+      // status filter
+      if (selectedStatuses.length > 0 && !(selectedStatuses.length === 1 && selectedStatuses[0] === "all")) {
+        if (!selectedStatuses.includes(String(p.status))) return false
+      }
+
+      // searchScope
+      if (q) {
+        const inTitle = p.title?.toLowerCase().includes(q)
+        const inTags = Array.isArray(p.tags) && p.tags.join(" ").toLowerCase().includes(q)
+        const inAll = inTitle || inTags || String(p.summary || "").toLowerCase().includes(q)
+        if (searchScope === "all" && !inAll) return false
+        if (searchScope === "title" && !inTitle) return false
+        if (searchScope === "tags" && !inTags) return false
+      }
+
+      return true
+    }).length
+  }, [projects, showAll, selectedDomains, selectedMediums, selectedStatuses, searchQuery, searchScope])
+
+  // close menus on outside click / Escape (kept from project-filters for parity)
   useEffect(() => {
-    handleFilterChange()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, selectedMedium, selectedStatus, selectedTags])
+    function onDocClick(e: MouseEvent) {
+      const target = e.target as Node
+      const containers = [showRef.current, domainRef.current, mediumRef.current, statusRef.current]
+      if (!containers.some((c) => c && c.contains(target))) setOpenMenu(null)
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpenMenu(null)
+    }
+    document.addEventListener("mousedown", onDocClick)
+    document.addEventListener("keydown", onKey)
+    return () => {
+      document.removeEventListener("mousedown", onDocClick)
+      document.removeEventListener("keydown", onKey)
+    }
+  }, [])
 
-  const clearFilters = () => {
-    setSearch("")
-    setSelectedMedium(["all"])
-    setSelectedStatus(["all"])
-    setSelectedTags([])
+  // propagate filter changes like project-filters did
+  useEffect(() => {
+    
     onFilterChange?.({
-      search: "",
-      medium: ["all"],
-      status: ["all"],
-      tags: [],
+      search: searchQuery,
+      domain: selectedDomains,
+      medium: selectedMediums,
+      status: selectedStatuses,
+      tags: selectedTags,
+      searchScope: searchScope,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, searchScope, selectedDomains, selectedMediums, selectedStatuses, selectedTags])
+
+  // notify sort changes back to caller in the upstream format expected by project-filters
+  useEffect(() => {
+    if (!onSortChange) return
+    let mapped: "newest" | "oldest" | "title-asc" | "title-desc" = "newest"
+    if (sortField === "title") mapped = sortOrder === "asc" ? "title-asc" : "title-desc"
+    else mapped = sortOrder === "asc" ? "oldest" : "newest"
+    onSortChange(mapped)
+  }, [sortField, sortOrder, onSortChange])
+
+  // default expanded on larger screens (mirror project-filters behavior)
+  useEffect(() => {
+    if (typeof window !== "undefined") setIsExpanded(window.innerWidth >= 768)
+  }, [])
+
+  const toggleDomain = (domain: string) => {
+    if (domain === "all") return setSelectedDomains(["all"])
+    setSelectedDomains((prev) => {
+      const withoutAll = prev.filter((x) => x !== "all")
+      if (prev.includes(domain)) {
+        const next = withoutAll.filter((x) => x !== domain)
+        return next.length === 0 ? ["all"] : next
+      }
+      return [...withoutAll, domain]
     })
   }
+
+  const toggleMedium = (medium: string) => {
+    if (medium === "all") return setSelectedMediums(["all"])
+    setSelectedMediums((prev) => {
+      const withoutAll = prev.filter((x) => x !== "all")
+      if (prev.includes(medium)) {
+        const next = withoutAll.filter((x) => x !== medium)
+        return next.length === 0 ? ["all"] : next
+      }
+      return [...withoutAll, medium]
+    })
+  }
+
+  const toggleStatus = (status: string) => {
+    if (status === "all") return setSelectedStatuses(["all"])
+    setSelectedStatuses((prev) => {
+      const withoutAll = prev.filter((x) => x !== "all")
+      if (prev.includes(status)) {
+        const next = withoutAll.filter((x) => x !== status)
+        return next.length === 0 ? ["all"] : next
+      }
+      return [...withoutAll, status]
+    })
+  }
+
+  const clearAllFilters = () => {
+    setSelectedDomains(["all"])
+    setSelectedMediums(["all"])
+    setSelectedStatuses(["all"])
+    setSelectedTags([])
+    setSearchQuery("")
+    // suggest returning to showing all projects when clearing
+    onShowAllToggle?.(true)
+  }
+
+  const activeFilterCount =
+    (selectedDomains.includes("all") ? 0 : selectedDomains.length) +
+    (selectedMediums.includes("all") ? 0 : selectedMediums.length) +
+    (selectedStatuses.includes("all") ? 0 : selectedStatuses.length) +
+    selectedTags.length +
+    (searchQuery.trim() ? 1 : 0)
 
   return (
-    <div className="mb-8 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
-          Showing {typeof visibleCount === "number" ? visibleCount : "?"} of {typeof totalCount === "number" ? totalCount : "?"}
-        </div>
-        <div>
-          <label className="text-sm text-muted-foreground mr-2">Sort</label>
-          <select
-            value={sort}
-            onChange={(e) => onSortChange?.(e.target.value as "newest" | "oldest" | "title-asc" | "title-desc")}
-            className="border rounded px-2 py-1 text-sm"
-          >
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="title-asc">Title A → Z</option>
-            <option value="title-desc">Title Z → A</option>
-          </select>
-        </div>
-      </div>
-      <div className="flex items-center gap-4">
-        {/* Search Bar */}
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Search projects..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-10"
-            aria-label="Search projects"
-          />
-        </div>
+    <div className="space-y-4 mb-2">
+      {/* Top bar - always visible */}
+      <div className="flex items-center justify-between gap-4 flex-wrap ">
 
-        {/* View Toggle */}
-        <div className="flex items-center gap-1 border border-border rounded-lg p-1">
-          <Button
-            variant={viewMode === "grid" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onViewModeChange?.("grid")}
-            className="h-8 w-8 p-0"
-            aria-label="Grid view"
-            aria-pressed={viewMode === "grid"}
-          >
-            <Grid3X3 className="h-4 w-4" />
-          </Button>
-          <Button
-            variant={viewMode === "list" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onViewModeChange?.("list")}
-            className="h-8 w-8 p-0"
-            aria-label="List view"
-            aria-pressed={viewMode === "list"}
-          >
-            <List className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
 
-      {/* Medium Filters */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-foreground">Medium</h3>
-        <div className="flex flex-wrap gap-2">
-          {domains.map((d) => {
-            const active = selectedMedium.includes(d)
-            return (
-              <Button
-                key={d}
-                variant={active ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  // toggle selection; if selecting "all", reset to ["all"]
-                  if (d === "all") return setSelectedMedium(["all"])
-                  setSelectedMedium((prev) => {
-                    const withoutAll = prev.filter((x) => x !== "all")
-                    if (prev.includes(d)) return withoutAll.length === 0 ? ["all"] : withoutAll.filter((x) => x !== d)
-                    return [...withoutAll, d]
-                  })
-                }}
-                className="gap-2"
-                aria-pressed={active}
-              >
-                {d === "all" ? "All Projects" : d}
-              </Button>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Status Filters */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-foreground">Status</h3>
-        <div className="flex flex-wrap gap-2">
-          {statuses.map((s) => {
-            const active = selectedStatus.includes(s)
-            return (
-              <Button
-                key={s}
-                variant={active ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  if (s === "all") return setSelectedStatus(["all"])
-                  setSelectedStatus((prev) => {
-                    const withoutAll = prev.filter((x) => x !== "all")
-                    if (prev.includes(s)) return withoutAll.length === 0 ? ["all"] : withoutAll.filter((x) => x !== s)
-                    return [...withoutAll, s]
-                  })
-                }}
-                aria-pressed={active}
-              >
-                {s === "all" ? "All Status" : (friendlyStatusLabel(s) || s)}
-              </Button>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Active Filters & Clear */}
-      {(search || (selectedMedium.length > 0 && !(selectedMedium.length === 1 && selectedMedium[0] === "all")) || (selectedStatus.length > 0 && !(selectedStatus.length === 1 && selectedStatus[0] === "all")) || selectedTags.length > 0) && (
-        <div className="flex items-center gap-2 pt-2 border-t border-border">
-          <span className="text-sm text-muted-foreground">Active filters:</span>
-          {search && (
-            <Badge variant="secondary" className="gap-1">
-              Search: {search}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => setSearch("")} />
-            </Badge>
-          )}
-          {selectedMedium.length > 0 && !(selectedMedium.length === 1 && selectedMedium[0] === "all") && (
-            selectedMedium.map((m) => (
-              <Badge key={m} variant="secondary" className="gap-1">
-                {m}
-                <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedMedium((prev) => (prev.filter((x) => x !== m).length === 0 ? ["all"] : prev.filter((x) => x !== m)))} />
+      
+        <div className="flex items-center gap-3 ">
+          <Button variant="outline" size="sm" onClick={() => setIsExpanded(!isExpanded)} className="gap-2">
+            <SlidersHorizontal className="h-4 w-4" />
+            Filters
+            {activeFilterCount > 0 && (
+              <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5">
+                {activeFilterCount}
               </Badge>
-            ))
-          )}
-          {selectedStatus.length > 0 && !(selectedStatus.length === 1 && selectedStatus[0] === "all") && (
-            selectedStatus.map((s) => (
-              <Badge key={s} variant="secondary" className="gap-1">
-                {friendlyStatusLabel(s) || s}
-                <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedStatus((prev) => (prev.filter((x) => x !== s).length === 0 ? ["all"] : prev.filter((x) => x !== s)))} />
-              </Badge>
-            ))
-          )}
-          <Button variant="ghost" size="sm" onClick={clearFilters} className="ml-auto">
-            Clear all
+            )}
+            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </Button>
+
+          <div className="text-sm text-muted-foreground">
+            Showing <span className="font-medium text-foreground">{filteredProjects}</span> of{" "}
+            <span className="font-medium text-foreground">{totalProjects}</span> projects
+          </div>
+        </div>
+
+
+        {/* <div className="text-sm text-muted-foreground">
+          Showing {typeof visibleCount === "number" ? visibleCount : filteredProjects} of {typeof totalCount === "number" ? totalCount : totalProjects}
+        </div> */}
+
+        <div className="flex items-center gap-2">
+            {/* View mode toggle */}
+          <div className="flex items-center border rounded-md">
+            <Button
+              variant={viewMode === "grid" ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => onViewModeChange?.("grid")}
+              className="rounded-r-none"
+            >
+              <Grid3X3 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={viewMode === "list" ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => onViewModeChange?.("list")}
+              className="rounded-l-none"
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Expandable filter section */}
+      {isExpanded && (
+        <div className="border rounded-lg p-4 space-y-4 bg-card">
+          {/* Search bar with scope selector */}
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={`Search ${searchScope === "all" ? "all fields" : searchScope}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 min-w-32 bg-transparent">
+                  {searchScope === "all" ? "All fields" : searchScope === "tags" ? "Tags" : "Title"}
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Search in</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup value={searchScope} onValueChange={(v) => setSearchScope(v as SearchScope)}>
+                  <DropdownMenuRadioItem value="all">All fields</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="title">Title only</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="tags">Tags only</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Filter controls */}
+          <div className="flex flex-wrap gap-3">
+            {/* Show all / featured toggle (driven by prop) */}
+            <div className="flex items-center border rounded-md">
+              <Button
+                variant={showAll ? "default" : "outline"}
+                size="sm"
+                onClick={() => onShowAllToggle?.(true)}
+                className="rounded-r-none"
+              >
+                All
+              </Button>
+              <Button
+                variant={!showAll ? "default" : "outline"}
+                size="sm"
+                onClick={() => onShowAllToggle?.(false)}
+                className="rounded-l-none"
+              >
+                Featured
+              </Button>
+            </div>
+
+            {/* Domain filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 bg-transparent">
+                  Domain
+
+
+                                                                        {selectedDomains.length > 0 && !selectedDomains.includes("all") && (
+                    <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5">
+                      {selectedDomains.length}
+                    </Badge>
+                  )}
+
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                {domains.map((domain) => (
+                  <DropdownMenuCheckboxItem
+                    key={domain}
+                    checked={selectedDomains.includes(domain)}
+                    onCheckedChange={() => toggleDomain(domain)}
+                  >
+                    {domain === "all" ? "Select All" : domain}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Medium filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 bg-transparent">
+                  Medium
+
+                                    {selectedMediums.length > 0 && !selectedMediums.includes("all") && (
+                    <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5">
+                      {selectedMediums.length}
+                    </Badge>
+                  )}
+
+
+
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                {mediums.map((medium) => (
+                  <DropdownMenuCheckboxItem
+                    key={medium}
+                    checked={selectedMediums.includes(medium)}
+                    onCheckedChange={() => toggleMedium(medium)}
+                  >
+                    {medium === "all" ? "Select All" : medium}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Status filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 bg-transparent">
+                  Status
+                                                      {selectedStatuses.length > 0 && !selectedStatuses.includes("all") && (
+                    <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5">
+                      {selectedStatuses.length}
+                    </Badge>
+                  )}
+
+
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>Select statuses</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {statuses.map((status) => (
+                  <DropdownMenuCheckboxItem
+                    key={status}
+                    checked={selectedStatuses.includes(status)}
+                    onCheckedChange={() => toggleStatus(status)}
+                  >
+                    {status === "all" ? "Select All" : status}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Sort dropdown */}
+            <DropdownMenu >
+              <DropdownMenuTrigger asChild className="ml-auto">
+                <Button variant="outline" className="gap-2 bg-transparent">
+                  Sort: {sortField === "title" ? "Title" : sortField === "createdAt" ? "Created" : "Updated"}
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup value={sortField} onValueChange={(v) => setSortField(v as SortField)}>
+                  <DropdownMenuRadioItem value="title">Title</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="createdAt">Created date</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="updatedAt">Updated date</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Order</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup value={sortOrder} onValueChange={(v) => setSortOrder(v as SortOrder)}>
+                  <DropdownMenuRadioItem value="asc">Ascending</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="desc">Descending</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+
+          </div>
+
+          {/* Active filter badges */}
+          {activeFilterCount > 0 && (
+            <div className="flex flex-wrap gap-2 pt-2 border-t">
+              {selectedDomains
+                .filter((d) => d !== "all")
+                .map((domain) => (
+                  <Badge key={domain} variant="secondary" className="gap-1">
+                    {domain}
+                    <button onClick={() => toggleDomain(domain)} className="ml-1 hover:text-foreground">
+                      ×
+                    </button>
+                  </Badge>
+                ))}
+              {selectedMediums
+                .filter((m) => m !== "all")
+                .map((medium) => (
+                  <Badge key={medium} variant="secondary" className="gap-1">
+                    {medium}
+                    <button onClick={() => toggleMedium(medium)} className="ml-1 hover:text-foreground">
+                      ×
+                    </button>
+                  </Badge>
+                ))}
+                {selectedStatuses
+                  .filter((s) => s !== "all")
+                  .map((status) => (
+                    <Badge key={status} variant="secondary" className="gap-1">
+                      {friendlyStatusLabel(status) || status}
+                      <button onClick={() => toggleStatus(status)} className="ml-1 hover:text-foreground">
+                        ×
+                      </button>
+                    </Badge>
+                  ))}
+
+                              {/* Clear filters */}
+            {activeFilterCount > 0 && (
+              <Button className="ml-auto " variant="ghost" size="sm" onClick={clearAllFilters}>
+                Clear all filters
+              </Button>
+            )}
+            </div>
+          )}
         </div>
       )}
     </div>

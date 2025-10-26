@@ -1,6 +1,16 @@
 import * as fs from "fs";
 import * as path from "path";
 
+// Simple in-memory cache to avoid repeating expensive filesystem walks
+// during the same server/process lifetime. Keyed by `subdir` so callers
+// can request different roots (e.g. "projects"). We store a Promise so
+// in-flight calls are deduped as well.
+const _loadPublicJsonCache: Record<string, Promise<unknown[]> | undefined> = {};
+
+export function clearLoadPublicJsonCache() {
+  for (const k of Object.keys(_loadPublicJsonCache)) delete _loadPublicJsonCache[k];
+}
+
 /**
  * Recursively loads all .json files under /public/<subdir>
  * and returns a single typed array.
@@ -9,6 +19,10 @@ import * as path from "path";
 export async function loadPublicJsonRecursively<T = unknown>(
   subdir = "projects"
 ): Promise<T[]> {
+  if (_loadPublicJsonCache[subdir]) {
+    return _loadPublicJsonCache[subdir] as Promise<T[]>;
+  }
+
   const primaryRoot = path.join(process.cwd(), "public", subdir);
   const fallbackRoots = [path.join(process.cwd(), "Projects"), path.join(process.cwd(), "PORTFOLIO")];
   const rootsToWalk: string[] = [];
@@ -71,10 +85,18 @@ export async function loadPublicJsonRecursively<T = unknown>(
       }
     }
   }
-  // Walk all candidate roots
-  for (const r of rootsToWalk) {
-    if (verbose) console.info(`Walking JSON root: ${r}`);
-    await walk(r);
-  }
-  return out;
+  // Wrap the actual work in an IIFE and save the Promise into the cache so
+  // concurrent callers share the same work and later callers get the cached
+  // result.
+  const work = (async () => {
+    // Walk all candidate roots
+    for (const r of rootsToWalk) {
+      if (verbose) console.info(`Walking JSON root: ${r}`);
+      await walk(r);
+    }
+    return out;
+  })();
+
+  _loadPublicJsonCache[subdir] = work as Promise<unknown[]>;
+  return work as Promise<T[]>;
 }

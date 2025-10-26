@@ -21,9 +21,91 @@ from pathlib import Path
 from typing import Optional
 import argparse
 from urllib.parse import urlparse, unquote
+import errno
 
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".tiff"}
 DOMAINS = {"Technology", "Creative", "Expository"}
+
+# Extended extension maps for normalizing collection item types
+IMAGE_EXTS_FULL = IMAGE_EXTS | {".svg", ".heic", ".avif"}
+VIDEO_EXTS = {".mov", ".mp4", ".webm", ".mkv", ".avi", ".flv", ".ogv", ".wmv", ".mpg", ".mpeg"}
+AUDIO_EXTS = {".mp3", ".wav", ".aac", ".ogg", ".m4a", ".flac", ".opus"}
+MODEL_EXTS = {".glb", ".gltf", ".obj", ".fbx", ".stl", ".dae", ".3ds", ".ply"}
+GAME_EXTS = {".html", ".htm", ".unityweb", ".wasm"}
+TEXT_EXTS = {".md", ".markdown", ".txt", ".tex", ".csv", ".json", ".pdf"}
+
+
+def determine_collection_item_type(raw_type: Optional[str], path_val: Optional[str]) -> str:
+    """Map a raw type string or path/filename to one of the canonical types:
+    "image", "video", "3d-model", "game", "text", "audio", "url-link".
+    Defaults to "image" when unsure (safe fallback for thumbnails/previews).
+    """
+    if raw_type and isinstance(raw_type, str):
+        t = raw_type.strip().lower()
+        # If it's already one of the canonical names, return it
+        if t in {"image", "video", "3d-model", "3d", "game", "text", "audio", "url-link", "url"}:
+            if t == "3d":
+                return "3d-model"
+            if t == "url":
+                return "url-link"
+            return t if t != "3d-model" else "3d-model"
+        # Sometimes the type field contains an extension or short form like "mov", "glb", "png"
+        if t.startswith('.'):
+            t = t[1:]
+        # extension-like
+        if t in {ext.lstrip('.') for ext in IMAGE_EXTS_FULL}:
+            return "image"
+        if t in {ext.lstrip('.') for ext in VIDEO_EXTS}:
+            return "video"
+        if t in {ext.lstrip('.') for ext in AUDIO_EXTS}:
+            return "audio"
+        if t in {ext.lstrip('.') for ext in MODEL_EXTS}:
+            return "3d-model"
+        if t in {ext.lstrip('.') for ext in GAME_EXTS}:
+            return "game"
+        if t in {ext.lstrip('.') for ext in TEXT_EXTS}:
+            return "text"
+
+    # Inspect the path if provided
+    if path_val and isinstance(path_val, str):
+        # Check if it's a URL first
+        if path_val.strip().startswith(('http://', 'https://', 'ftp://')):
+            return "url-link"
+        try:
+            p = Path(unquote(str(path_val)))
+            ext = p.suffix.lower()
+            if ext in IMAGE_EXTS_FULL:
+                return "image"
+            if ext in VIDEO_EXTS:
+                return "video"
+            if ext in AUDIO_EXTS:
+                return "audio"
+            if ext in MODEL_EXTS:
+                return "3d-model"
+            if ext in GAME_EXTS:
+                return "game"
+            if ext in TEXT_EXTS:
+                return "text"
+        except Exception:
+            pass
+
+    # As a last-resort fallback, attempt to glean an extension from the string
+    if path_val and isinstance(path_val, str):
+        lower = path_val.lower()
+        for extset, canon in (
+            (IMAGE_EXTS_FULL, "image"),
+            (VIDEO_EXTS, "video"),
+            (AUDIO_EXTS, "audio"),
+            (MODEL_EXTS, "3d-model"),
+            (GAME_EXTS, "game"),
+            (TEXT_EXTS, "text"),
+        ):
+            for ext in extset:
+                if ext.lstrip('.') in lower or ext in lower:
+                    return canon
+
+    # Default fallback
+    return "image"
 
 
 def slugify(name: str) -> str:
@@ -157,6 +239,42 @@ def copy_resources_for_project(proj_dir: Path, project_obj: dict, public_project
     for res in resources:
         if not isinstance(res, dict):
             continue
+        # Support a "local-link" resource type which should point to an
+        # internal site path. It can be expressed either as:
+        #   { type: "local-link", url: "/projects/proj-1" }
+        # or encoded in the type itself:
+        #   { type: "local-link:/projects/proj-1" }
+        # Normalize and set `res["url"]` to a site-relative path (leading '/').
+        rtype = res.get("type") or ""
+        if isinstance(rtype, str) and rtype.lower().startswith("local-link"):
+            # If the type contains a colon, the part after it is the path
+            path_from_type = None
+            if ":" in rtype:
+                try:
+                    _, after = rtype.split(":", 1)
+                    if after:
+                        path_from_type = unquote(after)
+                except Exception:
+                    path_from_type = None
+
+            url_val = res.get("url")
+            if path_from_type:
+                p = str(path_from_type)
+                if not p.startswith("/"):
+                    p = "/" + p
+                res["url"] = p
+            elif url_val:
+                try:
+                    u = unquote(str(url_val))
+                    if not u.startswith("/"):
+                        u = "/" + u
+                    res["url"] = u
+                except Exception:
+                    # leave as-is on error
+                    pass
+            # nothing to copy for local-link, continue to next resource
+            continue
+
         if res.get("type") != "local-download":
             continue
         url_val = res.get("url")
@@ -250,6 +368,11 @@ def copy_collection_for_project(proj_dir: Path, project_obj: dict, public_projec
         # Ensure item has an id
         item_id = item.get("id") or slugify(item.get("label") or item.get("path") or "")
         item["id"] = item_id
+        # Normalize and set the item's type to one of the canonical values
+        # Prefer the declared type but fall back to inferring from path or thumbnail
+        raw_type = item.get("type")
+        inferred = determine_collection_item_type(raw_type, item.get("path") or item.get("thumbnail") or item.get("label"))
+        item["type"] = inferred
 
         item_dir = dest_root / item_id
         item_dir.mkdir(parents=True, exist_ok=True)
@@ -288,6 +411,7 @@ def copy_collection_for_project(proj_dir: Path, project_obj: dict, public_projec
                 pass
 
         # Copy thumbnail if present, else attempt to find one
+        # Thumbnails can be images OR videos (for autoplay preview)
         thumb_val = item.get("thumbnail")
         tfound = None
         if thumb_val:
@@ -304,25 +428,28 @@ def copy_collection_for_project(proj_dir: Path, project_obj: dict, public_projec
             if thumb_val:
                 candidate_name = Path(unquote(str(thumb_val))).name
             # search for exact filename first, then by stem
+            # Allow both images AND videos as thumbnails
+            THUMBNAIL_EXTS = IMAGE_EXTS | VIDEO_EXTS
             for p in proj_dir.rglob("*"):
                 if not p.is_file():
                     continue
-                if candidate_name and p.name == candidate_name and p.suffix.lower() in IMAGE_EXTS:
+                if candidate_name and p.name == candidate_name and p.suffix.lower() in THUMBNAIL_EXTS:
                     tfound = p
                     break
             if not tfound and thumb_val:
                 tstem = Path(unquote(str(thumb_val))).stem.lower()
                 for p in proj_dir.rglob("*"):
-                    if p.is_file() and p.stem.lower() == tstem and p.suffix.lower() in IMAGE_EXTS:
+                    if p.is_file() and p.stem.lower() == tstem and p.suffix.lower() in THUMBNAIL_EXTS:
                         tfound = p
                         break
 
         if not tfound:
             # as a last resort look for a file named <item_id>_thumbnail or thumbnail
+            THUMBNAIL_EXTS = IMAGE_EXTS | VIDEO_EXTS
             for p in proj_dir.rglob("*"):
                 if not p.is_file():
                     continue
-                if p.suffix.lower() in IMAGE_EXTS and p.stem.lower() in {f"{item_id}_thumbnail", "thumbnail", item_id}:
+                if p.suffix.lower() in THUMBNAIL_EXTS and p.stem.lower() in {f"{item_id}_thumbnail", "thumbnail", item_id}:
                     tfound = p
                     break
 
@@ -339,9 +466,75 @@ def copy_collection_for_project(proj_dir: Path, project_obj: dict, public_projec
     return out
 
 
+def extract_external_image_hostnames(projects: list[dict]) -> set[str]:
+    """Extract all external image hostnames from project data.
+    
+    Scans through projects looking for:
+    - thumbnail URLs
+    - collection item paths (images, videos, etc.)
+    - hero image URLs
+    - any other image fields that might contain external URLs
+    
+    Returns a set of hostnames (e.g., 'example.com', 'cdn.example.org')
+    """
+    hostnames = set()
+    
+    def extract_hostname(url_str: str) -> Optional[str]:
+        """Extract hostname from a URL string if it's an external URL."""
+        if not url_str or not isinstance(url_str, str):
+            return None
+        
+        url_str = url_str.strip()
+        
+        # Skip local paths (starting with / or not containing ://)
+        if url_str.startswith('/') or '://' not in url_str:
+            return None
+        
+        try:
+            parsed = urlparse(url_str)
+            if parsed.hostname:
+                return parsed.hostname
+        except Exception:
+            pass
+        
+        return None
+    
+    def scan_dict(obj: dict):
+        """Recursively scan a dictionary for URL strings."""
+        if not isinstance(obj, dict):
+            return
+        
+        for key, value in obj.items():
+            # Check string values for URLs
+            if isinstance(value, str):
+                hostname = extract_hostname(value)
+                if hostname:
+                    hostnames.add(hostname)
+            # Recurse into nested dicts
+            elif isinstance(value, dict):
+                scan_dict(value)
+            # Recurse into lists
+            elif isinstance(value, list):
+                for item in value:
+                    if isinstance(item, dict):
+                        scan_dict(item)
+                    elif isinstance(item, str):
+                        hostname = extract_hostname(item)
+                        if hostname:
+                            hostnames.add(hostname)
+    
+    # Scan all projects
+    for project in projects:
+        if isinstance(project, dict):
+            scan_dict(project)
+    
+    return hostnames
+
+
 def main():
     parser = argparse.ArgumentParser(description="Copy thumbnails for projects into public/projects/<id>/")
     parser.add_argument("root", nargs="?", default="Projects", help="Root directory containing project domains.")
+    parser.add_argument("--repair", action="store_true", help="When set, attempt to repair stray 'projects 2'/'projects 3' folders by renaming the newest one to 'projects' and exit.")
     args = parser.parse_args()
 
     root = Path(args.root)
@@ -354,6 +547,148 @@ def main():
     public_root.mkdir(parents=True, exist_ok=True)
     target_public_projects = public_root / "projects"
 
+    # Simple exclusive lock to avoid concurrent pre-build runs which can
+    # produce unexpected directory name collisions (e.g. Finder creating
+    # "projects 2"). We create a lockfile in `public` using O_EXCL so that
+    # other processes will fail fast if a build is already running.
+    lockfile = public_root / "projects_build.lock"
+    lock_acquired = False
+    lock_fd = None
+
+    def acquire_lock():
+        nonlocal lock_acquired, lock_fd
+        try:
+            # os.O_CREAT | os.O_EXCL ensures this fails if the file already exists
+            lock_fd = os.open(str(lockfile), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.write(lock_fd, f"pid={os.getpid()} time={int(time.time())}\n".encode("utf-8"))
+            lock_acquired = True
+        except OSError as e:
+            if e.errno == errno.EEXIST:
+                raise SystemExit(f"Another pre-build appears to be running (lockfile exists at {lockfile}). Exiting to avoid race conditions.")
+            raise
+
+    def release_lock():
+        nonlocal lock_acquired, lock_fd
+        try:
+            if lock_fd is not None:
+                os.close(lock_fd)
+            if lock_acquired and lockfile.exists():
+                lockfile.unlink()
+        except Exception:
+            # best-effort cleanup; don't fail the build just because lock removal failed
+            pass
+
+    def repair_projects_dir():
+        """If there is no `projects` directory but there are siblings like
+        `projects 2`, `projects 3`, pick the most recently-modified one and
+        rename it to `projects`. This is a manual/explicit repair action and
+        will only run when --repair is passed.
+        """
+        # collect candidates whose name starts with 'projects'
+        candidates = []
+        for p in public_root.iterdir():
+            if not p.is_dir():
+                continue
+            name = p.name
+            # match 'projects' optionally followed by space+digits
+            if name == "projects" or (name.startswith("projects ") and name[len("projects "):].strip().isdigit()):
+                candidates.append(p)
+
+        # If the canonical folder exists, nothing to repair
+        canonical = public_root / "projects"
+        if canonical.exists():
+            print(f"Canonical folder exists at {canonical}; nothing to repair.")
+            return
+
+        if not candidates:
+            print("No 'projects' or 'projects N' folders found to repair.")
+            return
+
+        # pick the newest candidate by modification time
+        chosen = max(candidates, key=lambda p: p.stat().st_mtime)
+        backup = public_root / f"projects_backup_before_repair_{int(time.time())}"
+        try:
+            # rename chosen to canonical name; if canonical exists this will fail
+            chosen.rename(canonical)
+            print(f"Renamed {chosen} -> {canonical}")
+        except Exception as e:
+            # if rename fails, attempt a safer move: first try to rename canonical to backup
+            try:
+                if canonical.exists():
+                    canonical.rename(backup)
+                chosen.rename(canonical)
+                print(f"Renamed {chosen} -> {canonical} (backup of previous placed at {backup})")
+            except Exception as e2:
+                raise SystemExit(f"Failed to repair projects folder: {e} then {e2}")
+
+    def delete_old_backups():
+        """Remove leftover backup directories created by previous runs.
+
+        Only removes directories whose names start with 'projects_backup' or
+        'projects_backup_before_repair_' inside the `public` directory. This
+        helps avoid accumulating many backups over time. This is best-effort
+        and will log warnings to `pre-build.log` on failures.
+        """
+        try:
+            for p in public_root.iterdir():
+                if not p.is_dir():
+                    continue
+                name = p.name
+                if name.startswith("projects_backup") or name.startswith("projects_backup_before_repair_"):
+                    # Don't attempt to remove the canonical live folder
+                    if name == "projects":
+                        continue
+                    try:
+                        shutil.rmtree(p)
+                        append_log(f"CLEANUP: removed old backup {p}")
+                        print(f"Removed old backup {p}")
+                    except Exception as e:
+                        append_log(f"WARNING: failed to remove old backup {p}: {e}")
+                        print(f"Warning: failed to remove old backup {p}: {e}")
+        except Exception:
+            # best-effort only; don't raise
+            pass
+
+    # If user asked for repair only, run repair and exit
+    if args.repair:
+        repair_projects_dir()
+        return
+
+    # Acquire build lock before mutating public/projects
+    acquire_lock()
+
+    # If a canonical projects folder exists, rename it to a backup immediately
+    # so we can build the new folder without interfering with the live one.
+    # We record `backup_path` so we can restore it on failure or delete it
+    # after a successful build.
+    try:
+        if target_public_projects.exists():
+            # unique backup name with timestamp and pid to avoid collisions
+            backup_path = public_root / f"projects_backup_{int(time.time())}_{os.getpid()}"
+            try:
+                target_public_projects.rename(backup_path)
+                print(f"Renamed existing {target_public_projects} -> {backup_path} before building new projects")
+            except Exception as e:
+                # If rename fails, try to remove the existing folder as a last resort.
+                try:
+                    shutil.rmtree(target_public_projects)
+                    print(f"Failed to rename but removed existing {target_public_projects} as fallback: {e}")
+                    backup_path = None
+                except Exception as e2:
+                    # If we cannot safely move or remove the existing folder, abort and release lock.
+                    try:
+                        release_lock()
+                    except Exception:
+                        pass
+                    raise SystemExit(f"Failed to prepare existing projects folder for rebuild: rename_error={e} remove_error={e2}")
+    except Exception as e:
+        # Unexpected error preparing backup; release lock and exit.
+        try:
+            release_lock()
+        except Exception:
+            pass
+        raise
+
     # Create a temp directory sibling to `projects`, e.g. public/projects_tmp_xxx
     tmp_dir_path = Path(tempfile.mkdtemp(prefix="projects_tmp_", dir=str(public_root)))
     temp_public_projects_root = tmp_dir_path
@@ -361,6 +696,8 @@ def main():
     copied = []
     skipped = []
     all_projects: list[dict] = []
+    missing_thumbnail_projects: list[str] = []
+    missing_summary_projects: list[str] = []
     backup_path = None
 
     for domain_dir in sorted(root.iterdir()):
@@ -490,6 +827,8 @@ def main():
                                 skipped.append((str(json_path), f"no thumbnail for id={obj.get('id') or obj.get('title')}"))
                                 # still include the project without copying a thumbnail
                                 all_projects.append(obj)
+                                # record missing thumbnail by project id (or title as fallback)
+                                missing_thumbnail_projects.append(str(obj.get("id") or obj.get("title") or json_path))
                                 acted_any = True
                                 continue
                         else:
@@ -533,12 +872,38 @@ def main():
 
                     # Finally, include the project object in the aggregated list
                     all_projects.append(obj)
+                    # Record summary-missing projects (summary missing or blank after strip)
+                    try:
+                        summary_val = obj.get("summary")
+                        if not (isinstance(summary_val, str) and summary_val.strip()):
+                            missing_summary_projects.append(str(obj.get("id") or obj.get("title") or json_path))
+                    except Exception:
+                        # ignore and continue
+                        pass
                     acted_any = True
                 if not acted_any:
                     skipped.append((str(json_path), "no valid project objects found"))
             except Exception as e:
                 skipped.append((str(json_path), f"error:{e}"))
 
+    # Extract all external image hostnames from projects
+    external_hostnames = extract_external_image_hostnames(all_projects)
+    
+    # Write external hostnames config for Next.js
+    hostnames_config_path = public_root / "image-hostnames.json"
+    try:
+        hostnames_config_path.write_text(
+            json.dumps({"hostnames": sorted(list(external_hostnames))}, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8"
+        )
+        print(f"Wrote {len(external_hostnames)} external image hostnames to {hostnames_config_path}")
+        if external_hostnames:
+            print("External image hostnames found:")
+            for hostname in sorted(external_hostnames):
+                print(f"  - {hostname}")
+    except Exception as e:
+        print(f"Warning: Failed to write image hostnames config: {e}")
+    
     # Write aggregated projects.json into the temp dir
     output_path = temp_public_projects_root / "projects.json"
 
@@ -546,28 +911,92 @@ def main():
         output_path.write_text(json.dumps(all_projects, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"Wrote {len(all_projects)} projects to {output_path}")
 
+        # prepare a simple log file in public to record build outcome/errors
+        log_file = public_root / "pre-build.log"
+        def append_log(line: str):
+            try:
+                with open(str(log_file), "a", encoding="utf-8") as fh:
+                    fh.write(f"{int(time.time())}: {line}\n")
+            except Exception:
+                pass
+
         # Successfully finished building into temp dir. Now atomically replace
         # the existing `public/projects` directory. We remove the old one first
         # to ensure a clean rename.
         try:
+            # Try to remove the existing `public/projects` directory first to avoid
+            # accumulating duplicate files. If removal fails (permissions, locked
+            # files, etc.) fall back to renaming the folder to a backup name so we
+            # can still roll back on failure.
             backup_path = None
-            # If the existing target exists, move it aside to a backup name so we can
-            # restore it if the next rename fails. This preserves the old folder until
-            # the new one is successfully in place.
             if target_public_projects.exists():
-                backup_path = public_root / f"projects_backup_{int(time.time())}"
-                target_public_projects.rename(backup_path)
+                try:
+                    shutil.rmtree(target_public_projects)
+                    print(f"Removed existing {target_public_projects} to avoid duplicates.")
+                except Exception as e_rm:
+                    # Removal failed; fall back to renaming to a backup so we can
+                    # restore if the subsequent rename fails.
+                    backup_path = public_root / f"projects_backup_{int(time.time())}"
+                    try:
+                        target_public_projects.rename(backup_path)
+                        print(f"Renamed existing {target_public_projects} to backup {backup_path}")
+                    except Exception as e_rename:
+                        # If both removal and rename fail, raise to trigger the
+                        # outer exception handling and avoid leaving the temp dir in an
+                        # inconsistent state.
+                        raise RuntimeError(f"Failed to remove or rename existing projects dir: remove_error={e_rm}, rename_error={e_rename}")
 
             # Move temp into place
-            temp_public_projects_root.rename(target_public_projects)
-            print(f"Replaced {target_public_projects} with {temp_public_projects_root}")
-
-            # Remove backup if present
-            if backup_path and backup_path.exists():
+            try:
+                # Move temp into place. Prefer rename for atomicity when possible.
                 try:
-                    shutil.rmtree(backup_path)
+                    temp_public_projects_root.rename(target_public_projects)
                 except Exception:
-                    print(f"Warning: failed to remove backup at {backup_path}; leaving it in place.")
+                    # Fallback to os.replace which may succeed when rename fails.
+                    os.replace(str(temp_public_projects_root), str(target_public_projects))
+
+                print(f"Replaced {target_public_projects} with {temp_public_projects_root}")
+                append_log(f"SUCCESS: replaced projects with new build; wrote {len(all_projects)} projects")
+
+                # If we created a backup earlier, attempt to remove it now that the
+                # new folder is in place.
+                if backup_path and backup_path.exists():
+                    try:
+                        shutil.rmtree(backup_path)
+                        print(f"Removed backup at {backup_path}")
+                    except Exception:
+                        append_log(f"WARNING: failed to remove backup at {backup_path}; left in place")
+                        print(f"Warning: failed to remove backup at {backup_path}; leaving it in place.")
+                # Remove any older backup directories left from previous runs
+                try:
+                    delete_old_backups()
+                except Exception:
+                    # best-effort only
+                    pass
+            except Exception as replace_exc:
+                err_msg = f"Failed to replace {target_public_projects} with temp build: {replace_exc}"
+                print(err_msg)
+                append_log(f"ERROR: {err_msg}")
+                # Attempt to roll back: if we created a backup and the target doesn't exist,
+                # try restoring the backup back to the original target path.
+                try:
+                    if backup_path and backup_path.exists() and not target_public_projects.exists():
+                        backup_path.rename(target_public_projects)
+                        append_log(f"RESTORE: restored original projects folder from {backup_path}")
+                        print(f"Restored original projects folder from backup: {backup_path} -> {target_public_projects}")
+                except Exception as e2:
+                    append_log(f"ERROR: failed to restore original projects folder from backup: {e2}")
+                    print(f"Failed to restore original projects folder from backup: {e2}")
+
+                # Cleanup temp dir if it still exists (partial build)
+                try:
+                    if temp_public_projects_root.exists():
+                        shutil.rmtree(temp_public_projects_root)
+                        append_log(f"CLEANUP: removed partial temp build at {temp_public_projects_root}")
+                except Exception:
+                    pass
+                # Reraise to allow outer handlers to proceed to finally block
+                raise
         except Exception as e:
             print(f"Failed to replace {target_public_projects} with temp build: {e}")
             # Attempt to roll back: if we created a backup and the target doesn't exist,
@@ -589,8 +1018,26 @@ def main():
         except Exception:
             pass
 
-    # Summary
-    print(json.dumps({"copied": copied, "skipped": skipped, "written": str(output_path)}, ensure_ascii=False, indent=2))
+    finally:
+        # Always release the build lock if we acquired it
+        try:
+            release_lock()
+        except Exception:
+            pass
+
+    # Also print readable lists for convenience
+    if missing_thumbnail_projects:
+        print("Projects added to projects.json missing a thumbnail:")
+        for p in missing_thumbnail_projects:
+            print(f" - {p}")
+    else:
+        print("All included projects have thumbnails. \n")
+    if missing_summary_projects:
+        print("\nProjects added to projects.json missing a summary:")
+        for p in missing_summary_projects:
+            print(f" - {p}")
+    else:
+        print("All included projects have summaries.\n\n")
 
 
 if __name__ == "__main__":
