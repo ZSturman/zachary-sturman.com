@@ -8,6 +8,7 @@ import { ProjectMetadata } from "./project-details/project-metadata";
 import ResourceButtons from "./project-details/resource-buttons";
 import { Collection } from "./project-details/collection/collection";
 import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
 
 interface ProjectModalProps {
@@ -17,11 +18,13 @@ interface ProjectModalProps {
 }
 
 export function ProjectModal({ project, isOpen, onClose }: ProjectModalProps) {
+  const router = useRouter();
+  
   const goToProjectPage = () => {
     if (!project) return;
     onClose();
-    // hard navigation to bypass interception
-    window.location.assign(`/projects/${project.id}`);
+    // Use Next.js router for proper client-side navigation
+    router.push(`/projects/${project.id}`);
   };
 
 

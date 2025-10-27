@@ -1,10 +1,10 @@
 import Link from "next/link"
 import type { Project } from "@/types"
 import { loadPublicJsonRecursively } from "@/lib/load-public-json"
-import ProjectDetails from "@/components/projects-details"
+import ProjectDetailsClientWrapper from "@/components/project-details-client-wrapper"
 
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<Array<{ id: string }>> {
   try {
     const projects = await loadPublicJsonRecursively<Project>("projects")
     return projects.map((p) => ({ id: p.id }))
@@ -14,11 +14,7 @@ export async function generateStaticParams() {
   }
 }
 
-export default async function ProjectPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
 
   try {
@@ -40,8 +36,7 @@ export default async function ProjectPage({
       )
     }
     return (
-      /*     <ProjectDetails project={project} /> */
-          <ProjectDetails project={project} />
+          <ProjectDetailsClientWrapper project={project} />
     )
   } catch (e) {
     console.error(e)

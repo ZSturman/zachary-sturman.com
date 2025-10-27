@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "python3 lib/pre-build.py /Users/zacharysturman/Desktop/PORTFOLIO && next dev",
+    "dev": "npm run generate-projects && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate-projects": "python3 lib/pre-build.py /Users/zacharysturman/Desktop/PORTFOLIO",
+    "prepare": "node -e \"try { require('fs').chmodSync('.git/hooks/pre-push', '755') } catch(e) {}\""
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -17,6 +19,7 @@
     "@react-three/fiber": "^9.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "firebase-tools": "^14.22.0",
     "lucide-react": "^0.544.0",
     "next": "15.5.3",
     "react": "19.1.0",
