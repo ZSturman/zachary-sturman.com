@@ -83,7 +83,7 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
                   variant="outline"
                   className={STATUS_COLOR[project.status] || "bg-gray-100"}
                 >
-                  {project.substatus ?? project.status}
+                  {project.subStatus ?? project.status}
                 </Badge>
 
                     <ProjectMediums project={project} />
