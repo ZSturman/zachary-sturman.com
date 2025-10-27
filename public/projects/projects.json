@@ -1,5 +1,154 @@
 [
   {
+    "id": "project_manager_swift",
+    "domain": "Technology",
+    "category": "Software",
+    "mediums": [
+      "Desktop"
+    ],
+    "status": "active",
+    "subStatus": "development",
+    "title": "Project Manager Swift App",
+    "summary": "A native macOS application for managing projects stored as JSON files",
+    "description": "This is a comprehensive project management application built with SwiftUI that scans folders for _project.json files and provides a rich editing interface.",
+    "story": "The idea came from needing a native macOS application to manage project data that was previously handled by a web application. The Swift version provides better integration with the macOS ecosystem and more robust file system monitoring.",
+    "images": {
+      "directory": "images",
+      "thumbnail": "app-icon.png",
+      "banner": "app-banner.png"
+    },
+    "visibility": "public",
+    "starred": true,
+    "tags": [
+      "Swift",
+      "SwiftUI",
+      "macOS",
+      "Project Management",
+      "JSON"
+    ],
+    "resources": [
+      {
+        "id": "swift-docs",
+        "type": "documentation",
+        "label": "Swift Documentation",
+        "url": "https://swift.org/documentation/"
+      },
+      {
+        "id": "swiftui-docs",
+        "type": "documentation",
+        "label": "SwiftUI Documentation",
+        "url": "https://developer.apple.com/documentation/swiftui"
+      }
+    ],
+    "createdAt": "2025-10-26T12:00:00Z",
+    "updatedAt": "2025-10-26T12:00:00Z",
+    "reviewed": "2025-10-26T12:00:00Z",
+    "metadata": {
+      "platform": "macOS",
+      "minVersion": "14.0",
+      "language": "Swift",
+      "framework": "SwiftUI"
+    },
+    "genres": [
+      "Productivity",
+      "Developer Tools"
+    ],
+    "topics": [
+      "File Management",
+      "JSON Processing",
+      "User Interface"
+    ],
+    "details": [
+      {
+        "label": "Development Language",
+        "value": "Swift 5.0+"
+      },
+      {
+        "label": "UI Framework",
+        "value": "SwiftUI"
+      },
+      {
+        "label": "Minimum macOS",
+        "value": "14.0"
+      }
+    ],
+    "requiresFollowUp": false
+  },
+  {
+    "id": "web_app_original",
+    "domain": "Technology",
+    "category": "Web",
+    "mediums": [
+      "Web",
+      "Desktop"
+    ],
+    "status": "done",
+    "subStatus": "completed",
+    "title": "Original Web Project Manager",
+    "summary": "The original Next.js web application that this Swift app is based on",
+    "description": "A React/Next.js web application with a comprehensive project editing interface, including image management, resource linking, and metadata editing capabilities.",
+    "story": "This was the original implementation that proved the concept of a visual project management interface. It served as the foundation for understanding the requirements that led to the native macOS version.",
+    "images": {
+      "directory": "web-images",
+      "thumbnail": "web-app-thumb.png"
+    },
+    "visibility": "public",
+    "starred": false,
+    "tags": [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS"
+    ],
+    "resources": [
+      {
+        "id": "nextjs-docs",
+        "type": "documentation",
+        "label": "Next.js Documentation",
+        "url": "https://nextjs.org/docs"
+      },
+      {
+        "id": "react-docs",
+        "type": "documentation",
+        "label": "React Documentation",
+        "url": "https://react.dev"
+      }
+    ],
+    "createdAt": "2025-09-15T10:00:00Z",
+    "updatedAt": "2025-10-20T15:30:00Z",
+    "reviewed": "2025-10-25T09:00:00Z",
+    "metadata": {
+      "framework": "Next.js",
+      "language": "TypeScript",
+      "styling": "Tailwind CSS",
+      "deployment": "Vercel"
+    },
+    "genres": [
+      "Web Development",
+      "Productivity"
+    ],
+    "topics": [
+      "React",
+      "Component Architecture",
+      "Project Management"
+    ],
+    "details": [
+      {
+        "label": "Framework",
+        "value": "Next.js 14"
+      },
+      {
+        "label": "Language",
+        "value": "TypeScript"
+      },
+      {
+        "label": "Styling",
+        "value": "Tailwind CSS"
+      }
+    ],
+    "requiresFollowUp": false
+  },
+  {
     "collection": {
       "items": [
         {

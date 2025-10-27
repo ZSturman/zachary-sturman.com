@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "python3 lib/pre-build.py /Users/zacharysturman/Desktop/PORTFOLIO && next dev",
-    "build": "next build",
-    "start": "next start",
+  "dev": "python3 lib/pre-build.py /Users/zacharysturman/Desktop/PORTFOLIO && next dev",
+  "build": "python3 lib/pre-build.py /Users/zacharysturman/Desktop/PORTFOLIO && next build",
+  "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "@react-three/fiber": "^9.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "firebase-tools": "^14.22.0",
     "lucide-react": "^0.544.0",
     "next": "15.5.3",
     "react": "19.1.0",

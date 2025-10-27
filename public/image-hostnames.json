@@ -1,6 +1,10 @@
 {
   "hostnames": [
+    "developer.apple.com",
     "github.com",
+    "nextjs.org",
+    "react.dev",
+    "swift.org",
     "zsturman.github.io"
   ]
 }
