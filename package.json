@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "dev": "python3 lib/pre-build.py /Users/zacharysturman/Desktop/PORTFOLIO && next dev",
-  "build": "python3 lib/pre-build.py /Users/zacharysturman/Desktop/PORTFOLIO && next build",
-  "start": "next start",
-    "lint": "eslint"
+    "dev": "npm run prebuild && next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "prebuild": "python3 lib/pre-build.py /Users/zacharysturman/Desktop/PORTFOLIO",
+    "prepare": "node -e \"try { require('fs').chmodSync('.git/hooks/pre-push', '755') } catch(e) {}\""
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
