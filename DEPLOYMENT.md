@@ -17,7 +17,7 @@ This project uses a **pre-push Git hook** to automatically generate the `public/
 
 - `npm run dev` - Run pre-build script + start development server
 - `npm run build` - Build for production (CI/CD uses this)
-- `npm run prebuild` - Manually run the pre-build script
+- `npm run generate-projects` - Manually run the pre-build script
 - `npm start` - Start production server
 - `npm run lint` - Run linting
 
@@ -36,7 +36,7 @@ Located at `.git/hooks/pre-push`, this hook:
 If you need to run the pre-build script manually:
 
 ```bash
-npm run prebuild
+npm run generate-projects
 ```
 
 ## Troubleshooting
