@@ -1,4 +1,4 @@
-// Generic content blocks that can be reused across sections
+// ===== Reusable primitives =====
 export interface ContentBlock {
   label: string
   content: string | string[]
@@ -17,108 +17,67 @@ export interface TimelineItem {
   details?: string[]
 }
 
-// Unified section content interface
-export interface SectionContent {
-  blocks?: ContentBlock[]
-  tagGroups?: TagGroup[]
-  timelineItems?: TimelineItem[]
-  downloadUrl?: string
+// ===== Section models =====
+
+// 1) Story/history and motivations
+export interface StorySection {
+  about: ContentBlock[]              // long-form narrative blocks
+  timeline?: TimelineItem[]          // optional life/community milestones
 }
 
-// Legacy interfaces for backwards compatibility
-export interface ContactMethod {
-  type: string
-  value: string
-  preferred?: boolean
+// 2) Resume-like experience + download link
+export interface ExperienceSection {
+  roles: TimelineItem[]              // jobs, contracting, internships
+  resumeUrl: string                  // downloadable PDF
 }
 
-export interface Goal {
-  timeframe: string
-  description: string
+// 3) Skills with specifics + education + certifications
+export interface SkillsSection {
+  tagGroups: TagGroup[]              // high-level skill categories
+  specifics?: Record<string, string[]> // deeper per-area bullets
+  education: TimelineItem[]          // schools, programs, degrees
+  certifications: { name: string; issuer?: string; year?: string }[]
 }
 
-// Simplified type aliases
-export type ResumeContent = SectionContent
-export type PersonalContent = SectionContent
-export type ProfessionalContent = SectionContent
-export type VolunteerContent = SectionContent
-export type EducationContent = SectionContent
-export type ExperienceContent = SectionContent
-
-export interface PortfolioData {
-  resume: ResumeContent
-  personal: PersonalContent
-  professional: ProfessionalContent
-  volunteer: VolunteerContent
-  education: EducationContent
-  experience: ExperienceContent
-  contact: ContactMethod[]
-  goals: Goal[]
+// 4) Perspectives/opinions, freely extensible
+export interface PerspectivesSection {
+  entries: {
+    title: string
+    summary?: string
+    body: string
+    topics?: string[]
+    updatedAt?: string               // ISO date string
+  }[]
 }
 
+// ===== Portfolio root =====
+export interface Portfolio {
+  story: StorySection
+  experience: ExperienceSection
+  skills: SkillsSection
+  perspectives: PerspectivesSection
+}
 
-
-
-export const personalTabsData: PortfolioData = {
-  resume: {
-    blocks: [
+// ===== Your data migrated =====
+export const portfolioData: Portfolio = {
+  story: {
+    about: [
       {
-        label: "Summary",
-        content: "Download my full resume to see a comprehensive overview of my skills, experience, and accomplishments."
-      }
-    ],
-    tagGroups: [
-      {
-        category: "Technical Skills",
-        items: ["React", "TypeScript", "Node.js", "Python", "AWS"]
-      },
-      {
-        category: "Design Tools",
-        items: ["Figma", "Adobe Creative Suite", "Blender"]
-      }
-    ],
-    downloadUrl: "/resume.pdf"
-  },
-  personal: {
-    blocks: [
-      {
-        label: "Why I Do What I Do",
-        content: "I grew up fascinated by how things work. From taking apart radios as a kid to building my first website at 14, I've always been driven by curiosity and the desire to create meaningful experiences."
-      },
-      {
-        label: "My Thoughts on AI",
-        content: "I think a lot about how data and people move through technology, how design influences trust, and how AI can support human judgment instead of replacing it."
+        label: "Quick Summary",
+        content:
+          "Originally trained in the entertainment industry, I pivoted to software engineering by teaching myself through building projects I'd want to use. My background in film and storytelling gives me a different lens on design and flow: what connects one moment to the next, what holds attention, what breaks it."
       },
       {
         label: "Interests & Hobbies",
         content: [
-          "Film and storytelling",
-          "3D animation and modeling",
-          "Science fiction writing",
+          "Film & storytelling",
+          "3D animation & modeling",
+          "Physics & Quantum Mechanics",
           "Data visualization"
         ]
       }
-    ]
-  },
-  professional: {
-    blocks: [
-      {
-        label: "My Journey",
-        content: "Before programming, I studied film at Full Sail University and spent years in production—TV, commercials, and features—before moving through a mix of work that ranged from broadcast operations to casino dealing."
-      },
-      {
-        label: "My Approach",
-        content: "I build software that helps people work with and make sense of data. Sometimes that means cleaning and reshaping information until it tells a clearer story; other times, it means designing the systems that guide it from one place to another."
-      }
     ],
-    tagGroups: [
-      {
-        items: ["Full-stack Development", "Data Engineering", "UI/UX Design", "System Architecture"]
-      }
-    ]
-  },
-  volunteer: {
-    timelineItems: [
+    timeline: [
       {
         title: "Denver Dumb Friends League",
         subtitle: "Volunteer",
@@ -136,49 +95,109 @@ export const personalTabsData: PortfolioData = {
       }
     ]
   },
-  education: {
-    timelineItems: [
+
+experience: {
+  roles: [
+    {
+      title: "Data Engineer (Contract)",
+      subtitle: "TowardBetter.me — Remote",
+      period: "Oct 2024 – Feb 2025",
+      details: [
+        "Designed and implemented data architecture to support app development for efficient storage and retrieval of user-generated content",
+        "Built and optimized API endpoints using FastAPI with Firebase for authentication and database operations",
+        "Used XState to build state-driven pipeline workflows for robust and maintainable data flows",
+        "Developed and integrated an LLM-powered chat assistant for free-tier users to improve engagement and accessibility",
+        "Integrated Twilio, Stripe, and Zoom to expand application functionality"
+      ]
+    },
+    {
+      title: "Full Stack Software Engineer",
+      subtitle: "Lost & Hound — University of Melbourne, Australia",
+      period: "Feb 2024 – Oct 2024",
+      details: [
+        "Built a Python-based data pipeline using OpenCV and scikit-learn for computer vision tasks",
+        "Implemented PostgreSQL schema for large-scale image data with optimized queries",
+        "Trained and deployed ML models for lost pet photo matching end to end",
+        "Delivered training enabling non-profit teams to manage and maintain applications",
+        "Improved build and deployment with GitHub Actions"
+      ]
+    },
+    {
+      title: "Web Engineer",
+      subtitle: "theKnifeGrinder — Anchorage, Alaska",
+      period: "Aug 2020 – Nov 2023",
+      details: [
+        "Modernized site infrastructure with React and Next.js to improve performance and UX",
+        "Developed RESTful APIs with FastAPI for efficient data delivery",
+        "Used Pandas and NumPy for data cleaning and transformation to support analytics"
+      ]
+    },
+    {
+      title: "Business Intelligence Engineer",
+      subtitle: "Ameristar Casino — Denver, CO",
+      period: "Apr 2017 – Oct 2023",
+      details: [
+        "Performed advanced data analysis with Pandas and Matplotlib to generate insights",
+        "Built machine learning models in Python for segmentation and trend prediction",
+        "Developed scalable backend systems for high-frequency ingestion and real-time analytics"
+      ]
+    }
+  ],
+  resumeUrl: "/Zachary Sturman Resume.pdf"
+},
+
+  skills: {
+tagGroups: [
+  {
+    category: "Technical & Development",
+    items: [
+      "React",
+      "TypeScript",
+      "Node.js",
+      "Python",
+      "AWS",
+      "React + Vite",
+      "Design systems",
+      "Node.js APIs",
+      "Data modeling",
+      "CI/CD",
+    ],
+  },
+  {
+    category: "Design & Visualization",
+    items: [
+      "Figma",
+      "Adobe Creative Suite",
+      "Blender",
+      "UI/UX Design",
+      "Data visualization",
+    ],
+  },
+  {
+    category: "Cloud & Systems",
+    items: [
+      "AWS IAM/S3/Lambda",
+      "System Architecture",
+      "Scalable backend design",
+      "Infrastructure automation",
+      "Monitoring & logging",
+    ],
+  },
+],
+    education: [
       {
         title: "B.S. in Media Communication",
         subtitle: "Full Sail University",
         period: "2014"
       }
     ],
-    blocks: [
-      {
-        label: "Certificates",
-        content: [
-          "Google Certified Data Analyst (2022)",
-          "AWS Certified Cloud Practitioner (2023)"
-        ]
-      }
+    certifications: [
+      { name: "Google Certified Data Analyst", issuer: "Google", year: "2022" },
+      { name: "AWS Certified Cloud Practitioner", issuer: "Amazon Web Services", year: "2023" }
     ]
   },
-  experience: {
-    timelineItems: [
-      {
-        title: "Senior Software Engineer",
-        subtitle: "TechCorp",
-        period: "2021-Present",
-        details: [
-          "Led development of data visualization platform",
-          "Architected scalable backend systems",
-          "Mentored junior developers"
-        ]
-      },
-      {
-        title: "Lead Frontend Developer",
-        subtitle: "StartupXYZ",
-        period: "2018-2021",
-        details: [
-          "Built responsive web applications",
-          "Implemented design systems",
-          "Optimized application performance"
-        ]
-      }
-    ]
-  },
-  contact: [],
-  goals: []
-}
 
+  perspectives: {
+    entries: []
+  }
+}

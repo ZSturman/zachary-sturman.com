@@ -22,7 +22,8 @@ export function PortfolioHeader() {
         <ThemeToggle />
       </div>
 
-      <h1 className="text-4xl font-light tracking-tight text-foreground transition-colors group-hover:text-muted-foreground md:text-5xl">
+{/*       <h1 className="text-4xl font-light tracking-tight text-foreground transition-colors group-hover:text-muted-foreground md:text-5xl"> */}
+<h1 className="text-4xl md:text-5xl font-light dark:text-[#4a9eff] text-[#244468] uppercase tracking-wide">
         {name}
       </h1>
 
