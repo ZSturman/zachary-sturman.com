@@ -12,9 +12,9 @@ import {
   PenTool,
   Cpu,
 } from "lucide-react";
-import Image from "next/image";
+import { MediaDisplay } from "@/components/ui/media-display";
 import ProjectMediums from "../project-details/project-mediums";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getOptimizedMediaPath, formatTextWithNewlines } from "@/lib/utils";
 import PrimaryActionButton from "./primary-action-button";
 
 // Map domain to icon
@@ -37,6 +37,13 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
     Array.isArray(project.resources) && project.resources.length > 0
       ? project.resources[0]
       : undefined;
+  
+  const folderName = project.folderName || project.id;
+  const folderPath = `/projects/${folderName}`;
+  
+  const thumbnailPath = getOptimizedMediaPath(project.images?.thumbnail, folderPath);
+  const thumbnailSettings = project.imageSettings?.thumbnail;
+  
   // Note: no extra derived project shape needed here; `project` is used directly
   return (
     <Card
@@ -47,20 +54,14 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
         {/* Thumbnail */}
         <div className="flex-shrink-0">
           <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-muted aspect-square">
-            {/* Avoid creating "/projects/<id>/undefined" when thumbnail is missing */}
-            {(() => {
-              const thumbSrc = project.images?.thumbnail
-                ? `/projects/${project.id}/${project.images.thumbnail}`
-                : "/placeholder.svg";
-              return (
-                <Image
-                  src={thumbSrc}
-                  alt={`${project.title} thumbnail`}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-200"
-                />
-              );
-            })()}
+            <MediaDisplay
+              src={thumbnailPath}
+              alt={`${project.title} thumbnail`}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-200"
+              loop={thumbnailSettings?.loop ?? true}
+              autoPlay={thumbnailSettings?.autoPlay ?? true}
+            />
           </div>
         </div>
         {/* Content */}
@@ -83,7 +84,7 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
                   variant="outline"
                   className={STATUS_COLOR[project.status] || "bg-gray-100"}
                 >
-                  {project.subStatus ?? project.status}
+                  {project.phase ?? project.status}
                 </Badge>
 
                     <ProjectMediums project={project} />
@@ -96,8 +97,8 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
             </span>
           </div>
 
-          <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-            {project.summary}
+          <p className="text-muted-foreground text-sm mb-4 line-clamp-2 whitespace-pre-wrap">
+            {formatTextWithNewlines(project.summary)}
           </p>
 
           <div className="flex items-center justify-between">

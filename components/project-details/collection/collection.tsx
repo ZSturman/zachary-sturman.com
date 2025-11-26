@@ -1,8 +1,7 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CollectionItem, Project } from "@/types";
-import { getCategory } from "@/lib/utils";
+import { Project, CollectionItem } from "@/types";
 import CollectionItemCard from "./collection-item";
+import { formatTextWithNewlines } from "@/lib/utils";
 
 interface CollectionProps {
   project: Project;
@@ -10,85 +9,99 @@ interface CollectionProps {
 }
 
 export function Collection({ project, inModal }: CollectionProps) {
-  
-
-
-  const items: CollectionItem[] = (project.collection?.items ??
-    []) as CollectionItem[];
-
-  if (!items || items.length === 0) {
+  // Handle collection structure: { [collectionName: string]: CollectionItem[] | { items: CollectionItem[] } }
+  if (!project.collection || Object.keys(project.collection).length === 0) {
     return null;
   }
 
-  // Group items by inferred category
-  const groups = items.reduce<Record<string, CollectionItem[]>>((acc, it) => {
-    const path = (it as unknown as { path?: string }).path;
-    const cat = getCategory(
-      it.type,
-      path || (it.thumbnail as string) || it.label
-    );
-    if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(it);
-    return acc;
-  }, {});
-
-  const groupKeys = Object.keys(groups);
-
-  // If no items, show empty card
-  if (groupKeys.length === 0) {
-    return (
-      <Card>
-        <CardContent className="py-8">
-          <p className="text-center text-muted-foreground">
-            No items in this collection
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
-
+  const collections = Object.entries(project.collection);
+  const folderName = project.folderName || project.id;
   
-  if (groupKeys.length === 1) {
-    // Single group -> render items directly
+  // If only one collection, render it directly without tabs
+  if (collections.length === 1) {
+    const [collectionName, collectionData] = collections[0];
+    
+    // Handle both direct array and nested items structure
+    const items: CollectionItem[] = Array.isArray(collectionData) ? collectionData : (collectionData as { items: CollectionItem[] }).items || [];
+    const collectionInfo = Array.isArray(collectionData) ? {} : (collectionData as { label?: string; summary?: string; description?: string; items?: CollectionItem[] });
+    const label = collectionInfo.label || collectionName;
+    const summary = collectionInfo.summary;
+    const description = collectionInfo.description;
+    
+    if (!items || items.length === 0) {
+      return null;
+    }
+
     return (
-      <div className="space-y-4">
-        {groups[groupKeys[0]].map((item, idx) => {
-          return (
-            <div key={idx} className="grid gap-4  items-start">
-              <div className="mt-4">
-                  <CollectionItemCard item={item} project={project} inModal={inModal} />
-              </div>
-            </div>
-          );
-        })}
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <h3 className="text-xl font-semibold tracking-tight">{label}</h3>
+          {summary && (
+            <p className="text-sm text-muted-foreground" style={{ whiteSpace: 'pre-wrap' }}>
+              {formatTextWithNewlines(summary)}
+            </p>
+          )}
+          {description && (
+            <p className="text-sm text-muted-foreground" style={{ whiteSpace: 'pre-wrap' }}>
+              {formatTextWithNewlines(description)}
+            </p>
+          )}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.map((item, idx) => (
+            <CollectionItemCard key={item.id || idx} item={item} project={project} inModal={inModal} folderName={folderName} collectionName={collectionName} />
+          ))}
+        </div>
       </div>
     );
   }
 
-  // Multiple groups -> render tabs per category
+  // Multiple collections -> render tabs per collection name
   return (
-    <Tabs defaultValue={groupKeys[0]} className="w-full">
+    <Tabs defaultValue={collections[0][0]} className="w-full">
       <TabsList className="w-full justify-start overflow-x-auto">
-        {groupKeys.map((key) => (
-          <TabsTrigger key={key} value={key}>
-            {key}
-          </TabsTrigger>
-        ))}
+        {collections.map(([collectionName, collectionData]) => {
+          const collectionInfo = Array.isArray(collectionData) ? {} : (collectionData as { label?: string; summary?: string; description?: string; items?: CollectionItem[] });
+          const label = collectionInfo.label || collectionName;
+          return (
+            <TabsTrigger key={collectionName} value={collectionName}>
+              {label}
+            </TabsTrigger>
+          );
+        })}
       </TabsList>
 
-      {groupKeys.map((key) => (
-        <TabsContent key={key} value={key} className="space-y-4">
-          {groups[key].map((item, idx) => {
-            return (
-              <div key={idx} className="grid gap-4  items-start">
-                <div className="mt-4">
-                    <CollectionItemCard item={item} project={project} inModal={inModal} />
-                </div>
+      {collections.map(([collectionName, collectionData]) => {
+        // Handle both direct array and nested items structure
+        const items: CollectionItem[] = Array.isArray(collectionData) ? collectionData : (collectionData as { items: CollectionItem[] }).items || [];
+        const collectionInfo = Array.isArray(collectionData) ? {} : (collectionData as { label?: string; summary?: string; description?: string; items?: CollectionItem[] });
+        const summary = collectionInfo.summary;
+        const description = collectionInfo.description;
+        
+        return (
+          <TabsContent key={collectionName} value={collectionName} className="space-y-6">
+            {(summary || description) && (
+              <div className="space-y-2">
+                {summary && (
+                  <p className="text-sm text-muted-foreground" style={{ whiteSpace: 'pre-wrap' }}>
+                    {formatTextWithNewlines(summary)}
+                  </p>
+                )}
+                {description && (
+                  <p className="text-sm text-muted-foreground" style={{ whiteSpace: 'pre-wrap' }}>
+                    {formatTextWithNewlines(description)}
+                  </p>
+                )}
               </div>
-            );
-          })}
-        </TabsContent>
-      ))}
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {items.map((item, idx) => (
+                <CollectionItemCard key={item.id || idx} item={item} project={project} inModal={inModal} folderName={folderName} collectionName={collectionName} />
+              ))}
+            </div>
+          </TabsContent>
+        );
+      })}
     </Tabs>
   );
 }

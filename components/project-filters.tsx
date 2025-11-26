@@ -70,7 +70,7 @@ export function ProjectFilters({
   initialSearchScope = "all",
 }: ProjectFiltersProps) {
   // ui state
-  const [isExpanded, setIsExpanded] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(false)
   // viewMode is driven by prop via onViewModeChange
   const [searchScope, setSearchScope] = useState<SearchScope>(
     initialSearchScope
@@ -142,7 +142,7 @@ export function ProjectFilters({
     const q = searchQuery.trim().toLowerCase()
     return projects.filter((p) => {
       // featured/starred filter - when showAll is false show only starred/featured
-      if (!showAll && !p.starred) return false
+      if (!showAll && !p.featured) return false
 
       // domain filter
       if (selectedDomains.length > 0 && !(selectedDomains.length === 1 && selectedDomains[0] === "all")) {
@@ -220,10 +220,7 @@ export function ProjectFilters({
     onSortChange(mapped)
   }, [sortField, sortOrder, onSortChange])
 
-  // default expanded on larger screens (mirror project-filters behavior)
-  useEffect(() => {
-    if (typeof window !== "undefined") setIsExpanded(window.innerWidth >= 768)
-  }, [])
+  // Intentionally do not auto-expand filters on load — keep collapsed by default.
 
   const toggleDomain = (domain: string) => {
     if (domain === "all") return setSelectedDomains(["all"])

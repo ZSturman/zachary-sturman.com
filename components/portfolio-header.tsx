@@ -32,7 +32,7 @@ export function PortfolioHeader() {
       </h2>
 
       <SocialLinks />
-      <PersonalTabs />
+{/*       <PersonalTabs /> */}
     </header>
   );
 }

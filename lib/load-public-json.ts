@@ -57,6 +57,14 @@ export async function loadPublicJsonRecursively<T = unknown>(
             // Returns include boolean and optional reason for skipping
             if (!(obj && typeof obj === "object")) return { include: false, reason: "not_an_object" };
             const o = obj as Record<string, unknown>;
+            
+            // For projects, require an `id` field
+            if (subdir === "projects") {
+              if (!Object.prototype.hasOwnProperty.call(o, "id") || !o["id"]) {
+                return { include: false, reason: "missing_id" };
+              }
+            }
+            
             if (Object.prototype.hasOwnProperty.call(o, "reviewed")) {
               const rev = o["reviewed"];
               if (rev === false || rev === "false") return { include: false, reason: "reviewed_false" };
@@ -80,7 +88,7 @@ export async function loadPublicJsonRecursively<T = unknown>(
             else if (verbose) console.debug(`Skipped ${full}: ${res.reason}`);
           }
         } catch (err) {
-          console.error(`Skipping ${full}:`, err);
+          console.warn(`Skipping ${full}:`, err instanceof Error ? err.message : err);
         }
       }
     }

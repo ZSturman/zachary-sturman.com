@@ -42,9 +42,9 @@ export function ProjectModal({ project, isOpen, onClose }: ProjectModalProps) {
       </DialogTitle>
 
       
-      <DialogContent className="max-h-[90vh] max-w-7xl overflow-y-auto p-4">
+      <DialogContent className="max-h-[90vh] max-w-7xl p-0 flex flex-col overflow-hidden">
 
-        <div className="relative">
+        <div className="relative flex-1 min-h-0 overflow-y-auto p-4">
           <ProjectHeader project={project} />
 
           <div>

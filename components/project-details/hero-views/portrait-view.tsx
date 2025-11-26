@@ -1,17 +1,25 @@
-import Image from "next/image";
+import { MediaDisplay } from "@/components/ui/media-display";
 import ResourceButtons from "../resource-buttons";
 import { Project } from "@/types";
+import { formatTextWithNewlines } from "@/lib/utils";
 
 export default function PortraitView({ project, image }: { project: Project; image: string }) {
+  // Get video settings for poster
+  const posterSettings = project.images?.posterPortrait 
+    ? project.imageSettings?.posterPortrait 
+    : project.imageSettings?.poster;
+  
   return (
     <div className="flex flex-row">
       <div className="relative w-full aspect-[9/13] overflow-hidden rounded-lg ">
-        <Image
+        <MediaDisplay
           src={image || "/placeholder.svg"}
           alt={project.title}
           fill
           className="object-cover"
           priority
+          loop={posterSettings?.loop ?? true}
+          autoPlay={posterSettings?.autoPlay ?? true}
         />
       </div>
 
@@ -30,8 +38,8 @@ export default function PortraitView({ project, image }: { project: Project; ima
           <ResourceButtons project={project} showMessage={false} />
         </div>
 
-                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed text-pretty">
-          {project.summary}
+                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed text-pretty whitespace-pre-wrap">
+          {formatTextWithNewlines(project.summary)}
         </p>
       </div>
     </div>

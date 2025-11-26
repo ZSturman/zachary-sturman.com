@@ -4,6 +4,7 @@ import React from "react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 import { Project } from "@/types"
+import { formatTextWithNewlines } from "@/lib/utils"
 
 interface Props {
 	project: Project
@@ -31,7 +32,7 @@ export default function ProjectDescriptionAndStory({ project }: Props) {
 			<Card>
 				<CardContent>
 					{title && <h2 className="text-xl font-semibold mb-2">{title}</h2>}
-					<div className="prose max-w-none whitespace-pre-wrap">{content}</div>
+					<div className="prose max-w-none whitespace-pre-wrap">{formatTextWithNewlines(content)}</div>
 				</CardContent>
 			</Card>
 		)
@@ -90,14 +91,14 @@ export function ProjectContent({ project }: ProjectContentProps) {
       {hasDescription && (
         <section>
           <h2 className="mb-4 text-2xl font-semibold text-foreground">About</h2>
-          <p className="text-pretty leading-relaxed text-muted-foreground">{description}</p>
+          <p className="text-pretty leading-relaxed text-muted-foreground whitespace-pre-wrap">{formatTextWithNewlines(description)}</p>
         </section>
       )}
 
       {project.story && (
         <section>
           <h2 className="mb-4 text-2xl font-semibold text-foreground">Story</h2>
-          <p className="text-pretty leading-relaxed text-muted-foreground">{project.story}</p>
+          <p className="text-pretty leading-relaxed text-muted-foreground whitespace-pre-wrap">{formatTextWithNewlines(project.story)}</p>
         </section>
       )}
 

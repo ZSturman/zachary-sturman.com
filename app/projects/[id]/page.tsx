@@ -5,13 +5,8 @@ import ProjectDetailsClientWrapper from "@/components/project-details-client-wra
 
 
 export async function generateStaticParams(): Promise<Array<{ id: string }>> {
-  try {
-    const projects = await loadPublicJsonRecursively<Project>("projects")
-    return projects.map((p) => ({ id: p.id }))
-  } catch (e) {
-    console.error("generateStaticParams: failed to load projects:", e)
-    return []
-  }
+  const projects = await loadPublicJsonRecursively<Project>("projects")
+  return projects.map((p) => ({ id: p.id }))
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {

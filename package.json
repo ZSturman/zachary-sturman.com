@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run generate-projects && next dev",
+    "dev": "npm run generate-projects && npm run optimize && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate-projects": "python3 lib/pre-build.py /Users/zacharysturman/Desktop/PORTFOLIO",
-    "prepare": "node -e \"try { require('fs').chmodSync('.git/hooks/pre-push', '755') } catch(e) {}\""
+    "generate-projects": "python3 lib/folio-prebuild.py /Users/zacharysturman/Desktop/PORTFOLIO",
+    "optimize": "python3 lib/media-optimizer.py public/projects --delete-originals"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

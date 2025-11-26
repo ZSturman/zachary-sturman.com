@@ -1,0 +1,10 @@
+# Python dependencies for portfolio media optimization and cloud storage
+
+# Image processing (required for media optimization)
+Pillow>=10.0.0
+
+# Firebase Admin SDK (optional - for Firebase Storage uploads)
+firebase-admin>=6.0.0
+
+# AWS SDK for Python (optional - for S3 or Cloudflare R2 uploads)
+boto3>=1.28.0

@@ -1,6 +1,7 @@
 import { Project } from "@/types";
-import Image from "next/image";
+import { MediaDisplay } from "@/components/ui/media-display";
 import ResourceButtons from "../resource-buttons";
+import { formatTextWithNewlines } from "@/lib/utils";
 
 export default function LandscapeView({
   project,
@@ -9,6 +10,9 @@ export default function LandscapeView({
   project: Project;
   image: string;
 }) {
+  // Get video settings for banner
+  const bannerSettings = project.imageSettings?.banner;
+  
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-between">
@@ -28,17 +32,19 @@ export default function LandscapeView({
           <ResourceButtons project={project} showMessage={false} />
         </div>
 
-        <p className="text-lg md:text-xl text-muted-foreground leading-relaxed text-pretty">
-          {project.summary}
+        <p className="text-lg md:text-xl text-muted-foreground leading-relaxed text-pretty whitespace-pre-wrap">
+          {formatTextWithNewlines(project.summary)}
         </p>
       </div>
       <div className="relative w-full aspect-[2/1] overflow-hidden rounded-lg ">
-        <Image
+        <MediaDisplay
           src={image || "/placeholder.svg"}
           alt={project.title}
           fill
           className="object-cover"
           priority
+          loop={bannerSettings?.loop ?? true}
+          autoPlay={bannerSettings?.autoPlay ?? true}
         />
       </div>
     </div>

@@ -76,9 +76,12 @@ const ICON_MAP: Record<ResourceType | string, string> = {
   "local-download": "download",
   "local-link": "website",
   website: "website",
+  web: "website",
   blog: "blog",
   "app:iosAppStore": "apple", 
   "app:androidPlayStore": "google",
+  "apple": "apple",
+  "google": "google",
   // mediums (legacy, for compatibility)
   code: "code",
   science: "science",

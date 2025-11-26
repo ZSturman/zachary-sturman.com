@@ -14,58 +14,83 @@ export type CollectionItemType =
   | "game"
   | "text"
   | "audio"
-  | "url-link";
+  | "url-link"
+  | "folio";
 
 export type CollectionItem = {
   id: string;
-  path: string;
+  path?: string; // Main path for the item (can be image, video, or other media)
+  filePath?: string; // Alternative path structure (simplified from legacy object format)
   label?: string;
   summary?: string;
-  thumbnail?: string;
-  resources?: Resource[]; // optional in JSON
+  thumbnail?: string; // Can be image or video
+  resource?: Resource; // Single resource (legacy)
+  resources?: Resource[]; // Multiple resources
   type: CollectionItemType;
-  loop?: boolean;
-  autoPlay?: boolean;
+  loop?: boolean; // Whether video/animation should loop
+  autoPlay?: boolean; // Whether video should autoplay (defaults to true for thumbnails/banners/posters)
 };
+
+
 
 export interface Project {
   id: string;
+  folderName?: string;       // The actual folder name in public/projects/ (slug_id)
+  filePath?: string;
+  title: string;
+  subtitle?: string;
+  isPublic?: boolean;
+  summary: string;
   domain: string;
   category?: string;
-  mediums?: string[];
   status: string;
-  subStatus?: string;          // fixed casing
-  title: string;
-  summary: string;
-  description?: string;
-  story?: string;
+  phase?: string;
+  featured?: boolean;
+  requiresFollowUp?: boolean;
+  createdAt: string;           // ISO 8601 or timestamp
+  updatedAt: string;           // ISO 8601 or timestamp
+  
+  assetsFolder?: string;
+  
   images?: {
-    directory?: string;
-    banner?: string;
-    iconCircle?: string;
-    iconSquare?: string;
-    posterLandscape?: string;
-    posterPortrait?: string;
-    thumbnail?: string;
-    [k: string]: string | undefined;
+    thumbnail?: string; // Can be image (including GIF) or video
+    banner?: string; // Can be image (including GIF) or video
+    poster?: string; // Can be image (including GIF) or video
+    posterPortrait?: string; // Can be image (including GIF) or video
+    posterLandscape?: string; // Can be image (including GIF) or video
+    icon?: string; // Can be image (including GIF) or video
+    [k: string]: string | undefined; // Other images/videos
   };
-  thumbnail?: string;          // top-level thumbnail seen in JSON
-  visibility: string;          // required in JSON
-  starred?: boolean;
+  
+  // Video/animation settings for images that are actually videos
+  imageSettings?: {
+    thumbnail?: { loop?: boolean; autoPlay?: boolean };
+    banner?: { loop?: boolean; autoPlay?: boolean };
+    poster?: { loop?: boolean; autoPlay?: boolean };
+    posterPortrait?: { loop?: boolean; autoPlay?: boolean };
+    posterLandscape?: { loop?: boolean; autoPlay?: boolean };
+    icon?: { loop?: boolean; autoPlay?: boolean };
+    [k: string]: { loop?: boolean; autoPlay?: boolean } | undefined;
+  };
+  
   tags?: string[];
-  resources?: Resource[];
-  createdAt: string;           // ISO 8601
-  updatedAt: string;           // ISO 8601
-  reviewed?: string;           // ISO 8601, optional
-  metadata?: Record<string, unknown>;
-  subtitle?: string;
+  mediums?: string[];
   genres?: string[];
   topics?: string[];
-  details?: Array<{ label: string; value: string }>;
+  subjects?: string[];
+  
+  description?: string;
+  story?: string;
+  resources?: Resource[];
+  
   collection?: {
-    items?: CollectionItem[];
-    thumbnails?: string;       // e.g., "_collection_thumbnails"
-    updatedAt?: string;        // ISO 8601
+    [collectionName: string]: CollectionItem[] | { items: CollectionItem[]; [key: string]: unknown };
   };
-  requiresFollowUp?: boolean;
+
+  details?: [
+    {
+      label: string;
+      value: string | string[] | Record<string, unknown>;
+    }
+  ]
 }

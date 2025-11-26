@@ -42,3 +42,21 @@ yarn-error.log*
 next-env.d.ts
 
 /public/pre-build.log
+
+# Build logs
+/logs/
+
+# Media optimization - ignore originals, keep optimized versions
+# This prevents large unoptimized files from bloating the repo
+public/projects/**/*.jpg
+public/projects/**/*.jpeg
+public/projects/**/*.png
+public/projects/**/*.mp4
+public/projects/**/*.mov
+public/projects/**/*.webm
+public/projects/**/*.avi
+
+# But DO commit optimized versions
+!public/projects/**/*-optimized.*
+!public/projects/**/*-thumb.*
+!public/projects/**/*-placeholder.*

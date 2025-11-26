@@ -25,6 +25,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: INITIAL_THEME_SCRIPT }} />
+        <meta name="apple-mobile-web-app-title" content="Zachary Sturman" />
+
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Banner />

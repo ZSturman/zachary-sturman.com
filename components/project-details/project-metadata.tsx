@@ -1,7 +1,8 @@
 import { Badge } from "@/components/ui/badge"
 import { Project } from "@/types"
-import { Calendar, Eye, AlertCircle } from "lucide-react"
-import Image from "next/image"
+import { Calendar, AlertCircle } from "lucide-react"
+import { MediaDisplay } from "@/components/ui/media-display"
+import { getOptimizedMediaPath } from "@/lib/utils"
 
 
 interface ProjectMetadataProps {
@@ -24,34 +25,51 @@ export function ProjectMetadata({ project }: ProjectMetadataProps) {
     return status.replace(/_/g, " ")
   }
 
-  const poster = project.images?.posterPortrait || project.images?.posterLandscape
+  const folderName = project.folderName || project.id;
+  const folderPath = `/projects/${folderName}`;
+  
+  const poster = project.images?.posterPortrait || project.images?.posterLandscape || project.images?.poster
   const posterOrientation = project.images?.posterPortrait ? "portrait" : "landscape"
 
-  const posterPath = poster ? `/projects/${project.id}/${poster}` : "/placeholder.svg"
-  const thumbnailPath = project.images?.thumbnail ? `/projects/${project.id}/${project.images.thumbnail}` : "/placeholder.svg"
+  const posterPath = getOptimizedMediaPath(poster, folderPath)
+  const thumbnailPath = getOptimizedMediaPath(project.images?.thumbnail, folderPath)
+  
+  // Get video settings for poster and thumbnail
+  const posterSettings = poster ? (
+    project.images?.posterPortrait 
+      ? project.imageSettings?.posterPortrait 
+      : project.images?.posterLandscape 
+        ? project.imageSettings?.posterLandscape 
+        : project.imageSettings?.poster
+  ) : undefined;
+  
+  const thumbnailSettings = project.imageSettings?.thumbnail;
 
   return (
     <div className="space-y-6">
       {poster && (
         <div className="overflow-hidden rounded-lg border border-border relative">
-
-          <Image
+          <MediaDisplay
             src={posterPath}
             alt={`${project.title} poster`}
-            width={100}
-            height={100}
-            className={`w-full object-cover ${posterOrientation === "portrait" ? "aspect-[2/3]" : "aspect-video"}`}
+            width={400}
+            height={posterOrientation === "portrait" ? 600 : 225}
+            className={`w-full h-auto object-cover`}
+            loop={posterSettings?.loop ?? true}
+            autoPlay={posterSettings?.autoPlay ?? true}
           />
         </div>
       )}
 
       {project.images?.thumbnail && !poster && (
         <div className="overflow-hidden rounded-lg border border-border relative">
-          <Image
+          <MediaDisplay
             src={thumbnailPath}
             alt={`${project.title} thumbnail`}
             fill
             className="w-full object-cover aspect-video"
+            loop={thumbnailSettings?.loop ?? true}
+            autoPlay={thumbnailSettings?.autoPlay ?? true}
           />
         </div>
       )}
@@ -64,7 +82,7 @@ export function ProjectMetadata({ project }: ProjectMetadataProps) {
             <div>
               <p className="mb-2 text-sm text-muted-foreground">Status</p>
               <Badge variant={project.status === "done" ? "default" : "secondary"}>
-                {getStatusLabel(project.status, project.subStatus)}
+                {getStatusLabel(project.status, project.phase)}
               </Badge>
             </div>
           )}

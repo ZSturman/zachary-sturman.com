@@ -214,7 +214,7 @@ export function PortfolioClient({ projects }: PortfolioClientProps) {
       const isPublic = typeof vis === "string" ? vis === "public" : true;
       if (!isPublic) return false;
       if (showAll) return true;
-      return Boolean((p as unknown as { starred?: boolean })?.starred);
+      return Boolean((p as unknown as { featured?: boolean })?.featured);
     });
 
   return base.filter((p) => {
@@ -277,14 +277,30 @@ export function PortfolioClient({ projects }: PortfolioClientProps) {
 
   const sortedProjects = useMemo(() => {
     const copy = [...filteredProjects];
+    function toTimestamp(v: unknown) {
+      if (v == null || v === "") return 0;
+      if (typeof v === "number") return v;
+      if (typeof v === "string") {
+        // numeric string (unix timestamp) -> number
+        const n = Number(v);
+        if (!Number.isNaN(n)) return n;
+        // try ISO / date parse
+        const d = Date.parse(v);
+        return Number.isNaN(d) ? 0 : d;
+      }
+      if (v instanceof Date) return v.getTime();
+      return 0;
+    }
     switch (sort) {
       case "newest":
         return copy.sort((a, b) =>
-          (b.createdAt || "").localeCompare(a.createdAt || "")
+          // newest first -> compare numeric timestamps
+          toTimestamp(b.createdAt) - toTimestamp(a.createdAt)
         );
       case "oldest":
         return copy.sort((a, b) =>
-          (a.createdAt || "").localeCompare(b.createdAt || "")
+          // oldest first -> ascending timestamps
+          toTimestamp(a.createdAt) - toTimestamp(b.createdAt)
         );
       case "title-asc":
         return copy.sort((a, b) => a.title.localeCompare(b.title));

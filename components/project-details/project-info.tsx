@@ -26,11 +26,31 @@ export default function ProjectInfo({ project }: { project: Project }) {
   );
 }
 
-function InfoItem({ label, value }: { label: string; value: string }) {
+function InfoItem({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | string[] | Record<string, unknown>;
+}) {
+  let displayValue: string;
+
+  if (Array.isArray(value)) {
+    displayValue = value.join(", ");
+  } else if (value && typeof value === "object") {
+    try {
+      displayValue = JSON.stringify(value);
+    } catch {
+      displayValue = String(value);
+    }
+  } else {
+    displayValue = String(value ?? "");
+  }
+
   return (
     <div className="flex justify-between items-baseline gap-2">
       <span className="text-sm text-muted-foreground font-medium">{label}</span>
-      <span className="text-sm text-foreground text-right">{value}</span>
+      <span className="text-sm text-foreground text-right">{displayValue}</span>
     </div>
   );
 }

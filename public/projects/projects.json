@@ -1,462 +1,329 @@
 [
   {
-    "id": "project_manager_swift",
-    "domain": "Technology",
     "category": "Software",
-    "mediums": [
-      "Desktop"
-    ],
-    "status": "active",
-    "subStatus": "development",
-    "title": "Project Manager Swift App",
-    "summary": "A native macOS application for managing projects stored as JSON files",
-    "description": "This is a comprehensive project management application built with SwiftUI that scans folders for _project.json files and provides a rich editing interface.",
-    "story": "The idea came from needing a native macOS application to manage project data that was previously handled by a web application. The Swift version provides better integration with the macOS ecosystem and more robust file system monitoring.",
-    "images": {
-      "directory": "images",
-      "thumbnail": "app-icon.png",
-      "banner": "app-banner.png"
-    },
-    "visibility": "public",
-    "starred": true,
-    "tags": [
-      "Swift",
-      "SwiftUI",
-      "macOS",
-      "Project Management",
-      "JSON"
-    ],
-    "resources": [
-      {
-        "id": "swift-docs",
-        "type": "documentation",
-        "label": "Swift Documentation",
-        "url": "https://swift.org/documentation/"
-      },
-      {
-        "id": "swiftui-docs",
-        "type": "documentation",
-        "label": "SwiftUI Documentation",
-        "url": "https://developer.apple.com/documentation/swiftui"
-      }
-    ],
-    "createdAt": "2025-10-26T12:00:00Z",
-    "updatedAt": "2025-10-26T12:00:00Z",
-    "reviewed": "2025-10-26T12:00:00Z",
-    "metadata": {
-      "platform": "macOS",
-      "minVersion": "14.0",
-      "language": "Swift",
-      "framework": "SwiftUI"
-    },
-    "genres": [
-      "Productivity",
-      "Developer Tools"
-    ],
-    "topics": [
-      "File Management",
-      "JSON Processing",
-      "User Interface"
-    ],
-    "details": [
-      {
-        "label": "Development Language",
-        "value": "Swift 5.0+"
-      },
-      {
-        "label": "UI Framework",
-        "value": "SwiftUI"
-      },
-      {
-        "label": "Minimum macOS",
-        "value": "14.0"
-      }
-    ],
-    "requiresFollowUp": false
-  },
-  {
-    "id": "web_app_original",
+    "createdAt": 785853422.744704,
+    "description": "The first version of my portfolio was built with Flask, following Corey Schafer’s tutorials as a starting point. It was my introduction to web development and a way to learn how all the pieces of a site come together. I set up my own server, configured Nginx, and handled deployment myself, not realizing that most people used simpler options. It was a long process, full of trial and error, but it gave me a deep understanding of how a web application actually runs. I designed my own SVG graphics and added simple hover animations to make it feel personal. It wasn’t perfect, but it worked, and I was proud of it.",
     "domain": "Technology",
-    "category": "Web",
-    "mediums": [
-      "Web",
-      "Desktop"
-    ],
-    "status": "done",
-    "subStatus": "completed",
-    "title": "Original Web Project Manager",
-    "summary": "The original Next.js web application that this Swift app is based on",
-    "description": "A React/Next.js web application with a comprehensive project editing interface, including image management, resource linking, and metadata editing capabilities.",
-    "story": "This was the original implementation that proved the concept of a visual project management interface. It served as the foundation for understanding the requirements that led to the native macOS version.",
+    "featured": false,
+    "id": "B062E7E0-387F-4D08-B0B6-A75410AACCE1",
     "images": {
-      "directory": "web-images",
-      "thumbnail": "web-app-thumb.png"
-    },
-    "visibility": "public",
-    "starred": false,
-    "tags": [
-      "React",
-      "Next.js",
-      "TypeScript",
-      "Tailwind CSS"
-    ],
-    "resources": [
-      {
-        "id": "nextjs-docs",
-        "type": "documentation",
-        "label": "Next.js Documentation",
-        "url": "https://nextjs.org/docs"
-      },
-      {
-        "id": "react-docs",
-        "type": "documentation",
-        "label": "React Documentation",
-        "url": "https://react.dev"
-      }
-    ],
-    "createdAt": "2025-09-15T10:00:00Z",
-    "updatedAt": "2025-10-20T15:30:00Z",
-    "reviewed": "2025-10-25T09:00:00Z",
-    "metadata": {
-      "framework": "Next.js",
-      "language": "TypeScript",
-      "styling": "Tailwind CSS",
-      "deployment": "Vercel"
-    },
-    "genres": [
-      "Web Development",
-      "Productivity"
-    ],
-    "topics": [
-      "React",
-      "Component Architecture",
-      "Project Management"
-    ],
-    "details": [
-      {
-        "label": "Framework",
-        "value": "Next.js 14"
-      },
-      {
-        "label": "Language",
-        "value": "TypeScript"
-      },
-      {
-        "label": "Styling",
-        "value": "Tailwind CSS"
-      }
-    ],
-    "requiresFollowUp": false
-  },
-  {
-    "collection": {
-      "items": [
-        {
-          "path": "https://zsturman.github.io/ZSDynamics-V1.0/",
-          "thumbnail": "/projects/zsdynamics_collection/httpszsturmangithubiozsdynamics_v10/httpszsturmangithubiozsdynamics_v10_thumbnail.png",
-          "type": "url-link",
-          "id": "httpszsturmangithubiozsdynamics_v10"
-        },
-        {
-          "path": "https://zsturman.github.io/ZSDynamics-V1.1/",
-          "thumbnail": "/projects/zsdynamics_collection/httpszsturmangithubiozsdynamics_v11/httpszsturmangithubiozsdynamics_v11_thumbnail.png",
-          "type": "url-link",
-          "id": "httpszsturmangithubiozsdynamics_v11"
-        },
-        {
-          "path": "https://zsturman.github.io/ZSDynamics-V2.0/",
-          "thumbnail": "/projects/zsdynamics_collection/httpszsturmangithubiozsdynamics_v20/httpszsturmangithubiozsdynamics_v20_thumbnail.png",
-          "type": "url-link",
-          "id": "httpszsturmangithubiozsdynamics_v20"
-        },
-        {
-          "path": "https://zsturman.github.io/ZSDynamics-V3.0/",
-          "thumbnail": "/projects/zsdynamics_collection/httpszsturmangithubiozsdynamics_v30/httpszsturmangithubiozsdynamics_v30_thumbnail.png",
-          "type": "url-link",
-          "id": "httpszsturmangithubiozsdynamics_v30"
-        },
-        {
-          "path": "https://zsturman.github.io/ZSDynamics-V4.0/",
-          "thumbnail": "/projects/zsdynamics_collection/httpszsturmangithubiozsdynamics_v40/httpszsturmangithubiozsdynamics_v40_thumbnail.png",
-          "type": "url-link",
-          "id": "httpszsturmangithubiozsdynamics_v40"
-        }
-      ],
-      "thumbnails": "_collection_thumbnails"
-    },
-    "createdAt": "2021-09-17T05:40:51Z",
-    "description": "Across these versions, the portfolio moves from early experiments with web servers and deployment to a more deliberate exploration of interaction and user experience. What began as a way to learn the basics of web development gradually became a study in how software grows through iteration. Each update introduced something new—whether a backend feature, a visualization tool, or an experiment with motion and layout—and together they form a record of learning that values progress over perfection. The result is less a single polished site and more a map of how understanding takes shape through making, breaking, and rebuilding.",
-    "domain": "Technology",
-    "genres": [],
-    "id": "zsdynamics_collection",
-    "images": {
-      "banner": "banner.png",
-      "directory": "images",
-      "posterLandscape": "poster-landscape.png",
       "thumbnail": "thumbnail.png"
     },
+    "isPublic": true,
     "mediums": [
       "Web"
     ],
-    "requiresFollowUp": true,
-    "resources": [],
-    "reviewed": "2025-10-26T16:41:12Z",
-    "starred": true,
-    "status": "in_progress",
-    "story": "When I first started learning Python, I wanted a way to show what I could do, even if it wasn’t much. Building the portfolio gave me that space. The early versions were slow and uncertain, full of mistakes that later became lessons. Over time, each new version taught me something different—not just about frameworks or syntax, but about patience, problem-solving, and how design decisions can change the way a project feels to use. By the time I reached the latest version, the portfolio had become less about proving skill and more about documenting growth. It’s a record of learning in motion, shaped by curiosity and the steady work of figuring things out, one version at a time.",
-    "subtitle": "A collection of my personal website versions",
-    "summary": "This collection showcases versions of my personal portfolio. Each version documents how my design, presentation style, skill and career path have evolved over time.",
-    "tags": [],
-    "thumbnail": "thumbnail.png",
-    "title": "ZSDynamics (Collection)",
-    "topics": [],
-    "updatedAt": "2025-10-26T16:41:12Z",
-    "visibility": "public"
-  },
-  {
-    "category": "Software",
-    "createdAt": "2021-10-20T23:25:16Z",
-    "description": "The first version of my portfolio was built with Flask, following Corey Schafer’s tutorials as a starting point. It was my introduction to web development and a way to learn how all the pieces of a site come together. I set up my own server, configured Nginx, and handled deployment myself, not realizing that most people used simpler options. It was a long process, full of trial and error, but it gave me a deep understanding of how a web application actually runs. I designed my own SVG graphics and added simple hover animations to make it feel personal. It wasn’t perfect, but it worked, and I was proud of it.",
-    "domain": "Technology",
-    "genres": [],
-    "id": "zsdynamics_v10",
-    "mediums": [
-      "Desktop"
-    ],
-    "requiresFollowUp": true,
+    "phase": "Outdated",
     "resources": [
       {
-        "id": "CE3E6BFC-E8ED-4E09-AA48-4AE8A03293F7",
-        "label": "Version 1.0",
-        "type": "url:website",
+        "category": "url",
+        "label": "Flask Portfolio",
+        "type": "website",
         "url": "https://zsturman.github.io/ZSDynamics-V1.0/"
       },
       {
-        "id": "E3335C94-DF85-471E-9EB9-497CAA18213A",
-        "label": "GitHub: ZSDynamics-V1",
-        "type": "repository:github",
+        "category": "repository",
+        "label": "Repo",
+        "type": "github",
         "url": "https://github.com/ZSturman/ZSDynamics-V1.0"
       },
       {
-        "id": "E1317073-EA05-4408-B7C7-FB967471485C",
-        "label": "ZSDynamics Collection",
-        "type": "local-link:zsdynamics",
-        "url": "zsdynamics"
+        "category": "folio",
+        "label": "Portfolio Collection",
+        "type": "local-link",
+        "url": "/projects/BB2F567C-B29C-4666-AABF-986E69AA9592"
       }
     ],
-    "reviewed": "2025-10-23T02:29:02Z",
-    "starred": false,
     "status": "archived",
     "story": "I went on indeed.com and looked for a job that I could see myself liking while also feeling satisfied with my pay. I found data scientist. Hoping to skip the formal education I started learned python. After I had somewhat of an idea of what I was doing I needed a way to advertise myself. I followed Corey Schafer’s Flask tutorials and tried to piece together my own version, learning about servers, Nginx, and deployment along the way. I didn’t know how complicated I was making things, but it taught me more than any tutorial could. When it finally worked, it felt less like finishing a project and more like understanding a language for the first time.",
-    "subStatus": "deprecated",
     "subtitle": "Built with Flask",
-    "summary": "The initial version used Flask and manual deployment with Nginx, teaching web app fundamentals. It was basic but personal, with custom SVGs and animations, resembling a complete first build. Inspired by Corey Schafer’s tutorials, it was a personal portfolio built from scratch with Flask.",
+    "summary": "The initial version used Flask and manual deployment with Nginx, teaching web app fundamentals. It was basic but personal, with custom SVGs and animations, resembling a complete first build. Inspired by Corey Schafer’s tutorials, it was a personal portfolio built from scratch with Flask. Deployed using Nginx and a self-hosted server, it taught full-stack fundamentals from setup to launch. Features custom SVG graphics, hover animations, and manually configured routing and deployment. A foundational project that taught core web architecture and deployment.",
     "tags": [
-      "Portfolio",
-      "Flask",
       "Python",
-      "Web Development"
+      "Portfolio",
+      "Flask"
     ],
-    "title": "ZSDynamics-V1.0",
-    "topics": [],
-    "updatedAt": "2025-10-23T02:29:02Z",
-    "visibility": "public"
+    "title": "ZSDynamics V1.0",
+    "name": "ZSDynamics V1.0",
+    "folderName": "zsdynamics_v10_B062E7E0-387F-4D08-B0B6-A75410AACCE1"
   },
   {
     "category": "Software",
-    "createdAt": "2022-11-21T00:26:14Z",
+    "createdAt": 785818175.59953,
     "description": "After spending time learning more about data science, I wanted the portfolio to do more than just display my work. I added a subscription feature that let visitors sign up and receive updates by email. I also integrated Dashly to bring in some data visualization and a bit of in-app analytics. It felt like a step forward—not just technically, but in how I thought about connecting with an audience.",
     "domain": "Technology",
-    "genres": [],
-    "id": "zsdynamics_v11",
+    "featured": false,
+    "id": "8D5D9392-990D-4431-82B5-5997F094FBA3",
+    "images": {
+      "thumbnail": "thumbnail.png"
+    },
+    "isPublic": true,
     "mediums": [
-      "Desktop"
+      "Web"
     ],
-    "requiresFollowUp": false,
+    "phase": "Outdated",
     "resources": [
       {
-        "id": "EA734311-1B3E-4120-991F-D34FDDF9BB39",
-        "label": "Version 1.1",
-        "type": "url:website",
+        "category": "url",
+        "label": "Flask Portfolio with Email Integration",
+        "type": "website",
         "url": "https://zsturman.github.io/ZSDynamics-V1.1/"
       },
       {
-        "id": "72B8C869-39AF-46A7-8048-5BDD411832CC",
-        "label": "GitHub: ZSDynamics-v1",
-        "type": "repository:github",
+        "category": "repository",
+        "label": "Repo",
+        "type": "github",
         "url": "https://github.com/ZSturman/ZSDynamics-v1.1"
       },
       {
-        "id": "E1115787-D70A-49D0-B6C6-CD8EEE75EC98",
-        "label": "ZSDynamics Collection",
-        "type": "local-link:zsdynamics",
-        "url": "zsdynamics"
+        "category": "folio",
+        "label": "Collection of all previous portfolio pages",
+        "type": "local-link",
+        "url": "/projects/BB2F567C-B29C-4666-AABF-986E69AA9592"
       }
     ],
-    "reviewed": "2025-10-23T02:27:09Z",
-    "starred": false,
     "status": "archived",
     "story": "After the first version went live, I wanted to make it more than a static showcase. I added ways for visitors to subscribe and receive updates, and I built simple tools for tracking engagement. I was thinking more like a developer by then—less about how the code looked and more about how people might use it. It was a small shift, but it made me realize that I enjoyed thinking about users and data together.",
-    "subStatus": "deprecated",
     "subtitle": "Built with Flask",
-    "summary": "Introduced subscription features and integrated Dashly analytics. Shifted focus from showcasing projects to engaging users and understanding data-driven design. Upgraded Flask portfolio to be interactive and communicative.",
+    "summary": "Introduced subscription features and integrated Dashly analytics. Shifted focus from showcasing projects to engaging users and understanding data-driven design. Upgraded Flask portfolio to be interactive and communicative. Added email subscription, automated updates, and Dashly for data analytics and user tracking. Python-based, this version emphasized user connection and data insights.",
     "tags": [
-      "Flask",
       "Python",
-      "Web Development",
       "Portfolio"
     ],
-    "title": "ZSDynamics-V1.1",
-    "topics": [],
-    "updatedAt": "2025-10-23T02:27:09Z",
-    "visibility": "public"
+    "title": "ZSDynamics V1.1",
+    "name": "ZSDynamics V1.1",
+    "folderName": "zsdynamics_v11_8D5D9392-990D-4431-82B5-5997F094FBA3"
   },
   {
     "category": "Software",
-    "createdAt": "2023-11-10T10:23:31Z",
+    "createdAt": 785818194.085708,
     "description": "During a year in Australia on a working holiday visa, I started paying closer attention to what skills employers were asking for. React came up almost everywhere. I didn’t want to abandon what I’d learned in Python, so I rebuilt the portfolio with a Python backend and a React frontend. It became a bridge between what I already knew and what I still needed to learn, and it gave me a clearer picture of how modern web stacks fit together.",
     "domain": "Technology",
-    "genres": [],
-    "id": "zsdynamics_v20",
+    "featured": false,
+    "id": "B998390B-405B-4D50-BA41-B9E4C5D124CC",
+    "images": {
+      "thumbnail": "thumbnail.png"
+    },
+    "isPublic": true,
     "mediums": [
-      "Desktop"
+      "Web"
     ],
-    "requiresFollowUp": true,
+    "phase": "Outdated",
     "resources": [
       {
-        "id": "9FCD8800-C0C3-404C-9490-22BE469E872E",
-        "label": "Version 2.0",
-        "type": "url:website",
+        "category": "url",
+        "label": "Python + React Hybrid Portfolio",
+        "type": "website",
         "url": "https://zsturman.github.io/ZSDynamics-V2.0/"
       },
       {
-        "id": "073288DF-165F-4BA5-8380-910C3420BCEF",
-        "label": "GitHub: ZSDynamics-V2",
-        "type": "repository:github",
+        "category": "repository",
+        "label": "Repo",
+        "type": "github",
         "url": "https://github.com/ZSturman/ZSDynamics-V2.0"
       },
       {
-        "id": "4F9293F2-9979-484F-880E-8B33BA23D755",
-        "label": "ZSDynamics Collection",
-        "type": "local-link:zsdynamics",
-        "url": "zsdynamics"
+        "category": "folio",
+        "label": "Collection of previous portfolios",
+        "type": "local-link",
+        "url": "/projects/BB2F567C-B29C-4666-AABF-986E69AA9592"
       }
     ],
-    "reviewed": "2025-10-23T02:23:46Z",
-    "starred": false,
     "status": "archived",
     "story": "While living in Australia, I started paying attention to what companies actually wanted in new hires. React kept appearing on job listings, so I decided to learn it by rebuilding my site. I didn’t drop Python; instead, I used it for the backend and let React handle the frontend. This version wasn’t just about learning a new framework—it was about learning how technologies talk to each other. It made the portfolio feel more modern, but also more grounded in how real-world applications are built.",
-    "subStatus": "deprecated",
     "subtitle": "Built with Python and React",
-    "summary": "Rebuilt with a Python backend and React frontend to meet modern tech demands while abroad. This version integrated prior Python experience with new frontend skills, emphasizing full-stack integration. Built during a working holiday in Australia, it modernized the stack while maintaining Python for server-side logic.",
+    "summary": "Rebuilt with a Python backend and React frontend to meet modern tech demands while abroad. This version integrated prior Python experience with new frontend skills, emphasizing full-stack integration. Built during a working holiday in Australia, it modernized the stack while maintaining Python for server-side logic. It showcases data projects, includes responsive layouts, and features a component-based front-end design.",
     "tags": [
-      "TypeScript",
-      "Portfolio",
       "Python",
-      "React",
-      "JavaScript"
+      "Portfolio",
+      "React"
     ],
-    "title": "ZSDynamics-V2.0",
-    "topics": [],
-    "updatedAt": "2025-10-23T02:23:46Z",
-    "visibility": "public"
+    "title": "ZSDynamics V2.0",
+    "name": "ZSDynamics V2.0",
+    "folderName": "zsdynamics_v20_B998390B-405B-4D50-BA41-B9E4C5D124CC"
   },
   {
-    "category": "Software",
-    "createdAt": "2023-11-21T00:41:06Z",
+    "createdAt": 785818214.456602,
     "description": "Once the basics were in place, I began to explore how to make the site more interactive. I added a theme selector that let users change the site’s colors and fonts in real time. It wasn’t great for SEO, but it was a good way to practice state management and user interface logic. This version felt like a sandbox for experimentation, a way to keep learning while trying out ideas that didn’t need to be perfect.",
-    "domain": "Technology",
-    "genres": [],
-    "id": "zsdynamics_v30",
-    "mediums": [
-      "Desktop"
-    ],
-    "requiresFollowUp": true,
+    "featured": false,
+    "id": "F9E04D0A-42AB-4091-8856-CC612DDBE276",
+    "images": {
+      "thumbnail": "thumbnail.png"
+    },
+    "isPublic": true,
     "resources": [
       {
-        "id": "A86E991A-F912-4676-9AFA-3515B83969F8",
-        "label": "Version 3.0",
-        "type": "url:website",
-        "url": "https://zsturman.github.io/ZSDynamics-V3.0/"
+        "category": "url",
+        "label": "Interactive Theme Portfolio",
+        "type": "website",
+        "url": "https://zsturman.github.io/ZSDynamics-V3.0/ "
       },
       {
-        "id": "DEBE5E65-8870-40AE-999E-3684C80B1820",
-        "label": "GitHub: ZSDynamics-V3",
-        "type": "repository:github",
+        "category": "repository",
+        "label": "Repo",
+        "type": "github",
         "url": "https://github.com/ZSturman/ZSDynamics-V3.0"
       },
       {
-        "id": "094E764B-BE36-402E-A784-720DA0819A81",
-        "label": "ZSDynamics Collection",
-        "type": "local-link:zsdynamics",
-        "url": "zsdynamics"
+        "category": "folio",
+        "label": "Collection of previous portfolios",
+        "type": "local-link",
+        "url": "/projects/BB2F567C-B29C-4666-AABF-986E69AA9592"
       }
     ],
-    "reviewed": "2025-10-23T02:16:22Z",
-    "starred": false,
-    "status": "archived",
     "story": "Once I felt more comfortable with React, I began exploring how design and interactivity could shape the experience. I added a feature that let users switch between different themes and fonts. It wasn’t practical in every sense, but it was interesting, and it made me curious about how design choices affect usability. That curiosity drove most of my learning at that stage.",
-    "subStatus": "deprecated",
     "subtitle": "Built with React",
-    "summary": "Added interactive elements like a theme selector to explore state management and UI logic. It served as a testing ground for experimentation and deepening frontend understanding. An experimental version explored front-end flexibility and user customization.",
-    "tags": [
-      "Portfolio",
-      "React",
-      "TypeScript",
-      "Web Development"
-    ],
-    "title": "ZSDynamics-V3.0",
-    "topics": [],
-    "updatedAt": "2025-10-23T02:16:22Z",
-    "visibility": "public"
+    "summary": "Added interactive elements like a theme selector to explore state management and UI logic. It served as a testing ground for experimentation and deepening frontend understanding. An experimental version explored front-end flexibility and user customization. It included dynamic theme and font selection, enabling users to personalize the interface. Focused on React state management, component communication, and styling logic. Served as a sandbox for improving front-end fluency.",
+    "title": "ZSDynamics V3.0",
+    "name": "ZSDynamics V3.0",
+    "domain": "Unknown Domain",
+    "folderName": "zsdynamics_v30_F9E04D0A-42AB-4091-8856-CC612DDBE276"
   },
   {
     "category": "Software",
-    "createdAt": "2024-10-20T23:42:56Z",
+    "createdAt": 663559327.836193,
     "description": "The most recent version focused on movement and refinement. I spent time experimenting with parallax effects and smoother animations, learning how small design decisions could change the way a page feels. I created an SVG character version of myself whose colors shifted with light and dark mode, which gave the site a more personal touch. By this point, the portfolio had become less about showing finished work and more about tracing how far I’d come in learning to build and design thoughtfully.",
     "domain": "Technology",
-    "genres": [],
-    "id": "zsdynamics_v40",
+    "featured": false,
+    "id": "55B14B05-726C-45BC-ACF6-7D21C943B78E",
+    "images": {
+      "thumbnail": "thumbnail copy.png"
+    },
+    "isPublic": true,
     "mediums": [
-      "Desktop"
+      "Web"
     ],
-    "requiresFollowUp": true,
+    "phase": "abandoned",
     "resources": [
       {
-        "id": "425B218B-D838-4745-B363-602FA695C25B",
-        "label": "Version 4.0",
-        "type": "url:website",
-        "url": "https://zsturman.github.io/ZSDynamics-V4.0/"
+        "category": "repository",
+        "label": "Repo",
+        "type": "github",
+        "url": "https://github.com/ZSturman/ZSDynamics-V4.0 "
       },
       {
-        "id": "405832B9-0EA9-4265-80BF-61527BED7932",
-        "label": "GitHub: ZSDynamics-V4",
-        "type": "repository:github",
-        "url": "https://github.com/ZSturman/ZSDynamics-V4.0"
+        "category": "url",
+        "label": "Animated portfolio with parallax and dynamic SVGs",
+        "type": "website",
+        "url": "https://zsturman.github.io/ZSDynamics-V4.0/ "
       },
       {
-        "id": "A1255086-291C-4EB6-B875-19BB8C919BE0",
+        "category": "folio",
         "label": "ZSDynamics Collection",
-        "type": "local-link:zsdynamics",
-        "url": "zsdynamics"
+        "type": "local-link",
+        "url": "/projects/BB2F567C-B29C-4666-AABF-986E69AA9592"
       }
     ],
-    "reviewed": "2025-10-23T02:19:59Z",
-    "starred": false,
     "status": "archived",
     "story": "For the latest version, I focused on detail. I added parallax effects, smoother animations, and an SVG self-portrait that adapted to light and dark mode. It was a chance to connect everything I’d learned—Python, React, animation, and design—into one project that felt cohesive. Each version of this portfolio marks a stage in my learning, not just in coding, but in understanding how to build something that grows with me.",
-    "subStatus": "deprecated",
     "subtitle": "Built with React",
-    "summary": "Focused on refined motion, polish, parallax effects, smoother animations, and an adaptive SVG avatar. It unified previous learning into a cohesive, expressive, and technically mature portfolio. The latest iteration emphasizes design and motion, introducing smooth parallax scrolling, layered animation effects, and a self-designed SVG character whose colors shift with light and dark mode.",
+    "summary": "Focused on refined motion, polish, parallax effects, smoother animations, and an adaptive SVG avatar. It unified previous learning into a cohesive, expressive, and technically mature portfolio. The latest iteration emphasizes design and motion, introducing smooth parallax scrolling, layered animation effects, and a self-designed SVG character whose colors shift with light and dark mode. Built to merge aesthetic polish with technical depth, reflecting growth across development and design disciplines.",
+    "tags": [
+      "Next.js",
+      "Portfolio",
+      "React"
+    ],
+    "title": "ZSDynamics v4.0",
+    "name": "ZSDynamics v4.0",
+    "folderName": "zsdynamics_v40_55B14B05-726C-45BC-ACF6-7D21C943B78E"
+  },
+  {
+    "category": "Software",
+    "collection": {
+      "Versions": {
+        "images": {},
+        "items": [
+          {
+            "id": "88EF03D6-E7E5-4A22-972E-BFC26D5142C0",
+            "label": "Version 4",
+            "order": 0,
+            "resource": {
+              "category": "app",
+              "label": "Version 4",
+              "type": "googlePlay",
+              "url": "https://zsturman.github.io/ZSDynamics-V4.0/ "
+            },
+            "summary": "The latest iteration emphasizing design and motion. Introduced smooth parallax scrolling, layered animation effects, and a self-designed SVG character whose colors shift dynamically with light and dark mode. Built to merge aesthetic polish with technical depth, reflecting growth across development and design disciplines.",
+            "thumbnail": "thumbnail.png",
+            "type": "local-link",
+            "url": "/projects/55B14B05-726C-45BC-ACF6-7D21C943B78E"
+          },
+          {
+            "id": "C1FC5A45-FD8E-4DC9-BCDF-70D875E81551",
+            "label": "Version 3",
+            "order": 1,
+            "resource": {
+              "category": "url",
+              "label": "Version 3.0",
+              "type": "website",
+              "url": "https://zsturman.github.io/ZSDynamics-V4.0/ "
+            },
+            "summary": "An experimental version exploring front-end flexibility and user customization. Added functionality for dynamic theme and font selection, enabling users to personalize the interface. Focused on React state management, component communication, and styling logic. Served as a sandbox for improving front-end fluency.",
+            "thumbnail": "thumbnail.png",
+            "type": "local-link",
+            "url": "/projects/F9E04D0A-42AB-4091-8856-CC612DDBE276"
+          }
+        ]
+      }
+    },
+    "createdAt": 785734268.088934,
+    "description": "Across these versions, the portfolio moves from early experiments with web servers and deployment to a more deliberate exploration of interaction and user experience. What began as a way to learn the basics of web development gradually became a study in how software grows through iteration. Each update introduced something new—whether a backend feature, a visualization tool, or an experiment with motion and layout—and together they form a record of learning that values progress over perfection. The result is less a single polished site and more a map of how understanding takes shape through making, breaking, and rebuilding.",
+    "domain": "Technology",
+    "featured": true,
+    "id": "BB2F567C-B29C-4666-AABF-986E69AA9592",
+    "images": {
+      "thumbnail": "thumbnail.png"
+    },
+    "isPublic": true,
+    "mediums": [
+      "Web"
+    ],
+    "resources": [
+      {
+        "category": "folio",
+        "label": "Version 4",
+        "type": "local-link",
+        "url": "/projects/55B14B05-726C-45BC-ACF6-7D21C943B78E"
+      },
+      {
+        "category": "folio",
+        "label": "Version 3",
+        "type": "local-link",
+        "url": "/projects/F9E04D0A-42AB-4091-8856-CC612DDBE276"
+      },
+      {
+        "category": "folio",
+        "label": "Version 2",
+        "type": "local-link",
+        "url": "/projects/B998390B-405B-4D50-BA41-B9E4C5D124CC"
+      },
+      {
+        "category": "folio",
+        "label": "Version 1.1",
+        "type": "local-link",
+        "url": "/projects/8D5D9392-990D-4431-82B5-5997F094FBA3"
+      },
+      {
+        "category": "folio",
+        "label": "Version 1.0",
+        "type": "local-link",
+        "url": "/projects/B062E7E0-387F-4D08-B0B6-A75410AACCE1"
+      }
+    ],
+    "status": "inProgress",
+    "story": "When I first started learning Python, I wanted a way to show what I could do, even if it wasn’t much. Building the portfolio gave me that space. The early versions were slow and uncertain, full of mistakes that later became lessons. Over time, each new version taught me something different—not just about frameworks or syntax, but about patience, problem-solving, and how design decisions can change the way a project feels to use. By the time I reached the latest version, the portfolio had become less about proving skill and more about documenting growth. It’s a record of learning in motion, shaped by curiosity and the steady work of figuring things out, one version at a time.",
+    "subtitle": "A collection of my previous portfolio pages",
+    "summary": "This collection showcases versions of my personal portfolio. Each version documents how my design, presentation style, skill and career path have evolved over time.",
     "tags": [
       "Portfolio",
-      "Web Development",
-      "React",
-      "TypeScript"
+      "Flask",
+      "Next.js",
+      "Python",
+      "React"
     ],
-    "title": "ZSDynamics-V4.0",
-    "topics": [],
-    "updatedAt": "2025-10-23T02:19:59Z",
-    "visibility": "public"
+    "title": "ZSDynamics Collection",
+    "updatedAt": 785853703.854182,
+    "name": "ZSDynamics Collection",
+    "folderName": "zsdynamics_collection_BB2F567C-B29C-4666-AABF-986E69AA9592"
   }
 ]

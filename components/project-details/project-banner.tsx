@@ -1,50 +1,9 @@
 import { Project } from "@/types";
 import Image from "next/image";
 import React from "react";
-
-// const ProjectBanner = ({ project }: { project: Project }) => {
-//   const srcBanner =
-//     project.images &&
-//     typeof project.images.banner === "string" &&
-//     project.images.banner
-//       ? `/projects/${project.id}/${project.images.banner}`
-//       : null;
-
-//   if (!srcBanner) return null;
-//   return (
-//     <div className="relative w-full aspect-[4/1] h-50 overflow-hidden bg-muted">
-//       {/* Blurred background layer */}
-//       <div className="absolute inset-0">
-//         <Image
-//           src={srcBanner || "/placeholder.svg"}
-//           alt=""
-//           fill
-//           className="object-cover blur-2xl scale-110 opacity-60"
-//           priority
-//         />
-//       </div>
-//       {/* Centered actual image */}
-//       <div className="absolute inset-0 flex items-center justify-center p-4">
-//         <div className="relative w-full h-full">
-//           <Image
-//             src={srcBanner || "/placeholder.svg"}
-//             alt={`${project.title} banner`}
-//             fill
-//             className="object-contain"
-//             priority
-//           />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProjectBanner;
-
-
+import { formatTextWithNewlines } from "@/lib/utils";
 
 import { Badge } from "@/components/ui/badge"
-import { Star } from "lucide-react"
 
 interface ProjectHeaderProps {
   project: Project
@@ -52,10 +11,26 @@ interface ProjectHeaderProps {
 
 export function ProjectHeader({ project }: ProjectHeaderProps) {
 
-      const srcBanner = project.images &&
+  const folderName = project.folderName || project.id;
+  
+  // Helper to get optimized image path
+  const getOptimizedPath = (imagePath: string | undefined): string | null => {
+    if (!imagePath) return null;
+    
+    // If already optimized, use as-is
+    if (imagePath.includes('-optimized') || imagePath.includes('-thumb')) {
+      return `/projects/${folderName}/${imagePath}`;
+    }
+    
+    // Convert to optimized version
+    const withoutExt = imagePath.replace(/\.[^.]+$/, '');
+    return `/projects/${folderName}/${withoutExt}-optimized.webp`;
+  };
+  
+  const srcBanner = project.images &&
     typeof project.images.banner === "string" &&
     project.images.banner
-      ? `/projects/${project.id}/${project.images.banner}`
+      ? getOptimizedPath(project.images.banner)
       : null;
   return (
     <header className="space-y-6 border-b border-border pb-8">
@@ -83,7 +58,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
         </div>
       </div>
 
-      <p className="text-pretty text-xl leading-relaxed text-foreground">{project.summary}</p>
+      <p className="text-pretty text-xl leading-relaxed text-foreground whitespace-pre-wrap">{formatTextWithNewlines(project.summary)}</p>
 
       {(project.category || project.domain || project.genres?.length || project.mediums?.length) && (
         <div className="flex flex-wrap gap-2">

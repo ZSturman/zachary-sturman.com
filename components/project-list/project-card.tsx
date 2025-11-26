@@ -5,10 +5,10 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
-import Image from "next/image";
+import { MediaDisplay } from "@/components/ui/media-display";
 import { Project } from "@/types";
 import { STATUS_COLOR } from "@/lib/resource-map";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getOptimizedMediaPath, formatTextWithNewlines } from "@/lib/utils";
 import ProjectMediums from "../project-details/project-mediums";
 import PrimaryActionButton from "./primary-action-button";
 
@@ -24,12 +24,11 @@ export function ProjectCard({
   compact = false,
 }: ProjectCardProps) {
 
-  const thumb =
-    project.images &&
-    typeof project.images.thumbnail === "string" &&
-    project.images.thumbnail
-      ? `/projects/${project.id}/${project.images.thumbnail}`
-      : "/placeholder.svg";
+  const folderName = project.folderName || project.id;
+  const folderPath = `/projects/${folderName}`;
+  
+  const thumb = getOptimizedMediaPath(project.images?.thumbnail, folderPath);
+  const thumbnailSettings = project.imageSettings?.thumbnail;
 
   // no-op: using ResourceButton for external resources and router push for details
 
@@ -42,25 +41,29 @@ export function ProjectCard({
         {compact ? (
           <div className="relative overflow-hidden rounded-t-lg">
             <div className="relative aspect-square">
-              <Image
+              <MediaDisplay
                 src={thumb}
                 alt={`${project.title} thumbnail`}
                 fill
                 className="object-cover"
+                loop={thumbnailSettings?.loop ?? true}
+                autoPlay={thumbnailSettings?.autoPlay ?? true}
               />
             </div>
           </div>
         ) : (
           <div className="relative overflow-hidden rounded-t-lg">
             {/* Main poster: fixed aspect so it never crops */}
-            <div className={`relative w-full `}>
-              <Image
+            <div className="relative w-full aspect-video">
+              <MediaDisplay
                 src={thumb}
                 alt={`${project.title} poster`}
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 800px, 100vw"
                 priority={false}
+                loop={thumbnailSettings?.loop ?? true}
+                autoPlay={thumbnailSettings?.autoPlay ?? true}
               />
 
               <div className="absolute top-3 left-3">
@@ -129,17 +132,7 @@ export function ProjectCard({
               </div>
             </div>
 
-          {Array.isArray(project.resources) && project.resources.length > 4 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2 text-xs ml-auto"
-              onClick={onClick}
-            >
-              <Eye className="h-3 w-3" />
-              View More
-            </Button>
-          )}
+
 
           <div className="absolute bottom-3 right-3 text-sm text-muted-foreground ">
             <div>Last Updated: {formatDate(project.updatedAt)}</div>
