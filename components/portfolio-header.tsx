@@ -1,11 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState, useRef } from "react";
-import { Button } from "./ui/button";
-import { ChevronDown, X } from "lucide-react";
 import SocialLinks from "./social-links";
-import PersonalTabs from "./personal-tabs";
+// import PersonalTabs from "./personal-tabs";
 
 const ThemeToggle = dynamic(() =>
   import("@/components/global-ui/theme-toggle").then((m) => m.ThemeToggle)

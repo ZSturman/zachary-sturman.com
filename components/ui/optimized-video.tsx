@@ -1,5 +1,6 @@
 "use client";
 
+import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 
 interface OptimizedVideoProps {
@@ -78,7 +79,7 @@ export function OptimizedVideo({
     >
       {/* Blur placeholder */}
       {placeholder && !isLoaded && (
-        <img
+        <Image
           src={placeholder}
           alt=""
           className="absolute inset-0 w-full h-full object-cover blur-lg scale-110"
@@ -87,7 +88,7 @@ export function OptimizedVideo({
 
       {/* Poster image (shown before video loads) */}
       {poster && !isLoaded && !placeholder && (
-        <img
+        <Image
           src={poster}
           alt=""
           className="absolute inset-0 w-full h-full object-cover"

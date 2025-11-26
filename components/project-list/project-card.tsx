@@ -3,14 +3,12 @@
 import type React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
 import { MediaDisplay } from "@/components/ui/media-display";
 import { Project } from "@/types";
 import { STATUS_COLOR } from "@/lib/resource-map";
-import { formatDate, getOptimizedMediaPath, formatTextWithNewlines } from "@/lib/utils";
 import ProjectMediums from "../project-details/project-mediums";
 import PrimaryActionButton from "./primary-action-button";
+import { formatDate, getOptimizedMediaPath } from "@/lib/utils";
 
 interface ProjectCardProps {
   project: Project;

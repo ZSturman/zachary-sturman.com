@@ -1,8 +1,59 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import React from "react"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
+}
+
+/**
+ * Check if a file path is a video file based on its extension
+ */
+export function isVideoFile(path?: string | null): boolean {
+  if (!path) return false
+  const ext = path.split(".").pop()?.toLowerCase() ?? ""
+  return ["mov", "mp4", "webm", "mkv", "avi", "flv", "ogv", "wmv", "mpg", "mpeg"].includes(ext)
+}
+
+/**
+ * Check if a file path is an image file (including GIF) based on its extension
+ */
+export function isImageFile(path?: string | null): boolean {
+  if (!path) return false
+  const ext = path.split(".").pop()?.toLowerCase() ?? ""
+  return ["png", "jpg", "jpeg", "svg", "gif", "webp", "bmp", "tiff", "heic", "avif"].includes(ext)
+}
+
+/**
+ * Get the optimized media path for a given filename
+ * Handles both images and videos, converting to optimized versions
+ * @param filename - The original filename (e.g., "thumbnail.png", "video.mp4")
+ * @param folderPath - The folder path (e.g., "/projects/my-project")
+ * @returns The path to the optimized version
+ */
+export function getOptimizedMediaPath(filename: string | undefined, folderPath: string): string {
+  if (!filename) return "/placeholder.svg"
+  
+  // If it's an external URL, return as-is
+  if (filename.startsWith("http://") || filename.startsWith("https://")) {
+    return filename
+  }
+  
+  const stem = filename.substring(0, filename.lastIndexOf('.')) || filename
+  
+  // Check if it's a video
+  if (isVideoFile(filename)) {
+    // Videos get optimized to .mp4
+    return `${folderPath}/${stem}-optimized.mp4`
+  }
+  
+  // Images (including GIFs) get optimized to .webp
+  if (isImageFile(filename)) {
+    return `${folderPath}/${stem}-optimized.webp`
+  }
+  
+  // For other files, return as-is
+  return `${folderPath}/${filename}`
 }
 
 export function getCategory(type?: string, path?: string) {
@@ -117,4 +168,30 @@ export const formatDate = (
 
   // Intl options (or default)
   return date.toLocaleDateString("en-US", (formatter as Intl.DateTimeFormatOptions) ?? { year: "numeric", month: "long", day: "numeric" })
+}
+
+/**
+ * Format text to preserve newlines by converting `\n` to React nodes with `<br/>` elements.
+ * Returns `null` for empty input, otherwise an array of React nodes.
+ */
+// (single implementation of formatTextWithNewlines is present above)
+
+/**
+ * Format text to preserve newlines by converting `\n` to React nodes with `<br/>` elements.
+ * Returns `null` for empty input, otherwise an array of React nodes.
+ */
+export function formatTextWithNewlines(text?: string): React.ReactNode {
+  if (!text) return null
+
+  const lines = text.split("\n")
+  const nodes: React.ReactNode[] = []
+
+  lines.forEach((line, i) => {
+    nodes.push(line)
+    if (i < lines.length - 1) {
+      nodes.push(React.createElement("br", { key: `br-${i}` }))
+    }
+  })
+
+  return nodes
 }
