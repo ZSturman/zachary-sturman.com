@@ -32,7 +32,7 @@ export function ProjectCard({
 
   return (
     <Card
-      className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.01] bg-card border-border"
+      className="group cursor-pointer transition-all duration-200 hover:shadow-lg md:hover:scale-[1.01] bg-card border-border max-w-full overflow-hidden"
       onClick={onClick}
     >
       <CardHeader className="p-0">
@@ -64,27 +64,27 @@ export function ProjectCard({
                 autoPlay={thumbnailSettings?.autoPlay ?? true}
               />
 
-              <div className="absolute top-3 left-3">
+              <div className="absolute top-2 md:top-3 left-2 md:left-3">
                 <Badge
                   variant="secondary"
                   className={`${
                     STATUS_COLOR[project.status as keyof typeof STATUS_COLOR]
-                  } font-medium`}
+                  } font-medium text-xs md:text-sm`}
                 >
                   {(project.status || "").charAt(0).toUpperCase() +
                     (project.status || "").slice(1)}
                 </Badge>
               </div>
 
-              <div className="absolute top-3 right-3">
-                <div className="flex items-center gap-2">
+              <div className="absolute top-2 md:top-3 right-2 md:right-3">
+                <div className="flex items-center gap-1 md:gap-2">
                   <ProjectMediums project={project} />
 
                   {/* Starred badge */}
                   {Boolean(
                     (project as unknown as { starred?: boolean }).starred
                   ) && (
-                    <div className="ml-1 rounded-full bg-yellow-300 text-yellow-900 text-xs px-2 py-0.5 font-semibold">
+                    <div className="ml-0.5 md:ml-1 rounded-full bg-yellow-300 text-yellow-900 text-xs px-1.5 md:px-2 py-0.5 font-semibold">
                       ★
                     </div>
                   )}
@@ -97,44 +97,42 @@ export function ProjectCard({
         )}
       </CardHeader>
 
-      <CardContent className="p-4 space-y-3 relative pb-10">
-        <div className="space-y-2">
-          <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-card-foreground leading-tight group-hover:text-primary transition-colors">
+      <CardContent className="p-3 md:p-4 space-y-2 md:space-y-3 relative pb-16 md:pb-10 max-w-full">
+        <div className="space-y-1.5 md:space-y-2 max-w-full">
+          <div className="flex items-start justify-between gap-2 max-w-full">
+            <h3 className="font-semibold text-sm md:text-base text-card-foreground leading-tight group-hover:text-primary transition-colors line-clamp-2 break-words max-w-full">
               {project.title}
             </h3>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+          <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-2 break-words max-w-full">
             {project.summary}
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-1 max-w-full">
           {project.tags?.slice(0, 3).map((tag) => (
-            <Badge key={tag} variant="outline" className="text-xs">
+            <Badge key={tag} variant="outline" className="text-[10px] md:text-xs truncate max-w-full">
               {tag}
             </Badge>
           ))}
           {project.tags && project.tags.length > 3 && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-[10px] md:text-xs">
               +{project.tags.length - 3}
             </Badge>
           )}
         </div>
 
-        <div className="flex items-center gap-2 pt-2">
-            {/* Single primary action: either the primary resource or a Details button */}
+        <div className="flex items-center gap-2 pt-2 max-w-full">
+            {/* Single primary action: visible on mobile, hover on desktop */}
             <div className="ml-auto">
-              <div className="opacity-0 group-hover:opacity-100 scale-y-0 group-hover:scale-y-100 transition-transform">
+              <div className="opacity-100 md:opacity-0 md:group-hover:opacity-100 scale-y-100 md:scale-y-0 md:group-hover:scale-y-100 transition-transform">
                 <PrimaryActionButton project={project} resource={Array.isArray(project.resources) && project.resources.length > 0 ? project.resources[0] : undefined} />
               </div>
             </div>
+        </div>
 
-
-
-          <div className="absolute bottom-3 right-3 text-sm text-muted-foreground ">
-            <div>Last Updated: {formatDate(project.updatedAt)}</div>
-          </div>
+        <div className="absolute bottom-2 md:bottom-3 left-3 right-3 text-[10px] md:text-xs text-muted-foreground flex justify-between items-center gap-2 max-w-full">
+          <span className="truncate">Updated: {formatDate(project.updatedAt)}</span>
         </div>
       </CardContent>
     </Card>

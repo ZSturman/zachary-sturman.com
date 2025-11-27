@@ -18,19 +18,19 @@ export default function ResourceButton({
   return (
     <Button
       variant="outline"
-      className="justify-start gap-3 h-auto p-2 px-4 bg-transparent w-auto max-w-64 hover:cursor-pointer"
+      className="justify-start gap-2 md:gap-3 h-auto p-2 md:px-4 px-3 bg-transparent w-auto max-w-64 hover:cursor-pointer min-h-[44px]"
       onClick={(e) => handleLinkClick(e, resource.url)}
     >
       <Image
         className="dark:invert shrink-0"
         src={icon}
         alt={resource.type}
-        width={20}
-        height={20}
+        width={16}
+        height={16}
       />
       <div className="text-left truncate">
-        <div className="font-medium truncate">{resource.label}</div>
-        <div className="text-xs text-muted-foreground break-all truncate">{resource.url}</div>
+        <div className="font-medium truncate text-xs md:text-sm">{resource.label}</div>
+        <div className="text-[10px] md:text-xs text-muted-foreground break-all truncate">{resource.url}</div>
       </div>
     </Button>
   );

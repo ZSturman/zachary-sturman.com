@@ -24,7 +24,7 @@ export default function PrimaryActionButton({
   return (
     <Button
       variant="outline"
-      className={className || "justify-start gap-3 h-auto p-2 px-4 bg-transparent w-auto max-w-64 hover:cursor-pointer"}
+      className={className || "justify-start gap-2 md:gap-3 h-auto p-2 md:px-4 px-3 bg-transparent w-auto max-w-64 hover:cursor-pointer min-h-[44px]"}
       onClick={(e) => {
         e.stopPropagation();
         router.push(`/projects/${project.id}`);
@@ -34,12 +34,12 @@ export default function PrimaryActionButton({
         className="dark:invert shrink-0"
         src="/icons/file.svg"
         alt="Details"
-        width={20}
-        height={20}
+        width={16}
+        height={16}
       />
       <div className="text-left truncate">
-        <div className="font-medium truncate">More Details</div>
-        <div className="text-xs text-muted-foreground break-all truncate">{`/projects/${project.id}`}</div>
+        <div className="font-medium truncate text-xs md:text-sm">More Details</div>
+        <div className="text-[10px] md:text-xs text-muted-foreground break-all truncate">{`/projects/${project.id}`}</div>
       </div>
     </Button>
   );

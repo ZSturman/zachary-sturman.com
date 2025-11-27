@@ -46,9 +46,9 @@ function PortfolioContent() {
 
   return (
     <>
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-3 md:px-4 py-6 md:py-8 max-w-7xl overflow-x-hidden">
         <PortfolioHeader />
-        {loading ? <p className="text-muted-foreground">Loading projects…</p> : <PortfolioClient projects={projects} />}
+        {loading ? <p className="text-muted-foreground text-sm md:text-base">Loading projects…</p> : <PortfolioClient projects={projects} />}
       </div>
       {!loading && <ProjectModal project={modalProject} isOpen={!!projectId && !!modalProject} onClose={handleCloseModal} />}
     </>
@@ -57,11 +57,11 @@ function PortfolioContent() {
 
 export default function PortfolioPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Suspense fallback={
-        <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="container mx-auto px-3 md:px-4 py-6 md:py-8 max-w-7xl overflow-x-hidden">
           <PortfolioHeader />
-          <p className="text-muted-foreground">Loading…</p>
+          <p className="text-muted-foreground text-sm md:text-base">Loading…</p>
         </div>
       }>
         <PortfolioContent />

@@ -278,25 +278,25 @@ export function ProjectFilters({
   return (
     <div className="space-y-4 mb-2">
       {/* Top bar - always visible */}
-      <div className="flex items-center justify-between gap-4 flex-wrap ">
+      <div className="flex items-center justify-between gap-2 md:gap-4 flex-wrap max-w-full">
 
 
       
-        <div className="flex items-center gap-3 ">
-          <Button variant="outline" size="sm" onClick={() => setIsExpanded(!isExpanded)} className="gap-2">
-            <SlidersHorizontal className="h-4 w-4" />
+        <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+          <Button variant="outline" size="sm" onClick={() => setIsExpanded(!isExpanded)} className="gap-1 md:gap-2 text-xs md:text-sm min-h-[44px]">
+            <SlidersHorizontal className="h-3 w-3 md:h-4 md:w-4" />
             Filters
             {activeFilterCount > 0 && (
-              <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5">
+              <Badge variant="secondary" className="ml-0.5 md:ml-1 h-4 md:h-5 min-w-4 md:min-w-5 px-1 md:px-1.5 text-[10px] md:text-xs">
                 {activeFilterCount}
               </Badge>
             )}
-            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            {isExpanded ? <ChevronUp className="h-3 w-3 md:h-4 md:w-4" /> : <ChevronDown className="h-3 w-3 md:h-4 md:w-4" />}
           </Button>
 
-          <div className="text-sm text-muted-foreground">
-            Showing <span className="font-medium text-foreground">{filteredProjects}</span> of{" "}
-            <span className="font-medium text-foreground">{totalProjects}</span> projects
+          <div className="text-xs md:text-sm text-muted-foreground">
+            <span className="hidden md:inline">Showing </span><span className="font-medium text-foreground">{filteredProjects}</span> of{" "}
+            <span className="font-medium text-foreground">{totalProjects}</span>
           </div>
         </div>
 
@@ -305,14 +305,14 @@ export function ProjectFilters({
           Showing {typeof visibleCount === "number" ? visibleCount : filteredProjects} of {typeof totalCount === "number" ? totalCount : totalProjects}
         </div> */}
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
             {/* View mode toggle */}
           <div className="flex items-center border rounded-md">
             <Button
               variant={viewMode === "grid" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => onViewModeChange?.("grid")}
-              className="rounded-r-none"
+              className="rounded-r-none min-h-[44px] min-w-[44px] px-2 md:px-3"
             >
               <Grid3X3 className="h-4 w-4" />
             </Button>
@@ -320,7 +320,7 @@ export function ProjectFilters({
               variant={viewMode === "list" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => onViewModeChange?.("list")}
-              className="rounded-l-none"
+              className="rounded-l-none min-h-[44px] min-w-[44px] px-2 md:px-3"
             >
               <List className="h-4 w-4" />
             </Button>
@@ -330,9 +330,9 @@ export function ProjectFilters({
 
       {/* Expandable filter section */}
       {isExpanded && (
-        <div className="border rounded-lg p-4 space-y-4 bg-card">
+        <div className="border rounded-lg p-3 md:p-4 space-y-3 md:space-y-4 bg-card max-w-full overflow-x-hidden">
           {/* Search bar with scope selector */}
-          <div className="flex gap-2">
+          <div className="flex flex-col md:flex-row gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
