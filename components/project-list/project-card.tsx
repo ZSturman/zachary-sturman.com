@@ -19,7 +19,6 @@ interface ProjectCardProps {
 export function ProjectCard({
   project,
   onClick,
-  compact = false,
 }: ProjectCardProps) {
 
   const folderName = project.folderName || project.id;
@@ -28,111 +27,103 @@ export function ProjectCard({
   const thumb = getOptimizedMediaPath(project.images?.thumbnail, folderPath);
   const thumbnailSettings = project.imageSettings?.thumbnail;
 
-  // no-op: using ResourceButton for external resources and router push for details
+  // Get status value and check if it should be displayed
+  const statusValue = project.status || "";
+  const showStatusBadge = statusValue && statusValue.trim() !== "";
 
   return (
     <Card
-      className="group cursor-pointer transition-all duration-200 hover:shadow-lg md:hover:scale-[1.01] bg-card border-border max-w-full overflow-hidden"
+      className="group cursor-pointer transition-all duration-200 hover:shadow-lg md:hover:scale-[1.01] bg-card border-border max-w-full overflow-hidden flex flex-col h-full p-0"
       onClick={onClick}
     >
-      <CardHeader className="p-0">
-        {compact ? (
-          <div className="relative overflow-hidden rounded-t-lg">
-            <div className="relative aspect-square">
-              <MediaDisplay
-                src={thumb}
-                alt={`${project.title} thumbnail`}
-                fill
-                className="object-cover"
-                loop={thumbnailSettings?.loop ?? true}
-                autoPlay={thumbnailSettings?.autoPlay ?? true}
-              />
-            </div>
-          </div>
-        ) : (
-          <div className="relative overflow-hidden rounded-t-lg">
-            {/* Main poster: fixed aspect so it never crops */}
-            <div className="relative w-full aspect-video">
-              <MediaDisplay
-                src={thumb}
-                alt={`${project.title} poster`}
-                fill
-                className="object-cover"
-                sizes="(min-width: 768px) 800px, 100vw"
-                priority={false}
-                loop={thumbnailSettings?.loop ?? true}
-                autoPlay={thumbnailSettings?.autoPlay ?? true}
-              />
+      {/* Label at top - above thumbnail (matching Collection Item style) */}
+      <div className="p-2 md:p-3 pb-1 md:pb-2  bg-muted/30">
+        <h3 className="font-semibold text-xs md:text-sm text-card-foreground leading-tight group-hover:text-primary transition-colors line-clamp-1 break-words">
+          {project.title}
+        </h3>
+      </div>
 
-              <div className="absolute top-2 md:top-3 left-2 md:left-3">
+      <CardHeader className="p-0">
+        {/* Thumbnail with aspect-video to match Collection Items */}
+        <div className="relative overflow-hidden">
+          <div className="relative w-full aspect-video ">
+            <MediaDisplay
+              src={thumb}
+              alt={`${project.title} thumbnail`}
+              fill
+              className="object-cover"
+              sizes="(min-width: 768px) 400px, 100vw"
+              priority={false}
+              loop={thumbnailSettings?.loop ?? true}
+              autoPlay={thumbnailSettings?.autoPlay ?? true}
+            />
+
+            {showStatusBadge && (
+              <div className="absolute top-1.5 md:top-2 left-1.5 md:left-2">
                 <Badge
                   variant="secondary"
                   className={`${
                     STATUS_COLOR[project.status as keyof typeof STATUS_COLOR]
-                  } font-medium text-xs md:text-sm`}
+                  } font-medium text-[10px] md:text-xs py-0 px-1.5 md:px-2`}
                 >
                   {(project.status || "").charAt(0).toUpperCase() +
                     (project.status || "").slice(1)}
                 </Badge>
               </div>
+            )}
 
-              <div className="absolute top-2 md:top-3 right-2 md:right-3">
-                <div className="flex items-center gap-1 md:gap-2">
-                  <ProjectMediums project={project} />
+            <div className="absolute top-1.5 md:top-2 right-1.5 md:right-2">
+              <div className="flex items-center gap-0.5 md:gap-1">
+                <ProjectMediums project={project} />
 
-                  {/* Starred badge */}
-                  {Boolean(
-                    (project as unknown as { starred?: boolean }).starred
-                  ) && (
-                    <div className="ml-0.5 md:ml-1 rounded-full bg-yellow-300 text-yellow-900 text-xs px-1.5 md:px-2 py-0.5 font-semibold">
-                      ★
-                    </div>
-                  )}
-                </div>
+                {/* Starred badge */}
+                {Boolean(
+                  (project as unknown as { featured?: boolean }).featured
+                ) && (
+                  <div className="ml-0.5 rounded-full bg-yellow-300 text-yellow-900 text-[10px] md:text-xs px-1 md:px-1.5 py-0 font-semibold">
+                    ★
+                  </div>
+                )}
               </div>
-
-              <div className="pointer-events-none absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-background/80 to-transparent" />
             </div>
           </div>
-        )}
+        </div>
       </CardHeader>
 
-      <CardContent className="p-3 md:p-4 space-y-2 md:space-y-3 relative pb-16 md:pb-10 max-w-full">
-        <div className="space-y-1.5 md:space-y-2 max-w-full">
-          <div className="flex items-start justify-between gap-2 max-w-full">
-            <h3 className="font-semibold text-sm md:text-base text-card-foreground leading-tight group-hover:text-primary transition-colors line-clamp-2 break-words max-w-full">
-              {project.title}
-            </h3>
-          </div>
-          <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-2 break-words max-w-full">
-            {project.summary}
-          </p>
-        </div>
+      <CardContent className="p-2 md:p-3 space-y-1.5 md:space-y-2 flex-1 flex flex-col max-w-full">
+        {/* Summary */}
+        <p className="text-[10px] md:text-xs text-muted-foreground leading-relaxed line-clamp-2 break-words flex-1">
+          {project.summary}
+        </p>
 
-        <div className="flex flex-wrap gap-1 max-w-full">
+        {/* Tags */}
+        <div className="flex flex-wrap gap-0.5 md:gap-1">
           {project.tags?.slice(0, 3).map((tag) => (
-            <Badge key={tag} variant="outline" className="text-[10px] md:text-xs truncate max-w-full">
+            <Badge key={tag} variant="outline" className="text-[8px] md:text-[10px] py-0 px-1 md:px-1.5 truncate max-w-full">
               {tag}
             </Badge>
           ))}
           {project.tags && project.tags.length > 3 && (
-            <Badge variant="outline" className="text-[10px] md:text-xs">
+            <Badge variant="outline" className="text-[8px] md:text-[10px] py-0 px-1 md:px-1.5">
               +{project.tags.length - 3}
             </Badge>
           )}
         </div>
 
-        <div className="flex items-center gap-2 pt-2 max-w-full">
-            {/* Single primary action: visible on mobile, hover on desktop */}
-            <div className="ml-auto">
-              <div className="opacity-100 md:opacity-0 md:group-hover:opacity-100 scale-y-100 md:scale-y-0 md:group-hover:scale-y-100 transition-transform">
-                <PrimaryActionButton project={project} resource={Array.isArray(project.resources) && project.resources.length > 0 ? project.resources[0] : undefined} />
-              </div>
-            </div>
-        </div>
-
-        <div className="absolute bottom-2 md:bottom-3 left-3 right-3 text-[10px] md:text-xs text-muted-foreground flex justify-between items-center gap-2 max-w-full">
-          <span className="truncate">Updated: {formatDate(project.updatedAt)}</span>
+        {/* Footer with date and action */}
+        <div className="flex items-center justify-between gap-1 pt-1">
+          <span className="text-[9px] md:text-[10px] text-muted-foreground truncate">
+            {formatDate(project.updatedAt)}
+          </span>
+          
+          
+          
+            <PrimaryActionButton 
+              project={project} 
+              resource={Array.isArray(project.resources) && project.resources.length > 0 ? project.resources[0] : undefined} 
+              className="md:h-7 pl-1.5 pr-3 md:px-2 text-[9px] md:text-xs gap-1 max-w-[70%] "
+            />
+          
         </div>
       </CardContent>
     </Card>

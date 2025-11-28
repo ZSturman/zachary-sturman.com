@@ -8,6 +8,7 @@ import { formatTextWithNewlines } from "@/lib/utils"
 
 interface Props {
 	project: Project
+	showStory?: boolean
 }
 
 /**
@@ -17,7 +18,7 @@ interface Props {
  * - If only one is present -> renders it directly (no tabs)
  * - If both are present -> render Tabs to switch between them
  */
-export default function ProjectDescriptionAndStory({ project }: Props) {
+export default function ProjectDescriptionAndStory({ project, showStory = true }: Props) {
 	const description = (project.description && String(project.description).trim()) || ""
 	const summary = (project.summary && String(project.summary).trim()) || ""
 
@@ -30,9 +31,9 @@ export default function ProjectDescriptionAndStory({ project }: Props) {
 	function RenderContent({ title, content }: { title: string; content: string }) {
 		return (
 			<Card>
-				<CardContent>
-					{title && <h2 className="text-xl font-semibold mb-2">{title}</h2>}
-					<div className="prose max-w-none whitespace-pre-wrap">{formatTextWithNewlines(content)}</div>
+				<CardContent className="p-3 md:p-6">
+					{title && <h2 className="text-base md:text-xl font-semibold mb-2">{title}</h2>}
+					<div className="prose max-w-none whitespace-pre-wrap text-sm md:text-base">{formatTextWithNewlines(content)}</div>
 				</CardContent>
 			</Card>
 		)
@@ -50,9 +51,9 @@ export default function ProjectDescriptionAndStory({ project }: Props) {
 	return (
 		<div className="w-full">
 			<Tabs defaultValue="summary" className="w-full">
-				<TabsList>
-					<TabsTrigger value="summary">Summary</TabsTrigger>
-					<TabsTrigger value="description">Description</TabsTrigger>
+				<TabsList className="text-xs md:text-sm">
+					<TabsTrigger value="summary" className="text-xs md:text-sm px-2 md:px-4">Summary</TabsTrigger>
+					<TabsTrigger value="description" className="text-xs md:text-sm px-2 md:px-4">Description</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="summary">

@@ -39,7 +39,7 @@ export function ProjectList({ viewMode = "list", projects }: ProjectListProps) {
   return (
     <>
       {viewMode === "grid" ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 max-w-full overflow-x-hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 max-w-full overflow-x-hidden">
           {projects.map((project, idx) => (
             <ProjectCard
               key={project.id + idx}

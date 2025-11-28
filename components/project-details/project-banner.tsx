@@ -33,9 +33,9 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
       ? getOptimizedPath(project.images.banner)
       : null;
   return (
-    <header className="space-y-6 border-b border-border pb-8">
+    <header className="space-y-3 md:space-y-6 border-b border-border pb-4 md:pb-8">
       {srcBanner && (
-        <div className="relative -mx-6 -mt-6 mb-6 h-48 overflow-hidden rounded-t-lg md:h-64">
+        <div className="relative -mx-3 md:-mx-6 -mt-3 md:-mt-6 mb-3 md:mb-6 h-32 md:h-48 lg:h-64 overflow-hidden rounded-t-lg">
           <Image
             src={srcBanner || "/placeholder.svg"}
             alt=""
@@ -46,39 +46,39 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
         </div>
       )}
 
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 space-y-2">
-          <div className="flex items-center gap-3">
-            <h1 className="text-balance font-sans text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+      <div className="flex items-start justify-between gap-2 md:gap-4">
+        <div className="flex-1 space-y-1 md:space-y-2">
+          <div className="flex items-center gap-2 md:gap-3">
+            <h1 className="text-balance font-sans text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
               {project.title}
             </h1>
            {/*  {project.starred && <Star className="h-6 w-6 fill-amber-400 text-amber-400" />} */}
           </div>
-          {project.subtitle && <p className="text-pretty text-lg text-muted-foreground">{project.subtitle}</p>}
+          {project.subtitle && <p className="text-pretty text-sm md:text-lg text-muted-foreground">{project.subtitle}</p>}
         </div>
       </div>
 
-      <p className="text-pretty text-xl leading-relaxed text-foreground whitespace-pre-wrap">{formatTextWithNewlines(project.summary)}</p>
+      <p className="text-pretty text-base md:text-xl leading-relaxed text-foreground whitespace-pre-wrap">{formatTextWithNewlines(project.summary)}</p>
 
       {(project.category || project.domain || project.genres?.length || project.mediums?.length) && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1 md:gap-2">
           {project.category && (
-            <Badge variant="secondary" className="text-sm">
+            <Badge variant="secondary" className="text-xs md:text-sm">
               {project.category}
             </Badge>
           )}
           {project.domain && (
-            <Badge variant="outline" className="text-sm">
+            <Badge variant="outline" className="text-xs md:text-sm">
               {project.domain}
             </Badge>
           )}
           {project.genres?.map((genre) => (
-            <Badge key={genre} variant="outline" className="text-sm">
+            <Badge key={genre} variant="outline" className="text-xs md:text-sm">
               {genre}
             </Badge>
           ))}
           {project.mediums?.map((medium) => (
-            <Badge key={medium} variant="secondary" className="text-sm">
+            <Badge key={medium} variant="secondary" className="text-xs md:text-sm">
               {medium}
             </Badge>
           ))}

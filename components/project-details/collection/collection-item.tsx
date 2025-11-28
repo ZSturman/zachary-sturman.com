@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect, Suspense } from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Play, Pause, Volume2, VolumeX } from "lucide-react"
@@ -11,9 +12,8 @@ import { Canvas } from "@react-three/fiber"
 import { OrbitControls, useGLTF, useAnimations } from "@react-three/drei"
 import type * as THREE from "three"
 import { CollectionItem, Project, Resource } from "@/types"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, ArrowRight } from "lucide-react"
 import { CollectionFullscreen } from "./collection-item-fullscreen"
-import ResourceButton from "../resource-button"
 import { cn } from "@/lib/utils"
 
 // Helper function to get the item path from various possible formats
@@ -137,7 +137,7 @@ interface CollectionItemWrapperProps {
 }
 
 function CollectionItemWrapper({ item, onRequestFullscreen, children, className, disableClickToFullscreen }: CollectionItemWrapperProps) {
-  const resources = getItemResources(item);
+  // Resources are no longer shown in collection items
   
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't trigger fullscreen if disabled or no handler
@@ -168,40 +168,33 @@ function CollectionItemWrapper({ item, onRequestFullscreen, children, className,
       )}
       onClick={handleCardClick}
     >
+      {/* Label at top - above thumbnail */}
+      {item.label && (
+        <div className="p-3 pb-2 border-b bg-muted/30">
+          <h4 className="font-semibold text-sm line-clamp-1">{item.label}</h4>
+        </div>
+      )}
+      
       {/* Content Area */}
       <div className="relative group aspect-video bg-muted">
         {children}
       </div>
       
-      {/* Metadata Footer - Always renders to maintain consistent card height */}
-      <div className="p-4 space-y-2 border-t bg-muted/30 flex-1 flex flex-col">
-        {/* Label */}
-        {item.label && (
-          <h4 className="font-semibold text-sm line-clamp-1">{item.label}</h4>
-        )}
-        
-        {/* Summary */}
-        {item.summary && (
+      {/* Summary Footer - No resource buttons */}
+      {item.summary && (
+        <div className="p-3 pt-2 space-y-2 border-t bg-muted/30 flex-1 flex flex-col">
           <p className="text-xs text-muted-foreground line-clamp-2 flex-1">
             {item.summary}
           </p>
-        )}
-        
-        {/* Resources */}
-        {resources.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-auto" onClick={(e) => e.stopPropagation()}>
-            {resources.map((resource, idx) => (
-              <ResourceButton key={idx} resource={resource} />
-            ))}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </Card>
   )
 }
 
 export default function CollectionItemCard({ item, project, inModal, folderName, collectionName }: ExtendedCollectionItemCardProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const router = useRouter()
 
   const openFullscreen = () => setIsFullscreen(true)
   const closeFullscreen = () => setIsFullscreen(false)
@@ -228,12 +221,39 @@ export default function CollectionItemCard({ item, project, inModal, folderName,
     }
   }, [isFullscreen, inModal]);
 
+  // Handle folio type - redirect directly to the page
+  const handleFolioClick = () => {
+    const itemPath = getItemPath(item, folderName, collectionName);
+    if (itemPath) {
+      // Check if it's a local path or external URL
+      if (itemPath.startsWith('http://') || itemPath.startsWith('https://')) {
+        // Check if it's the same host
+        try {
+          const linkUrl = new URL(itemPath, window.location.href);
+          if (linkUrl.hostname === window.location.hostname) {
+            router.push(linkUrl.pathname);
+          } else {
+            window.open(itemPath, "_blank", "noopener,noreferrer");
+          }
+        } catch {
+          window.open(itemPath, "_blank", "noopener,noreferrer");
+        }
+      } else {
+        router.push(itemPath);
+      }
+    }
+  };
+
   function renderInline() {
+    // For folio type, render a clickable card that redirects
+    if (item.type === "folio") {
+      return <FolioViewer item={item} onRequestFullscreen={handleFolioClick} folderName={folderName} collectionName={collectionName} />;
+    }
+    
     switch (item.type) {
       case "image":
         return <ImageViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} />
       case "url-link":
-      case "folio":
         return <UrlLinkViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} />
       case "video":
         return <VideoViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} />
@@ -255,7 +275,8 @@ export default function CollectionItemCard({ item, project, inModal, folderName,
     <>
       {renderInline()}
       
-      {isFullscreen && (
+      {/* Don't show fullscreen for folio type */}
+      {isFullscreen && item.type !== "folio" && (
         <CollectionFullscreen item={item} onClose={closeFullscreen} project={project} inModal={inModal} folderName={folderName} collectionName={collectionName} />
       )}
       
@@ -451,6 +472,95 @@ function UrlLinkViewer({ item, onRequestFullscreen, folderName, collectionName }
         {item.label && <p className="text-sm text-muted-foreground">{item.label}</p>}
       </div>
     </Card>
+  )
+}
+
+function FolioViewer({ item, onRequestFullscreen, folderName, collectionName }: ExtendedCollectionItemViewerProps) {
+  // Helper to get optimized thumbnail path
+  const getOptimizedThumbnail = (): string | undefined => {
+    if (!item.thumbnail) return undefined;
+    
+    // If it's an external URL, return as-is
+    if (item.thumbnail.startsWith('http://') || item.thumbnail.startsWith('https://')) {
+      return item.thumbnail;
+    }
+    
+    // Build the full path with collection structure
+    const buildFullPath = (relativePath: string): string => {
+      if (!folderName) return relativePath;
+      
+      if (item.id && collectionName) {
+        return `/projects/${folderName}/${collectionName}/${item.id}/${relativePath}`;
+      }
+      
+      return `/projects/${folderName}/${relativePath}`;
+    };
+    
+    const fullPath = buildFullPath(item.thumbnail);
+    
+    // If already optimized, use as-is
+    if (fullPath.includes('-optimized') || fullPath.includes('-thumb')) {
+      return fullPath;
+    }
+    
+    // Convert to optimized version
+    const withoutExt = fullPath.replace(/\.[^.]+$/, '');
+    return `${withoutExt}-optimized.webp`;
+  };
+  
+  const thumbnailPath = getOptimizedThumbnail();
+  
+  // Helper to determine if thumbnail is a video
+  const isVideoThumbnail = (thumbnail?: string): boolean => {
+    if (!thumbnail) return false
+    const videoExts = ['.mp4', '.mov', '.webm', '.mkv', '.avi']
+    return videoExts.some(ext => thumbnail.toLowerCase().endsWith(ext))
+  }
+
+  const hasThumbnail = !!item.thumbnail
+  const thumbnailIsVideo = isVideoThumbnail(item.thumbnail)
+
+  return (
+    <CollectionItemWrapper 
+      item={item} 
+      onRequestFullscreen={onRequestFullscreen}
+      disableClickToFullscreen={false}
+    >
+      <div className="relative aspect-video bg-muted overflow-hidden cursor-pointer" onClick={(e) => { e.stopPropagation(); onRequestFullscreen?.(); }}>
+        {hasThumbnail ? (
+          thumbnailIsVideo ? (
+            <video
+              src={thumbnailPath}
+              className="w-full h-full object-cover"
+              autoPlay={item.autoPlay !== false}
+              loop={item.loop !== false}
+              muted
+              playsInline
+            />
+          ) : (
+            <Image
+              src={thumbnailPath || "/placeholder.svg"}
+              alt={item.label || "Project link"}
+              fill
+              className="object-cover"
+            />
+          )
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-muted">
+            <ArrowRight className="h-8 w-8 text-muted-foreground" />
+          </div>
+        )}
+        
+        {/* Overlay to indicate it's a link to another project */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center pointer-events-none">
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="bg-background/90 rounded-full p-4">
+              <ArrowRight className="h-6 w-6" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </CollectionItemWrapper>
   )
 }
 

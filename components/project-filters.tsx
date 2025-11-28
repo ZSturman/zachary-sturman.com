@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import type { Project } from "@/types"
-import { Search, ChevronDown, Grid3X3, List, SlidersHorizontal, ChevronUp } from "lucide-react"
+import { Search, ChevronDown, Grid3X3, List, SlidersHorizontal, ChevronUp, Filter } from "lucide-react"
 import { friendlyStatusLabel } from "@/lib/resource-map"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -276,53 +276,75 @@ export function ProjectFilters({
     (searchQuery.trim() ? 1 : 0)
 
   return (
-    <div className="space-y-4 mb-2">
+    <div className="space-y-3 md:space-y-4 mb-2">
       {/* Top bar - always visible */}
       <div className="flex items-center justify-between gap-2 md:gap-4 flex-wrap max-w-full">
-
-
-      
+        {/* Left side: All/Featured toggle (prominent) + count */}
         <div className="flex items-center gap-2 md:gap-3 flex-wrap">
-          <Button variant="outline" size="sm" onClick={() => setIsExpanded(!isExpanded)} className="gap-1 md:gap-2 text-xs md:text-sm min-h-[44px]">
-            <SlidersHorizontal className="h-3 w-3 md:h-4 md:w-4" />
-            Filters
+          {/* Prominent All/Featured toggle */}
+          <div className="flex items-center border-2 border-primary/20 rounded-lg bg-muted/50">
+            <Button
+              variant={showAll ? "default" : "ghost"}
+              size="sm"
+              onClick={() => onShowAllToggle?.(true)}
+              className="rounded-r-none min-h-[36px] md:min-h-[40px] px-3 md:px-4 text-xs md:text-sm font-medium"
+            >
+              All
+            </Button>
+            <Button
+              variant={!showAll ? "default" : "ghost"}
+              size="sm"
+              onClick={() => onShowAllToggle?.(false)}
+              className="rounded-l-none min-h-[36px] md:min-h-[40px] px-3 md:px-4 text-xs md:text-sm font-medium"
+            >
+              Featured
+            </Button>
+          </div>
+
+          <div className="text-[10px] md:text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">{filteredProjects}</span>
+            <span className="hidden md:inline"> of </span>
+            <span className="md:hidden">/</span>
+            <span className="font-medium text-foreground">{totalProjects}</span>
+          </div>
+        </div>
+
+        {/* Right side: Filters button + View mode toggle */}
+        <div className="flex items-center gap-1 md:gap-2">
+          {/* Filters button - icon only on mobile */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setIsExpanded(!isExpanded)} 
+            className="gap-1 md:gap-2 text-xs md:text-sm min-h-[36px] md:min-h-[40px] px-2 md:px-3"
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5 md:h-4 md:w-4" />
+            <span className="hidden md:inline">Filters</span>
             {activeFilterCount > 0 && (
-              <Badge variant="secondary" className="ml-0.5 md:ml-1 h-4 md:h-5 min-w-4 md:min-w-5 px-1 md:px-1.5 text-[10px] md:text-xs">
+              <Badge variant="secondary" className="ml-0 md:ml-1 h-4 md:h-5 min-w-4 md:min-w-5 px-1 md:px-1.5 text-[9px] md:text-xs">
                 {activeFilterCount}
               </Badge>
             )}
             {isExpanded ? <ChevronUp className="h-3 w-3 md:h-4 md:w-4" /> : <ChevronDown className="h-3 w-3 md:h-4 md:w-4" />}
           </Button>
 
-          <div className="text-xs md:text-sm text-muted-foreground">
-            <span className="hidden md:inline">Showing </span><span className="font-medium text-foreground">{filteredProjects}</span> of{" "}
-            <span className="font-medium text-foreground">{totalProjects}</span>
-          </div>
-        </div>
-
-
-        {/* <div className="text-sm text-muted-foreground">
-          Showing {typeof visibleCount === "number" ? visibleCount : filteredProjects} of {typeof totalCount === "number" ? totalCount : totalProjects}
-        </div> */}
-
-        <div className="flex items-center gap-1 md:gap-2">
-            {/* View mode toggle */}
+          {/* View mode toggle */}
           <div className="flex items-center border rounded-md">
             <Button
               variant={viewMode === "grid" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => onViewModeChange?.("grid")}
-              className="rounded-r-none min-h-[44px] min-w-[44px] px-2 md:px-3"
+              className="rounded-r-none min-h-[36px] md:min-h-[40px] min-w-[36px] md:min-w-[40px] px-2 md:px-3"
             >
-              <Grid3X3 className="h-4 w-4" />
+              <Grid3X3 className="h-3.5 w-3.5 md:h-4 md:w-4" />
             </Button>
             <Button
               variant={viewMode === "list" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => onViewModeChange?.("list")}
-              className="rounded-l-none min-h-[44px] min-w-[44px] px-2 md:px-3"
+              className="rounded-l-none min-h-[36px] md:min-h-[40px] min-w-[36px] md:min-w-[40px] px-2 md:px-3"
             >
-              <List className="h-4 w-4" />
+              <List className="h-3.5 w-3.5 md:h-4 md:w-4" />
             </Button>
           </div>
         </div>
@@ -330,187 +352,221 @@ export function ProjectFilters({
 
       {/* Expandable filter section */}
       {isExpanded && (
-        <div className="border rounded-lg p-3 md:p-4 space-y-3 md:space-y-4 bg-card max-w-full overflow-x-hidden">
+        <div className="border rounded-lg p-2 md:p-4 space-y-2 md:space-y-4 bg-card max-w-full overflow-x-hidden">
           {/* Search bar with scope selector */}
-          <div className="flex flex-col md:flex-row gap-2">
+          <div className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 md:h-4 md:w-4 text-muted-foreground" />
               <Input
-                placeholder={`Search ${searchScope === "all" ? "all fields" : searchScope}...`}
+                placeholder={`Search...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
+                className="pl-7 md:pl-9 h-8 md:h-10 text-xs md:text-sm"
               />
             </div>
 
+            {/* Search scope - icon dropdown on mobile */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2 min-w-32 bg-transparent">
-                  {searchScope === "all" ? "All fields" : searchScope === "tags" ? "Tags" : "Title"}
-                  <ChevronDown className="h-4 w-4" />
+                <Button variant="outline" size="sm" className="gap-1 md:gap-2 h-8 md:h-10 px-2 md:px-3 bg-transparent text-xs md:text-sm">
+                  <span className="hidden md:inline">{searchScope === "all" ? "All fields" : searchScope === "tags" ? "Tags" : "Title"}</span>
+                  <span className="md:hidden">{searchScope === "all" ? "All" : searchScope === "tags" ? "Tags" : "Title"}</span>
+                  <ChevronDown className="h-3 w-3 md:h-4 md:w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Search in</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-xs md:text-sm">Search in</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup value={searchScope} onValueChange={(v) => setSearchScope(v as SearchScope)}>
-                  <DropdownMenuRadioItem value="all">All fields</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="title">Title only</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="tags">Tags only</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="all" className="text-xs md:text-sm">All fields</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="title" className="text-xs md:text-sm">Title only</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="tags" className="text-xs md:text-sm">Tags only</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
 
-          {/* Filter controls */}
-          <div className="flex flex-wrap gap-3">
-            {/* Show all / featured toggle (driven by prop) */}
-            <div className="flex items-center border rounded-md">
-              <Button
-                variant={showAll ? "default" : "outline"}
-                size="sm"
-                onClick={() => onShowAllToggle?.(true)}
-                className="rounded-r-none"
-              >
-                All
-              </Button>
-              <Button
-                variant={!showAll ? "default" : "outline"}
-                size="sm"
-                onClick={() => onShowAllToggle?.(false)}
-                className="rounded-l-none"
-              >
-                Featured
-              </Button>
+          {/* Advanced filter controls - Desktop: inline, Mobile: via dropdown */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Mobile: Advanced filters dropdown */}
+            <div className="md:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-1 h-8 px-2 bg-transparent text-xs">
+                    <Filter className="h-3.5 w-3.5" />
+                    Advanced
+                    {((!selectedDomains.includes("all") && selectedDomains.length > 0) ||
+                      (!selectedMediums.includes("all") && selectedMediums.length > 0) ||
+                      (!selectedStatuses.includes("all") && selectedStatuses.length > 0)) && (
+                      <Badge variant="secondary" className="ml-0.5 h-4 min-w-4 px-1 text-[9px]">
+                        {(selectedDomains.includes("all") ? 0 : selectedDomains.length) +
+                          (selectedMediums.includes("all") ? 0 : selectedMediums.length) +
+                          (selectedStatuses.includes("all") ? 0 : selectedStatuses.length)}
+                      </Badge>
+                    )}
+                    <ChevronDown className="h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-64" align="start">
+                  <DropdownMenuLabel className="text-xs">Domain</DropdownMenuLabel>
+                  {domains.map((domain) => (
+                    <DropdownMenuCheckboxItem
+                      key={domain}
+                      checked={selectedDomains.includes(domain)}
+                      onCheckedChange={() => toggleDomain(domain)}
+                      className="text-xs"
+                    >
+                      {domain === "all" ? "All Domains" : domain}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel className="text-xs">Medium</DropdownMenuLabel>
+                  {mediums.map((medium) => (
+                    <DropdownMenuCheckboxItem
+                      key={medium}
+                      checked={selectedMediums.includes(medium)}
+                      onCheckedChange={() => toggleMedium(medium)}
+                      className="text-xs"
+                    >
+                      {medium === "all" ? "All Mediums" : medium}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel className="text-xs">Status</DropdownMenuLabel>
+                  {statuses.map((status) => (
+                    <DropdownMenuCheckboxItem
+                      key={status}
+                      checked={selectedStatuses.includes(status)}
+                      onCheckedChange={() => toggleStatus(status)}
+                      className="text-xs"
+                    >
+                      {status === "all" ? "All Statuses" : status}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
-            {/* Domain filter */}
+            {/* Desktop: Individual filter dropdowns */}
+            <div className="hidden md:flex md:flex-wrap md:gap-2">
+              {/* Domain filter */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2 h-9 bg-transparent text-sm">
+                    Domain
+                    {selectedDomains.length > 0 && !selectedDomains.includes("all") && (
+                      <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5 text-xs">
+                        {selectedDomains.length}
+                      </Badge>
+                    )}
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  {domains.map((domain) => (
+                    <DropdownMenuCheckboxItem
+                      key={domain}
+                      checked={selectedDomains.includes(domain)}
+                      onCheckedChange={() => toggleDomain(domain)}
+                    >
+                      {domain === "all" ? "Select All" : domain}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Medium filter */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2 h-9 bg-transparent text-sm">
+                    Medium
+                    {selectedMediums.length > 0 && !selectedMediums.includes("all") && (
+                      <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5 text-xs">
+                        {selectedMediums.length}
+                      </Badge>
+                    )}
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  {mediums.map((medium) => (
+                    <DropdownMenuCheckboxItem
+                      key={medium}
+                      checked={selectedMediums.includes(medium)}
+                      onCheckedChange={() => toggleMedium(medium)}
+                    >
+                      {medium === "all" ? "Select All" : medium}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Status filter */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2 h-9 bg-transparent text-sm">
+                    Status
+                    {selectedStatuses.length > 0 && !selectedStatuses.includes("all") && (
+                      <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5 text-xs">
+                        {selectedStatuses.length}
+                      </Badge>
+                    )}
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>Select statuses</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {statuses.map((status) => (
+                    <DropdownMenuCheckboxItem
+                      key={status}
+                      checked={selectedStatuses.includes(status)}
+                      onCheckedChange={() => toggleStatus(status)}
+                    >
+                      {status === "all" ? "Select All" : status}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Sort dropdown - always visible */}
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2 bg-transparent">
-                  Domain
-
-
-                                                                        {selectedDomains.length > 0 && !selectedDomains.includes("all") && (
-                    <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5">
-                      {selectedDomains.length}
-                    </Badge>
-                  )}
-
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                {domains.map((domain) => (
-                  <DropdownMenuCheckboxItem
-                    key={domain}
-                    checked={selectedDomains.includes(domain)}
-                    onCheckedChange={() => toggleDomain(domain)}
-                  >
-                    {domain === "all" ? "Select All" : domain}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Medium filter */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2 bg-transparent">
-                  Medium
-
-                                    {selectedMediums.length > 0 && !selectedMediums.includes("all") && (
-                    <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5">
-                      {selectedMediums.length}
-                    </Badge>
-                  )}
-
-
-
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                {mediums.map((medium) => (
-                  <DropdownMenuCheckboxItem
-                    key={medium}
-                    checked={selectedMediums.includes(medium)}
-                    onCheckedChange={() => toggleMedium(medium)}
-                  >
-                    {medium === "all" ? "Select All" : medium}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Status filter */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2 bg-transparent">
-                  Status
-                                                      {selectedStatuses.length > 0 && !selectedStatuses.includes("all") && (
-                    <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5">
-                      {selectedStatuses.length}
-                    </Badge>
-                  )}
-
-
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Select statuses</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {statuses.map((status) => (
-                  <DropdownMenuCheckboxItem
-                    key={status}
-                    checked={selectedStatuses.includes(status)}
-                    onCheckedChange={() => toggleStatus(status)}
-                  >
-                    {status === "all" ? "Select All" : status}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Sort dropdown */}
-            <DropdownMenu >
               <DropdownMenuTrigger asChild className="ml-auto">
-                <Button variant="outline" className="gap-2 bg-transparent">
-                  Sort: {sortField === "title" ? "Title" : sortField === "createdAt" ? "Created" : "Updated"}
-                  <ChevronDown className="h-4 w-4" />
+                <Button variant="outline" size="sm" className="gap-1 md:gap-2 h-8 md:h-9 px-2 md:px-3 bg-transparent text-xs md:text-sm">
+                  <span className="hidden md:inline">Sort: </span>
+                  {sortField === "title" ? "Title" : sortField === "createdAt" ? "Created" : "Updated"}
+                  <ChevronDown className="h-3 w-3 md:h-4 md:w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-xs md:text-sm">Sort by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup value={sortField} onValueChange={(v) => setSortField(v as SortField)}>
-                  <DropdownMenuRadioItem value="title">Title</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="createdAt">Created date</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="updatedAt">Updated date</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="title" className="text-xs md:text-sm">Title</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="createdAt" className="text-xs md:text-sm">Created date</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="updatedAt" className="text-xs md:text-sm">Updated date</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel>Order</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-xs md:text-sm">Order</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup value={sortOrder} onValueChange={(v) => setSortOrder(v as SortOrder)}>
-                  <DropdownMenuRadioItem value="asc">Ascending</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="desc">Descending</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="asc" className="text-xs md:text-sm">Ascending</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="desc" className="text-xs md:text-sm">Descending</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-
-
           </div>
 
           {/* Active filter badges */}
           {activeFilterCount > 0 && (
-            <div className="flex flex-wrap gap-2 pt-2 border-t">
+            <div className="flex flex-wrap gap-1 md:gap-2 pt-2 border-t">
               {selectedDomains
                 .filter((d) => d !== "all")
                 .map((domain) => (
-                  <Badge key={domain} variant="secondary" className="gap-1">
+                  <Badge key={domain} variant="secondary" className="gap-0.5 md:gap-1 text-[10px] md:text-xs py-0.5 px-1.5 md:px-2">
                     {domain}
-                    <button onClick={() => toggleDomain(domain)} className="ml-1 hover:text-foreground">
+                    <button onClick={() => toggleDomain(domain)} className="ml-0.5 md:ml-1 hover:text-foreground">
                       ×
                     </button>
                   </Badge>
@@ -518,30 +574,30 @@ export function ProjectFilters({
               {selectedMediums
                 .filter((m) => m !== "all")
                 .map((medium) => (
-                  <Badge key={medium} variant="secondary" className="gap-1">
+                  <Badge key={medium} variant="secondary" className="gap-0.5 md:gap-1 text-[10px] md:text-xs py-0.5 px-1.5 md:px-2">
                     {medium}
-                    <button onClick={() => toggleMedium(medium)} className="ml-1 hover:text-foreground">
+                    <button onClick={() => toggleMedium(medium)} className="ml-0.5 md:ml-1 hover:text-foreground">
                       ×
                     </button>
                   </Badge>
                 ))}
-                {selectedStatuses
-                  .filter((s) => s !== "all")
-                  .map((status) => (
-                    <Badge key={status} variant="secondary" className="gap-1">
-                      {friendlyStatusLabel(status) || status}
-                      <button onClick={() => toggleStatus(status)} className="ml-1 hover:text-foreground">
-                        ×
-                      </button>
-                    </Badge>
-                  ))}
+              {selectedStatuses
+                .filter((s) => s !== "all")
+                .map((status) => (
+                  <Badge key={status} variant="secondary" className="gap-0.5 md:gap-1 text-[10px] md:text-xs py-0.5 px-1.5 md:px-2">
+                    {friendlyStatusLabel(status) || status}
+                    <button onClick={() => toggleStatus(status)} className="ml-0.5 md:ml-1 hover:text-foreground">
+                      ×
+                    </button>
+                  </Badge>
+                ))}
 
-                              {/* Clear filters */}
-            {activeFilterCount > 0 && (
-              <Button className="ml-auto " variant="ghost" size="sm" onClick={clearAllFilters}>
-                Clear all filters
-              </Button>
-            )}
+              {/* Clear filters */}
+              {activeFilterCount > 0 && (
+                <Button variant="ghost" size="sm" onClick={clearAllFilters} className="ml-auto text-[10px] md:text-xs h-6 md:h-8 px-2">
+                  Clear all
+                </Button>
+              )}
             </div>
           )}
         </div>
