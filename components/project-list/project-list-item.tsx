@@ -6,23 +6,10 @@ import { Card } from "@/components/ui/card";
 import { STATUS_COLOR } from "@/lib/resource-map";
 import type { Project } from "@/types";
 
-import {
-  Code,
-  BookOpen,
-  PenTool,
-  Cpu,
-} from "lucide-react";
 import { MediaDisplay } from "@/components/ui/media-display";
 import ProjectMediums from "../project-details/project-mediums";
 import { formatDate, getOptimizedMediaPath, formatTextWithNewlines } from "@/lib/utils";
-import PrimaryActionButton from "./primary-action-button";
-
-// Map domain to icon
-const domainIcons = {
-  Technology: Cpu,
-  Creative: PenTool,
-  Expository: BookOpen,
-};
+import ResourceButton from "../project-details/resource-button";
 
 export interface ProjectListItemProps {
   project: Project;
@@ -30,14 +17,6 @@ export interface ProjectListItemProps {
 }
 
 export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
-  // Pick icon based on domain
-  const DomainIcon =
-    domainIcons[project.domain as keyof typeof domainIcons] || Code;
-  const primaryLink =
-    Array.isArray(project.resources) && project.resources.length > 0
-      ? project.resources[0]
-      : undefined;
-  
   const folderName = project.folderName || project.id;
   const folderPath = `/projects/${folderName}`;
   
@@ -71,8 +50,8 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
         {/* Content */}
         <div className="flex-1 min-w-0 max-w-full overflow-hidden">
           <div className="flex flex-row items-center justify-between gap-1 md:gap-4 mb-1 md:mb-3 me-1.5 max-w-full">
-            <div className="flex flex-row md:flex-col items-center md:items-start gap-0.5 md:gap-1 min-w-0 max-w-full">
-              <h3 className="text-xs md:text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1 break-words max-w-full">
+            <div className="flex flex-col items-start gap-0.5 md:gap-1 min-w-0 flex-1">
+              <h3 className="text-xs md:text-lg font-semibold text-foreground group-hover:text-primary transition-colors break-words">
                 {Boolean(
                   (project as unknown as { featured?: boolean }).featured
                 ) && (
@@ -83,11 +62,10 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
                 {project.title}
               </h3>
               <div className="flex flex-wrap items-center gap-0.5 md:gap-2">
-                <DomainIcon className="h-2.5 w-2.5 md:h-4 md:w-4 text-muted-foreground flex-shrink-0" />
                 {showStatusBadge && (
                   <Badge
                     variant="outline"
-                    className={`${STATUS_COLOR[project.status] || "bg-gray-100"} text-[8px] md:text-xs whitespace-nowrap py-0 px-1 md:px-2`}
+                    className={`${STATUS_COLOR[project.status]} text-[8px] md:text-xs whitespace-nowrap`}
                   >
                     {statusValue}
                   </Badge>
@@ -119,9 +97,13 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
               )}
             </div>
 
-            {/* Make button visible on mobile (full width), hover on desktop */}
-            <div className="w-full md:w-auto opacity-100 md:opacity-0 md:group-hover:opacity-100 scale-y-100 md:scale-y-0 md:group-hover:scale-y-100 transition-transform flex-shrink-0">
-              <PrimaryActionButton project={project} resource={primaryLink} className="w-full md:w-auto justify-center md:justify-start gap-1.5 md:gap-3 h-auto p-1.5 md:p-2 md:px-4 px-2 bg-transparent max-w-full hover:cursor-pointer min-h-[32px] md:min-h-[44px] text-[10px] md:text-sm" />
+            {/* Resource icons and primary action */}
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {/* Show resource buttons as icons */}
+              {project.resources && project.resources.map((resource) => (
+                <ResourceButton key={resource.url} resource={resource} iconOnly className="h-7 w-7" />
+              ))}
+              
             </div>
           </div>
         </div>

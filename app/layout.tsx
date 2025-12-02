@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import dynamic from "next/dynamic"
 import { INITIAL_THEME_SCRIPT } from "@/lib/theme"
+import { BreadcrumbProvider } from "@/lib/breadcrumb-context"
 
 const Banner = dynamic(() => import("@/components/global-ui/banner").then((m) => m.Banner))
 
@@ -29,8 +30,10 @@ export default function RootLayout({
 
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Banner />
-        {children}
+        <BreadcrumbProvider>
+          <Banner />
+          {children}
+        </BreadcrumbProvider>
       </body>
     </html>
   );

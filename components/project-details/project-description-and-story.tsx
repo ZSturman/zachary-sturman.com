@@ -1,120 +1,120 @@
-"use client"
+"use client";
 
-import React from "react"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Card, CardContent } from "@/components/ui/card"
-import { Project } from "@/types"
-import { formatTextWithNewlines } from "@/lib/utils"
+import React from "react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Project } from "@/types";
+import { formatTextWithNewlines } from "@/lib/utils";
 
 interface Props {
-	project: Project
-	showStory?: boolean
+  project: Project;
 }
 
 /**
  * Renders Description / Summary for a project.
  * Behavior:
- * - If neither description nor summary -> returns null
+ * - If neither description nor story -> returns null
  * - If only one is present -> renders it directly (no tabs)
  * - If both are present -> render Tabs to switch between them
  */
-export default function ProjectDescriptionAndStory({ project, showStory = true }: Props) {
-	const description = (project.description && String(project.description).trim()) || ""
-	const summary = (project.summary && String(project.summary).trim()) || ""
+export default function ProjectDescriptionAndStory({ project }: Props) {
+  const description =
+    (project.description && String(project.description).trim()) || "";
+  const story = (project.story && String(project.story).trim()) || "";
 
-	const hasDescription = description.length > 0
-	const hasSummary = summary.length > 0
+  const hasDescription = description.length > 0;
+  const hasStory = story.length > 0;
 
-	if (!hasDescription && !hasSummary) return null
+  if (!hasDescription && !hasStory) return null;
 
-	// Single renderer used in both the tab and single-view cases
-	function RenderContent({ title, content }: { title: string; content: string }) {
-		return (
-			<Card>
-				<CardContent className="p-3 md:p-6">
-					{title && <h2 className="text-base md:text-xl font-semibold mb-2">{title}</h2>}
-					<div className="prose max-w-none whitespace-pre-wrap text-sm md:text-base">{formatTextWithNewlines(content)}</div>
-				</CardContent>
-			</Card>
-		)
-	}
+  // Single renderer used in both the tab and single-view cases
+  function RenderContent({
+    title,
+    content,
+  }: {
+    title: string;
+    content: string;
+  }) {
+    return (
+      <Card>
+        <CardContent className="p-3 md:p-6">
+          {title && (
+            <h2 className="text-base md:text-xl font-semibold mb-2">{title}</h2>
+          )}
+          <div className="prose max-w-none whitespace-pre-wrap text-sm md:text-base">
+            {formatTextWithNewlines(content)}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
-	if (hasDescription && !hasSummary) {
-		return <RenderContent title="Description" content={description} />
-	}
+  if (hasDescription && !hasStory) {
+    return <RenderContent title="Description" content={description} />;
+  }
 
-	if (!hasDescription && hasSummary) {
-		return <RenderContent title="Summary" content={summary} />
-	}
+  if (!hasDescription && hasStory) {
+    return <RenderContent title="Summary" content={story} />;
+  }
 
-	// Both present -> show tabs
-	return (
-		<div className="w-full">
-			<Tabs defaultValue="summary" className="w-full">
-				<TabsList className="text-xs md:text-sm">
-					<TabsTrigger value="summary" className="text-xs md:text-sm px-2 md:px-4">Summary</TabsTrigger>
-					<TabsTrigger value="description" className="text-xs md:text-sm px-2 md:px-4">Description</TabsTrigger>
-				</TabsList>
+  // Both present -> show tabs
+  return (
+    <div className="w-full">
+      <Tabs defaultValue="story" className="w-full">
+        <TabsList className="text-xs md:text-sm">
+          <TabsTrigger
+            value="story"
+            className="text-xs md:text-sm px-2 md:px-4"
+          >
+            Summary
+          </TabsTrigger>
+          <TabsTrigger
+            value="description"
+            className="text-xs md:text-sm px-2 md:px-4"
+          >
+            Description
+          </TabsTrigger>
+        </TabsList>
 
-				<TabsContent value="summary">
-					<RenderContent title="Summary" content={summary} />
-				</TabsContent>
+        <TabsContent value="story">
+          <RenderContent title="Summary" content={story} />
+        </TabsContent>
 
-				<TabsContent value="description">
-					<RenderContent title="Description" content={description} />
-				</TabsContent>
-			</Tabs>
-		</div>
-	)
+        <TabsContent value="description">
+          <RenderContent title="Description" content={description} />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
 }
 
-
-
 interface ProjectContentProps {
-  project: Project
+  project: Project;
 }
 
 export function ProjectContent({ project }: ProjectContentProps) {
+  const description =
+    (project.description && String(project.description).trim()) || "";
+  const story = (project.story && String(project.story).trim()) || "";
 
-		const description = (project.description && String(project.description).trim()) || ""
-	const summary = (project.summary && String(project.summary).trim()) || ""
+  const hasDescription = description.length > 0;
+  const hasStory = story.length > 0;
 
-	const hasDescription = description.length > 0
-	const hasSummary = summary.length > 0
-
-	if (!hasDescription && !hasSummary) return null
-
+  if (!hasDescription && !hasStory) return null;
 
   return (
-    <div className="space-y-8">
-
-
+    <div className="space-y-6 text-sm text-muted-foreground/80">
       {hasDescription && (
-        <section>
-          <h2 className="mb-4 text-2xl font-semibold text-foreground">About</h2>
-          <p className="text-pretty leading-relaxed text-muted-foreground whitespace-pre-wrap">{formatTextWithNewlines(description)}</p>
-        </section>
+        <div className="leading-relaxed whitespace-pre-wrap">
+          {formatTextWithNewlines(description)}
+        </div>
       )}
 
       {project.story && (
-        <section>
-          <h2 className="mb-4 text-2xl font-semibold text-foreground">Story</h2>
-          <p className="text-pretty leading-relaxed text-muted-foreground whitespace-pre-wrap">{formatTextWithNewlines(project.story)}</p>
-        </section>
-      )}
-
-      {project.tags && project.tags.length > 0 && (
-        <section>
-          <h2 className="mb-4 text-2xl font-semibold text-foreground">Tags</h2>
-          <div className="flex flex-wrap gap-2">
-            {project.tags.map((tag) => (
-              <span key={tag} className="rounded-md bg-muted px-3 py-1 text-sm text-muted-foreground">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </section>
+        <div className="leading-relaxed whitespace-pre-wrap border-l-2 border-muted pl-4">
+          {formatTextWithNewlines(project.story)}
+        </div>
       )}
     </div>
-  )
+  );
 }

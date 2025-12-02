@@ -123,10 +123,10 @@ export type DateFormatPreset = "year" | "shortMonthYear" | "long" | "iso"
 export const formatDate = (
   s?: string,
   formatter?: Intl.DateTimeFormatOptions | ((date: Date) => string) | DateFormatPreset | string
-): string => {
-  if (!s) return "N/A"
+): string | null => {
+  if (!s) return null
   const date = new Date(s)
-  if (isNaN(date.getTime())) return "N/A"
+  if (isNaN(date.getTime())) return null
 
   // function formatter has highest precedence
   if (typeof formatter === "function") return formatter(date)

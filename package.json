@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run generate-projects && npm run optimize && next dev",
+    "dev-cached": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

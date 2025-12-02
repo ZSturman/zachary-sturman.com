@@ -9,6 +9,7 @@ import { STATUS_COLOR } from "@/lib/resource-map";
 import ProjectMediums from "../project-details/project-mediums";
 import PrimaryActionButton from "./primary-action-button";
 import { formatDate, getOptimizedMediaPath } from "@/lib/utils";
+import ResourceButton from "../project-details/resource-button";
 
 interface ProjectCardProps {
   project: Project;
@@ -38,7 +39,7 @@ export function ProjectCard({
     >
       {/* Label at top - above thumbnail (matching Collection Item style) */}
       <div className="p-2 md:p-3 pb-1 md:pb-2  bg-muted/30">
-        <h3 className="font-semibold text-xs md:text-sm text-card-foreground leading-tight group-hover:text-primary transition-colors line-clamp-1 break-words">
+        <h3 className="font-semibold text-xs md:text-sm text-card-foreground leading-tight group-hover:text-primary transition-colors break-words">
           {project.title}
         </h3>
       </div>
@@ -116,14 +117,17 @@ export function ProjectCard({
             {formatDate(project.updatedAt)}
           </span>
           
-          
-          
+          {/* Resource icons and action button */}
+          <div className="flex items-center gap-0.5">
+            {project.resources && project.resources.slice(0, 2).map((resource) => (
+              <ResourceButton key={resource.url} resource={resource} iconOnly className="h-6 w-6" />
+            ))}
             <PrimaryActionButton 
               project={project} 
               resource={Array.isArray(project.resources) && project.resources.length > 0 ? project.resources[0] : undefined} 
               className="md:h-7 pl-1.5 pr-3 md:px-2 text-[9px] md:text-xs gap-1 max-w-[70%] "
             />
-          
+          </div>
         </div>
       </CardContent>
     </Card>

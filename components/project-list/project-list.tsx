@@ -4,6 +4,7 @@ import { ProjectCard } from "@/components/project-list/project-card"
 import { ProjectListItem } from "@/components/project-list/project-list-item"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useBreadcrumb } from "@/lib/breadcrumb-context"
 
 import type { Project } from "@/types"
 
@@ -14,6 +15,7 @@ interface ProjectListProps {
 
 export function ProjectList({ viewMode = "list", projects }: ProjectListProps) {
   const router = useRouter()
+  const { setPreviousPath } = useBreadcrumb()
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
@@ -25,14 +27,17 @@ export function ProjectList({ viewMode = "list", projects }: ProjectListProps) {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  const handleClick = (id: string) => {
+  const handleClick = (project: Project) => {
+    // Set breadcrumb state before navigating
+    setPreviousPath("/", "Home")
+    
     // On mobile, navigate directly to project details page
     // On desktop, use modal route
     if (isMobile) {
-      router.push(`/projects/${id}`)
+      router.push(`/projects/${project.id}`)
     } else {
-      router.push(`/?project=${id}`, { scroll: false })
-      router.prefetch(`/projects/${id}`)
+      router.push(`/?project=${project.id}`, { scroll: false })
+      router.prefetch(`/projects/${project.id}`)
     }
   }
 
@@ -44,7 +49,7 @@ export function ProjectList({ viewMode = "list", projects }: ProjectListProps) {
             <ProjectCard
               key={project.id + idx}
               project={project}
-              onClick={() => handleClick(project.id)}
+              onClick={() => handleClick(project)}
               compact
             />
           ))}
@@ -55,7 +60,7 @@ export function ProjectList({ viewMode = "list", projects }: ProjectListProps) {
             <ProjectListItem
               key={project.id + idx}
               project={project}
-              onClick={() => handleClick(project.id)}
+              onClick={() => handleClick(project)}
             />
           ))}
         </div>

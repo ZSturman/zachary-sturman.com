@@ -6,6 +6,7 @@ export default function ProjectInfo({ project }: { project: Project }) {
   return (
     <div className="space-y-6 p-6 bg-muted/30 rounded-lg">
       <div className="space-y-4">
+        
         <InfoItem label="Created" value={formatDate(project.createdAt)} />
         <InfoItem label="Updated" value={formatDate(project.updatedAt)} />
         {project.category && (
@@ -31,9 +32,11 @@ function InfoItem({
   value,
 }: {
   label: string;
-  value: string | string[] | Record<string, unknown>;
+  value: string | string[] | Record<string, unknown> | null
 }) {
   let displayValue: string;
+
+  if (!value) return null
 
   if (Array.isArray(value)) {
     displayValue = value.join(", ");

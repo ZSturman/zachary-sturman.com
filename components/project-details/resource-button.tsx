@@ -7,9 +7,11 @@ import { useRouter } from "next/navigation";
 export default function ResourceButton({
   resource,
   className,
+  iconOnly = false,
 }: {
   resource: Resource;
   className?: string;
+  iconOnly?: boolean;
 }) {
   const router = useRouter();
   const icon = bestIconPath(resource.type);
@@ -27,6 +29,26 @@ export default function ResourceButton({
       window.open(resource.url, "_blank", "noopener,noreferrer");
     }
   };
+  
+  if (iconOnly) {
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        className={className || "h-8 w-8 shrink-0"}
+        onClick={handleClick}
+        title={resource.label}
+      >
+        <Image
+          className="dark:invert"
+          src={icon}
+          alt={resource.type}
+          width={16}
+          height={16}
+        />
+      </Button>
+    );
+  }
   
   return (
     <Button

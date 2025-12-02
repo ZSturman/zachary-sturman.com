@@ -3,14 +3,12 @@ import ResourceButton from "./resource-button";
 
 export default function ResourceButtons({ project, showMessage = true }: { project: Project, showMessage?: boolean }) {
   return project.resources?.length ? (
-    <div className="p-2">
-      <div className="flex flex-row flex-wrap gap-3">
-        {project.resources.map((resource) => {
-          return <ResourceButton key={resource.url} resource={resource} />;
-        })}
-      </div>
+    <div className="flex flex-row flex-wrap gap-2">
+      {project.resources.map((resource) => {
+        return <ResourceButton key={resource.url} resource={resource} />;
+      })}
     </div>
-  ) : showMessage && (
+  ) : showMessage ? (
     <div className="space-y-3">
       <p className="text-muted-foreground leading-relaxed text-pretty">
         {project.status === "idea" && (
@@ -33,5 +31,5 @@ export default function ResourceButtons({ project, showMessage = true }: { proje
         )}
       </p>
     </div>
-  );
+  ) : null;
 }

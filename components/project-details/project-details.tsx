@@ -80,7 +80,7 @@ export function ProjectDetails({ project }: ProjectDetailsProps) {
         <ProjectTags project={project} />
 
         <div className="mt-4 md:mt-8">
-          <ProjectDescriptionAndStory project={project} showStory={false} />
+          <ProjectDescriptionAndStory project={project}/>
         </div>
 
         <ProjectMediums project={project} />

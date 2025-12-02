@@ -2,8 +2,7 @@ import { Project } from "@/types";
 import Image from "next/image";
 import React from "react";
 import { formatTextWithNewlines } from "@/lib/utils";
-
-import { Badge } from "@/components/ui/badge"
+import ResourceButton from "./resource-button";
 
 interface ProjectHeaderProps {
   project: Project
@@ -48,42 +47,24 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
 
       <div className="flex items-start justify-between gap-2 md:gap-4">
         <div className="flex-1 space-y-1 md:space-y-2">
-          <div className="flex items-center gap-2 md:gap-3">
+          <div className="flex items-center gap-2 md:gap-3 flex-wrap">
             <h1 className="text-balance font-sans text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
               {project.title}
             </h1>
-           {/*  {project.starred && <Star className="h-6 w-6 fill-amber-400 text-amber-400" />} */}
+            {/* Resource buttons as icons */}
+            {project.resources && project.resources.length > 0 && (
+              <div className="flex gap-2">
+                {project.resources.slice(0, 4).map((resource) => (
+                  <ResourceButton key={resource.url} resource={resource} iconOnly className="h-8 w-8 hover:cursor-pointer border-0" />
+                ))}
+              </div>
+            )}
           </div>
           {project.subtitle && <p className="text-pretty text-sm md:text-lg text-muted-foreground">{project.subtitle}</p>}
         </div>
       </div>
 
-      <p className="text-pretty text-base md:text-xl leading-relaxed text-foreground whitespace-pre-wrap">{formatTextWithNewlines(project.summary)}</p>
-
-      {(project.category || project.domain || project.genres?.length || project.mediums?.length) && (
-        <div className="flex flex-wrap gap-1 md:gap-2">
-          {project.category && (
-            <Badge variant="secondary" className="text-xs md:text-sm">
-              {project.category}
-            </Badge>
-          )}
-          {project.domain && (
-            <Badge variant="outline" className="text-xs md:text-sm">
-              {project.domain}
-            </Badge>
-          )}
-          {project.genres?.map((genre) => (
-            <Badge key={genre} variant="outline" className="text-xs md:text-sm">
-              {genre}
-            </Badge>
-          ))}
-          {project.mediums?.map((medium) => (
-            <Badge key={medium} variant="secondary" className="text-xs md:text-sm">
-              {medium}
-            </Badge>
-          ))}
-        </div>
-      )}
+      <p className="text-pretty text-sm md:text-base leading-relaxed text-muted-foreground whitespace-pre-wrap">{formatTextWithNewlines(project.summary)}</p>
     </header>
   )
 }

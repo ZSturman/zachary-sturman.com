@@ -15,6 +15,7 @@ import { CollectionItem, Project, Resource } from "@/types"
 import { ExternalLink, ArrowRight } from "lucide-react"
 import { CollectionFullscreen } from "./collection-item-fullscreen"
 import { cn } from "@/lib/utils"
+import ResourceButton from "../resource-button"
 
 // Helper function to get the item path from various possible formats
 function getItemPath(item: CollectionItem, folderName?: string, collectionName?: string): string | undefined {
@@ -137,7 +138,7 @@ interface CollectionItemWrapperProps {
 }
 
 function CollectionItemWrapper({ item, onRequestFullscreen, children, className, disableClickToFullscreen }: CollectionItemWrapperProps) {
-  // Resources are no longer shown in collection items
+  const resources = getItemResources(item);
   
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't trigger fullscreen if disabled or no handler
@@ -170,7 +171,7 @@ function CollectionItemWrapper({ item, onRequestFullscreen, children, className,
     >
       {/* Label at top - above thumbnail */}
       {item.label && (
-        <div className="p-3 pb-2 border-b bg-muted/30">
+        <div className="p-2 pb-1 border-b bg-muted/30">
           <h4 className="font-semibold text-sm line-clamp-1">{item.label}</h4>
         </div>
       )}
@@ -180,12 +181,21 @@ function CollectionItemWrapper({ item, onRequestFullscreen, children, className,
         {children}
       </div>
       
-      {/* Summary Footer - No resource buttons */}
-      {item.summary && (
-        <div className="p-3 pt-2 space-y-2 border-t bg-muted/30 flex-1 flex flex-col">
-          <p className="text-xs text-muted-foreground line-clamp-2 flex-1">
-            {item.summary}
-          </p>
+      {/* Summary Footer with resource buttons as icons */}
+      {(item.summary || resources.length > 0) && (
+        <div className="p-2 pt-1.5 space-y-1.5 border-t bg-muted/30 flex-1 flex flex-col">
+          {item.summary && (
+            <p className="text-xs text-muted-foreground line-clamp-4 flex-1">
+              {item.summary}
+            </p>
+          )}
+          {resources.length > 0 && (
+            <div className="flex gap-0.5 flex-shrink-0">
+              {resources.slice(0, 4).map((resource) => (
+                <ResourceButton key={resource.url} resource={resource} iconOnly className="h-6 w-6" />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </Card>

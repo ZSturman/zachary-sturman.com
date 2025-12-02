@@ -9,7 +9,9 @@ import ResourceButtons from "./project-details/resource-buttons";
 import { Collection } from "./project-details/collection/collection";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-
+import { useBreadcrumb } from "@/lib/breadcrumb-context";
+import ProjectDetailsFooter from "./project-details/project-details-footer";
+import ProjectDetailsMediaDisplay from "./project-details/project-details-media-display";
 
 interface ProjectModalProps {
   project: Project | null;
@@ -19,18 +21,18 @@ interface ProjectModalProps {
 
 export function ProjectModal({ project, isOpen, onClose }: ProjectModalProps) {
   const router = useRouter();
-  
+  const { setPreviousPath } = useBreadcrumb();
+
   const goToProjectPage = () => {
     if (!project) return;
+    // Set breadcrumb to come back to home (not modal) when navigating to project page
+    setPreviousPath("/", "Home");
     onClose();
     // Use Next.js router for proper client-side navigation
     router.push(`/projects/${project.id}`);
   };
 
-
-
   if (!project) return null;
-
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -41,34 +43,82 @@ export function ProjectModal({ project, isOpen, onClose }: ProjectModalProps) {
         </span>
       </DialogTitle>
 
-      
       <DialogContent className="max-h-[90vh] max-w-7xl p-0 flex flex-col overflow-hidden">
-
-        <div className="relative flex-1 min-h-0 overflow-y-auto p-4">
+        <div className="relative flex-1 min-h-0 overflow-y-auto px-4 pt-6">
           <ProjectHeader project={project} />
 
-          <div>
-            <Button onClick={goToProjectPage} >
-              Go to Project Page
-            </Button>
+          {/* Responsive grid: left content, right metadata on md+.
+              If there is no description/story, show metadata full-width. */}
+          {(() => {
+            const hasContent = Boolean(
+              (project.description && String(project.description).trim()) ||
+                (project.story && String(project.story).trim())
+            );
 
-          </div>
+            if (!hasContent) {
+              return (
+                <div className="mt-6 grid gap-6">
+                  {/* Button for full-width mobile/modal */}
+                  <div>
+                    <Button onClick={goToProjectPage} variant="outline" size="sm" className="w-full">
+                      Go to Project Page
+                    </Button>
+                  </div>
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_280px]">
-            <div className="space-y-8">
-            <ProjectContent project={project} />
-            {project.collection && <Collection project={project} inModal={true} />}
-          </div>
+                  <ProjectMetadata project={project} />
+                </div>
+              );
+            }
 
-          <aside className="space-y-6">
-            <ProjectMetadata project={project} />
-            {project.resources && project.resources.length > 0 && (
-              <ResourceButtons project={project} />
-            )}
-          </aside>
-          </div>
+            return (
+              <div className="mt-6 grid gap-6 grid-cols-1 md:grid-cols-[1fr_320px] items-start md:items-stretch">
+                <div className="space-y-6">
+                  {/* Button - shown above content on md+ left column */}
+                  <div className="md:hidden">
+                    <Button onClick={goToProjectPage} variant="outline" size="sm" className="w-full">
+                      Go to Project Page
+                    </Button>
+                  </div>
+
+                  {/* Priority: Collection/Media first */}
+                  {project.collection && (
+                    <div>
+                      <Collection project={project} inModal={true} />
+                    </div>
+                  )}
+
+                  {/* Resources section */}
+                  {project.resources && project.resources.length > 0 && (
+                    <div>
+                      <ResourceButtons project={project} showMessage={false} />
+                    </div>
+                  )}
+
+                  {/* About/Story content */}
+                  <div>
+                    <ProjectContent project={project} />
+                  </div>
+                </div>
+
+                <aside className="min-w-[280px] md:min-w-[320px]">
+                  {/* Button - visible on small screens inside sidebar area */}
+                  <div className="hidden md:flex mb-4">
+                    <Button onClick={goToProjectPage} variant="outline" size="sm" className="w-full">
+                      Go to Project Page
+                    </Button>
+                  </div>
+
+                  <div className="h-full">
+                    <ProjectDetailsMediaDisplay project={project} />
+                    <ProjectMetadata project={project} />
+                  </div>
+                </aside>
+              </div>
+            );
+          })()}
+
+          <ProjectDetailsFooter />
         </div>
-
       </DialogContent>
     </Dialog>
   );
