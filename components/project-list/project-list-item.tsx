@@ -48,7 +48,7 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
           </div>
         </div>
         {/* Content */}
-        <div className="flex-1 min-w-0 max-w-full overflow-hidden">
+        <div className="flex-1 min-w-0 max-w-full overflow-hidden relative">
           <div className="flex flex-row items-center justify-between gap-1 md:gap-4 mb-1 md:mb-3 me-1.5 max-w-full">
             <div className="flex flex-col items-start gap-0.5 md:gap-1 min-w-0 flex-1">
               <h3 className="text-xs md:text-lg font-semibold text-foreground group-hover:text-primary transition-colors break-words">
@@ -73,15 +73,17 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
                 <ProjectMediums project={project} />
               </div>
             </div>
+          </div>
 
-            <span className="text-[9px] md:text-sm text-muted-foreground whitespace-nowrap flex-shrink-0">
-              {formatDate(project.updatedAt)}
-            </span>
+          {/* Date positioned at top-right of the content area */}
+          <div className="absolute top-2 right-2 z-10 text-[9px] md:text-sm text-muted-foreground whitespace-nowrap">
+            {formatDate(project.updatedAt)}
           </div>
 
           <p className="text-muted-foreground text-[10px] md:text-sm mb-1.5 md:mb-4 line-clamp-3 whitespace-pre-wrap break-words max-w-full">
             {formatTextWithNewlines(project.summary)}
           </p>
+          
 
           <div className="flex flex-col gap-1.5 md:flex-row md:items-center md:justify-between md:gap-2 max-w-full">
             <div className="hidden md:flex flex-wrap gap-1 max-w-full overflow-hidden">
@@ -96,15 +98,13 @@ export function ProjectListItem({ project, onClick }: ProjectListItemProps) {
                 </Badge>
               )}
             </div>
+          </div>
 
-            {/* Resource icons and primary action */}
-            <div className="flex items-center gap-1 flex-shrink-0">
-              {/* Show resource buttons as icons */}
-              {project.resources && project.resources.map((resource) => (
-                <ResourceButton key={resource.url} resource={resource} iconOnly className="h-7 w-7" />
-              ))}
-              
-            </div>
+          {/* Resource icons positioned at bottom-right of the content area */}
+          <div className="absolute bottom-2 right-2 flex items-center gap-1 md:gap-2">
+            {project.resources && project.resources.map((resource) => (
+              <ResourceButton key={resource.url} resource={resource} showLabelOnMd className="h-7 w-7 md:h-auto md:w-auto" />
+            ))}
           </div>
         </div>
       </div>

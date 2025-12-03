@@ -78,8 +78,9 @@ const ICON_MAP: Record<ResourceType | string, string> = {
   website: "website",
   web: "website",
   blog: "blog",
-  "app:iosAppStore": "apple", 
-  "app:androidPlayStore": "google",
+  "iosappstore": "apple",
+  "app:iosappstore": "apple", 
+  "app:androidplaystore": "google",
   "apple": "apple",
   "google": "google",
   // mediums (legacy, for compatibility)

@@ -120,13 +120,9 @@ export function ProjectCard({
           {/* Resource icons and action button */}
           <div className="flex items-center gap-0.5">
             {project.resources && project.resources.slice(0, 2).map((resource) => (
-              <ResourceButton key={resource.url} resource={resource} iconOnly className="h-6 w-6" />
+              <ResourceButton key={resource.url} resource={resource} iconOnly  />
             ))}
-            <PrimaryActionButton 
-              project={project} 
-              resource={Array.isArray(project.resources) && project.resources.length > 0 ? project.resources[0] : undefined} 
-              className="md:h-7 pl-1.5 pr-3 md:px-2 text-[9px] md:text-xs gap-1 max-w-[70%] "
-            />
+
           </div>
         </div>
       </CardContent>

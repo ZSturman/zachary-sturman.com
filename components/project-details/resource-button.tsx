@@ -8,10 +8,12 @@ export default function ResourceButton({
   resource,
   className,
   iconOnly = false,
+  showLabelOnMd = false,
 }: {
   resource: Resource;
   className?: string;
   iconOnly?: boolean;
+  showLabelOnMd?: boolean;
 }) {
   const router = useRouter();
   const icon = bestIconPath(resource.type);
@@ -35,7 +37,7 @@ export default function ResourceButton({
       <Button
         variant="ghost"
         size="icon"
-        className={className || "h-8 w-8 shrink-0"}
+        className={className || "h-10 w-10 shrink-0"}
         onClick={handleClick}
         title={resource.label}
       >
@@ -43,9 +45,32 @@ export default function ResourceButton({
           className="dark:invert"
           src={icon}
           alt={resource.type}
+          width={20}
+          height={20}
+        />
+      </Button>
+    );
+  }
+  
+  // Show icon only on mobile, with label on md+ screens
+  if (showLabelOnMd) {
+    return (
+      <Button
+        variant="ghost"
+        className={className || "h-8 w-8 md:h-auto md:w-auto md:px-3 md:py-1.5 shrink-0"}
+        onClick={handleClick}
+        title={resource.label}
+      >
+        <Image
+          className="dark:invert shrink-0"
+          src={icon}
+          alt={resource.type}
           width={16}
           height={16}
         />
+        <span className="hidden md:inline ml-1.5 text-xs font-medium truncate max-w-[120px]">
+          {resource.label}
+        </span>
       </Button>
     );
   }

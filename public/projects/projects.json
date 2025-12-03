@@ -1,19 +1,164 @@
 [
   {
-    "category": "Software",
-    "createdAt": 785853422.744704,
-    "description": "The first version of my portfolio was built with Flask, following Corey Schafer’s tutorials as a starting point. It was my introduction to web development and a way to learn how all the pieces of a site come together. I set up my own server, configured Nginx, and handled deployment myself, not realizing that most people used simpler options. It was a long process, full of trial and error, but it gave me a deep understanding of how a web application actually runs. I designed my own SVG graphics and added simple hover animations to make it feel personal. It wasn’t perfect, but it worked, and I was proud of it.",
+    "category": "System",
+    "createdAt": 782236017.360592,
+    "description": "ChewSense is an iOS app that helps people slow down while they eat and pay more attention to their habits. It uses the motion sensors in AirPods to pick up chewing—mainly through X-axis acceleration—and gives gentle alerts when someone might be eating too fast. The app records motion and optional video so it can learn a person’s eating pattern and adjust over time. The goal is simple: improve digestion, avoid overeating, and make meals feel more mindful without asking the user to track anything manually.",
     "domain": "Technology",
-    "featured": false,
-    "id": "B062E7E0-387F-4D08-B0B6-A75410AACCE1",
+    "featured": true,
+    "id": "96B6C759-C77C-41F9-AFA1-64325010C604",
     "images": {
       "thumbnail": "thumbnail.png"
     },
     "isPublic": true,
     "mediums": [
+      "Mobile"
+    ],
+    "phase": "live",
+    "resources": [
+      {
+        "category": "app",
+        "label": "App Store Download",
+        "type": "iosAppStore",
+        "url": "https://apps.apple.com/us/app/chew-sense-collect-and-label/id6755277802"
+      },
+      {
+        "category": "repository",
+        "label": "Repo",
+        "type": "github",
+        "url": "https://github.com/ZSturman/ChewSense---Data-Collection-and-Labeling"
+      }
+    ],
+    "status": "done",
+    "story": "This project started from an idea I’d been thinking about for years. I originally assumed I’d have to build my own hardware to detect chewing, which is why I bought a 3D printer and began experimenting with custom sensors. That approach got complicated fast. Instead, I looked for something people already use every day. When I found out AirPods could actually pick up chewing through their motion data, I tested it and saw that the X-axis readings were consistent enough to use. From there, I built two iOS app versions that could record motion and video while someone eats. Working through it showed me that you don’t always need custom hardware—sometimes the tools we already have are good enough to bring an idea to life.",
+    "subtitle": "Using AirPods and motion data to help people slow down and eat more mindfully.",
+    "summary": "An iOS app that uses AirPods’ motion sensors to detect chewing and help users eat more mindfully by slowing down their pace.",
+    "tags": [
+      "iOS",
+      "Swift",
+      "AirPods",
+      "Machine Learning",
+      "Data Analysis",
+      "AI"
+    ],
+    "title": "Chew Sense - Data Collection and Labelling",
+    "topics": [
+      "Health"
+    ],
+    "updatedAt": 786473287.596777,
+    "name": "Chew Sense - Data Collection and Labelling",
+    "folderName": "chew_sense_data_collection_and_labelling_96B6C759-C77C-41F9-AFA1-64325010C604"
+  },
+  {
+    "category": "Software",
+    "createdAt": 778175671.555743,
+    "description": "MediLedger is designed around a simple idea: most of what you need to do with your medication shouldn’t require opening an app. With interactive widgets, you can log a full or half dose, check how many pills you have left, see when your refill is coming up, and set up different widgets for different medications. The app handles both prescription and non-prescription meds, tracks strength and dosage, and keeps a full history of what you’ve taken. Everything syncs through SwiftData across iPhone, iPad, and Mac, and it works offline when it needs to. You can customize what each widget shows, set up alerts for refills, and rely on automatic calculations to keep your supply accurate without any extra effort.",
+    "domain": "Technology",
+    "featured": true,
+    "id": "B9E63C92-6B9D-499C-A2B7-D72A7DA412EE",
+    "images": {
+      "poster": "poster.png",
+      "thumbnail": "thumbnail.png"
+    },
+    "isPublic": true,
+    "mediums": [
+      "Mobile"
+    ],
+    "phase": "live",
+    "resources": [
+      {
+        "category": "app",
+        "label": "App Store Download",
+        "type": "iosAppStore",
+        "url": "https://apps.apple.com/us/app/mediledger/id6744004933"
+      },
+      {
+        "category": "repository",
+        "label": "repo",
+        "type": "github",
+        "url": "https://github.com/ZSturman/MediLedger"
+      }
+    ],
+    "status": "done",
+    "story": "This started as a project to see how far I could push a widget-first approach. I wanted something simple enough to test the idea but useful enough that the effort felt worth it. Medication tracking made sense—it’s structured, it matters day to day, and most interactions are quick. I spent a lot of time figuring out how much a widget could handle: what buttons made sense, what info people would need at a glance, and how to keep things clean without stripping away control. The goal wasn’t to build a perfect app; it was to learn what happens when the widget becomes the main interaction surface. Eventually, I want this to connect with Trackables so all these small bits of daily data live in one place and start forming patterns that actually help people. It’s still early, but it feels like the right direction.",
+    "subtitle": "Widget-first medication tracking built for everyday reliability.",
+    "summary": "MediLedger is a medication management tool built around interactive Home Screen widgets. It lets users log doses, track supply, monitor refills, and sync data across all Apple devices. Designed for simplicity and precision, it shifts medication tracking from the app itself to the widget, making daily adherence faster and more accessible.",
+    "tags": [
+      "iOS",
+      "Swift"
+    ],
+    "title": "MediLedger",
+    "topics": [
+      "Health"
+    ],
+    "updatedAt": 785264362.30178,
+    "name": "MediLedger",
+    "folderName": "mediledger_B9E63C92-6B9D-499C-A2B7-D72A7DA412EE"
+  },
+  {
+    "category": "Software",
+    "createdAt": 773247960.782938,
+    "description": "Top Note is a focused productivity app for people who tend to ignore reminders or feel weighed down by long to-do lists. It takes a simpler approach: one reminder, flashcard, or note at a time. You can complete it or skip it, and if you skip, it returns sooner through a spaced repetition system that keeps important things visible.\n\nThis design encourages accountability and steady progress. It helps build habits, strengthen memory, and keep personal ideas within reach—without the noise of endless lists.\n\nWhy it works\nTop Note combines two familiar ideas: single-task focus and spaced repetition. Together they keep your attention on what matters next, reinforcing memory and consistency over time.\n\nFeatures\n– One-at-a-time reminders that reduce distraction.\n– Skip and repeat so skipped items return sooner.\n– Spaced repetition flashcards for better recall.\n– Widget-first design that keeps the app close at hand.\n– Flexible note support for quotes, goals, or brief thoughts.\n– Simple setup inside the app; most use happens in the widget.\n\nBest for\n– People who often dismiss reminders.\n– Habit tracking and reinforcement.\n– Short study or review sessions.\n– Keeping a meaningful note visible through the day.\n\nTop Note makes productivity manageable by narrowing your focus. Instead of managing a list, you engage with one small task—and let time handle the rest.",
+    "domain": "Technology",
+    "featured": true,
+    "id": "AD76406D-450D-457B-96B4-4979A19EF490",
+    "images": {
+      "heroBanner": "heroBanner.png",
+      "poster": "poster.png",
+      "thumbnail": "thumbnail.png"
+    },
+    "isPublic": true,
+    "mediums": [
+      "Mobile"
+    ],
+    "phase": "live",
+    "resources": [
+      {
+        "category": "app",
+        "label": "App Store Download",
+        "type": "iosAppStore",
+        "url": "https://apps.apple.com/us/app/top-note/id6742725271"
+      },
+      {
+        "category": "repository",
+        "label": "Repo",
+        "type": "github",
+        "url": "https://github.com/ZSturman/TopNote"
+      }
+    ],
+    "status": "done",
+    "subtitle": "A widget based iOS app",
+    "summary": "A widget-first productivity app that keeps you focused on what's next and only on what’s next.",
+    "tags": [
+      "Swift",
+      "iOS",
+      "Flashcards",
+      "Focus"
+    ],
+    "title": "Top Note",
+    "topics": [
+      "Productivity"
+    ],
+    "updatedAt": 786473109.746148,
+    "name": "Top Note",
+    "folderName": "top_note_AD76406D-450D-457B-96B4-4979A19EF490"
+  },
+  {
+    "category": "Software",
+    "createdAt": 630679022.7447052,
+    "description": "The first version of my portfolio came from following Corey Schafer’s Flask tutorials and trying to understand how a real web app fits together. I set up my own server, configured Nginx, and handled deployment myself—mostly because I didn’t know there were easier options. It took a lot of trial and error, but it taught me how everything actually works behind the scenes. I added some of my own SVG graphics and simple animations to make it feel personal. It wasn’t perfect, but it ran, and I learned a lot from getting it there.",
+    "domain": "Technology",
+    "featured": false,
+    "id": "B062E7E0-387F-4D08-B0B6-A75410AACCE1",
+    "images": {
+      "banner": "banner.png",
+      "poster": "poster.png",
+      "thumbnail": "thumbnail copy.png"
+    },
+    "isPublic": true,
+    "mediums": [
       "Web"
     ],
-    "phase": "Outdated",
+    "phase": "Archived",
     "resources": [
       {
         "category": "url",
@@ -34,34 +179,37 @@
         "url": "/projects/BB2F567C-B29C-4666-AABF-986E69AA9592"
       }
     ],
-    "status": "archived",
-    "story": "I went on indeed.com and looked for a job that I could see myself liking while also feeling satisfied with my pay. I found data scientist. Hoping to skip the formal education I started learned python. After I had somewhat of an idea of what I was doing I needed a way to advertise myself. I followed Corey Schafer’s Flask tutorials and tried to piece together my own version, learning about servers, Nginx, and deployment along the way. I didn’t know how complicated I was making things, but it taught me more than any tutorial could. When it finally worked, it felt less like finishing a project and more like understanding a language for the first time.",
+    "status": "done",
+    "story": "I found “data scientist” on Indeed and thought it looked like something I’d enjoy, so I started teaching myself Python. Once I understood the basics, I needed a way to show what I could do. I followed Corey Schafer’s Flask tutorials and tried to build my own version, which meant learning about servers, Nginx, deployment, and all the setup that comes with it. I didn’t realize how complicated I was making things, but working through it taught me more than the tutorials themselves. When I finally got it online, it felt like I had actually learned how things fit together.",
     "subtitle": "Built with Flask",
-    "summary": "The initial version used Flask and manual deployment with Nginx, teaching web app fundamentals. It was basic but personal, with custom SVGs and animations, resembling a complete first build. Inspired by Corey Schafer’s tutorials, it was a personal portfolio built from scratch with Flask. Deployed using Nginx and a self-hosted server, it taught full-stack fundamentals from setup to launch. Features custom SVG graphics, hover animations, and manually configured routing and deployment. A foundational project that taught core web architecture and deployment.",
+    "summary": "A Flask-based portfolio deployed manually with Nginx on a self-hosted server. Included custom SVGs, simple animations, and hand-configured routing and deployment. Functioned as an early full-stack project that introduced web app structure, hosting, and deployment fundamentals.",
     "tags": [
       "Python",
       "Portfolio",
       "Flask"
     ],
     "title": "ZSDynamics V1.0",
+    "updatedAt": 647015121.840316,
     "name": "ZSDynamics V1.0",
     "folderName": "zsdynamics_v10_B062E7E0-387F-4D08-B0B6-A75410AACCE1"
   },
   {
     "category": "Software",
-    "createdAt": 785818175.59953,
-    "description": "After spending time learning more about data science, I wanted the portfolio to do more than just display my work. I added a subscription feature that let visitors sign up and receive updates by email. I also integrated Dashly to bring in some data visualization and a bit of in-app analytics. It felt like a step forward—not just technically, but in how I thought about connecting with an audience.",
+    "createdAt": 648956975.59953,
+    "description": "After digging deeper into data science, I wanted the portfolio to be more than a place to drop my work. So I added a simple email subscription so visitors could get updates, and I integrated Dashly for some lightweight analytics and visualization. It was a noticeable step forward for me—not just in the code, but in how I was thinking about the people visiting the site.",
     "domain": "Technology",
     "featured": false,
     "id": "8D5D9392-990D-4431-82B5-5997F094FBA3",
     "images": {
+      "banner": "banner.png",
+      "poster": "poster.png",
       "thumbnail": "thumbnail.png"
     },
     "isPublic": true,
     "mediums": [
       "Web"
     ],
-    "phase": "Outdated",
+    "phase": "Archived",
     "resources": [
       {
         "category": "url",
@@ -82,33 +230,35 @@
         "url": "/projects/BB2F567C-B29C-4666-AABF-986E69AA9592"
       }
     ],
-    "status": "archived",
-    "story": "After the first version went live, I wanted to make it more than a static showcase. I added ways for visitors to subscribe and receive updates, and I built simple tools for tracking engagement. I was thinking more like a developer by then—less about how the code looked and more about how people might use it. It was a small shift, but it made me realize that I enjoyed thinking about users and data together.",
+    "status": "done",
+    "story": "Once the first version was up, I realized it needed to do more than just sit there. I added signup options for updates and built a few small tools to track engagement. By then I was approaching things more like a developer—less focused on the code in isolation and more on how someone might actually use the site. It was a small shift, but it made me realize I liked working at the intersection of users and data.",
     "subtitle": "Built with Flask",
-    "summary": "Introduced subscription features and integrated Dashly analytics. Shifted focus from showcasing projects to engaging users and understanding data-driven design. Upgraded Flask portfolio to be interactive and communicative. Added email subscription, automated updates, and Dashly for data analytics and user tracking. Python-based, this version emphasized user connection and data insights.",
+    "summary": "This version turned the portfolio from a static project list into an interactive site with email subscriptions and built-in analytics to better understand user engagement.",
     "tags": [
       "Python",
       "Portfolio"
     ],
     "title": "ZSDynamics V1.1",
+    "updatedAt": 670687413.282519,
     "name": "ZSDynamics V1.1",
     "folderName": "zsdynamics_v11_8D5D9392-990D-4431-82B5-5997F094FBA3"
   },
   {
     "category": "Software",
-    "createdAt": 785818194.085708,
-    "description": "During a year in Australia on a working holiday visa, I started paying closer attention to what skills employers were asking for. React came up almost everywhere. I didn’t want to abandon what I’d learned in Python, so I rebuilt the portfolio with a Python backend and a React frontend. It became a bridge between what I already knew and what I still needed to learn, and it gave me a clearer picture of how modern web stacks fit together.",
+    "createdAt": 672630594.0857086,
+    "description": "While I was in Australia on a working holiday visa, I started noticing how often React showed up in job descriptions. I didn’t want to throw away the Python knowledge I already had, so I rebuilt my portfolio using Python on the backend and React on the frontend. It helped me connect what I knew with what I needed to learn and gave me a better sense of how a modern stack actually fits together.",
     "domain": "Technology",
     "featured": false,
     "id": "B998390B-405B-4D50-BA41-B9E4C5D124CC",
     "images": {
+      "poster": "poster.jpg",
       "thumbnail": "thumbnail.png"
     },
     "isPublic": true,
     "mediums": [
       "Web"
     ],
-    "phase": "Outdated",
+    "phase": "Archived",
     "resources": [
       {
         "category": "url",
@@ -129,28 +279,36 @@
         "url": "/projects/BB2F567C-B29C-4666-AABF-986E69AA9592"
       }
     ],
-    "status": "archived",
-    "story": "While living in Australia, I started paying attention to what companies actually wanted in new hires. React kept appearing on job listings, so I decided to learn it by rebuilding my site. I didn’t drop Python; instead, I used it for the backend and let React handle the frontend. This version wasn’t just about learning a new framework—it was about learning how technologies talk to each other. It made the portfolio feel more modern, but also more grounded in how real-world applications are built.",
+    "status": "done",
+    "story": "Living in Australia made me pay more attention to what companies were prioritizing in new hires. React kept coming up, so I used my portfolio as a way to learn it. I kept Python for the backend and used React for the frontend, which forced me to learn how the two communicate. It updated the portfolio, but more importantly, it taught me how real-world applications blend multiple technologies.",
     "subtitle": "Built with Python and React",
-    "summary": "Rebuilt with a Python backend and React frontend to meet modern tech demands while abroad. This version integrated prior Python experience with new frontend skills, emphasizing full-stack integration. Built during a working holiday in Australia, it modernized the stack while maintaining Python for server-side logic. It showcases data projects, includes responsive layouts, and features a component-based front-end design.",
+    "summary": "A full-stack rebuild using a Python backend and a React frontend, created to modernize the stack while keeping existing Python experience in play. Developed during a working holiday in Australia, it featured responsive layouts, component-based design, and a structure suited for showcasing data-focused projects.",
     "tags": [
       "Python",
       "Portfolio",
-      "React"
+      "React",
+      "JavaScript"
     ],
     "title": "ZSDynamics V2.0",
+    "updatedAt": 720713255.866251,
     "name": "ZSDynamics V2.0",
     "folderName": "zsdynamics_v20_B998390B-405B-4D50-BA41-B9E4C5D124CC"
   },
   {
-    "createdAt": 785818214.456602,
-    "description": "Once the basics were in place, I began to explore how to make the site more interactive. I added a theme selector that let users change the site’s colors and fonts in real time. It wasn’t great for SEO, but it was a good way to practice state management and user interface logic. This version felt like a sandbox for experimentation, a way to keep learning while trying out ideas that didn’t need to be perfect.",
+    "category": "Software",
+    "createdAt": 722659814.456604,
+    "description": "After I got more comfortable with React, I wanted to see how design choices and small interactions could change the experience. I built a feature that let users switch between themes and font styles. It wasn’t the most practical feature, but it taught me a lot and pushed me to pay more attention to how design decisions show up in real use. That curiosity drove most of what I built during this stage.",
+    "domain": "Technology",
     "featured": false,
     "id": "F9E04D0A-42AB-4091-8856-CC612DDBE276",
     "images": {
-      "thumbnail": "thumbnail.png"
+      "thumbnail": "thumbnail copy.png"
     },
     "isPublic": true,
+    "mediums": [
+      "Web"
+    ],
+    "phase": "Archived",
     "resources": [
       {
         "category": "url",
@@ -171,29 +329,37 @@
         "url": "/projects/BB2F567C-B29C-4666-AABF-986E69AA9592"
       }
     ],
-    "story": "Once I felt more comfortable with React, I began exploring how design and interactivity could shape the experience. I added a feature that let users switch between different themes and fonts. It wasn’t practical in every sense, but it was interesting, and it made me curious about how design choices affect usability. That curiosity drove most of my learning at that stage.",
+    "status": "done",
+    "story": "After I got more comfortable with React, I wanted to see how design choices and small interactions could change the experience. I built a feature that let users switch between themes and font styles. It wasn’t the most practical feature, but it taught me a lot and pushed me to pay more attention to how design decisions show up in real use. That curiosity drove most of what I built during this stage.",
     "subtitle": "Built with React",
-    "summary": "Added interactive elements like a theme selector to explore state management and UI logic. It served as a testing ground for experimentation and deepening frontend understanding. An experimental version explored front-end flexibility and user customization. It included dynamic theme and font selection, enabling users to personalize the interface. Focused on React state management, component communication, and styling logic. Served as a sandbox for improving front-end fluency.",
+    "summary": "Added interactive features such as a live theme and font selector to experiment with frontend flexibility. Focused on React state management, component communication, and styling behavior. Served as a small sandbox for improving overall frontend fluency.",
+    "tags": [
+      "React",
+      "JavaScript",
+      "Portfolio"
+    ],
     "title": "ZSDynamics V3.0",
+    "updatedAt": 736440314.672471,
     "name": "ZSDynamics V3.0",
-    "domain": "Unknown Domain",
     "folderName": "zsdynamics_v30_F9E04D0A-42AB-4091-8856-CC612DDBE276"
   },
   {
     "category": "Software",
-    "createdAt": 663559327.836193,
-    "description": "The most recent version focused on movement and refinement. I spent time experimenting with parallax effects and smoother animations, learning how small design decisions could change the way a page feels. I created an SVG character version of myself whose colors shifted with light and dark mode, which gave the site a more personal touch. By this point, the portfolio had become less about showing finished work and more about tracing how far I’d come in learning to build and design thoughtfully.",
+    "createdAt": 737082127.8361893,
+    "description": "In the latest version, I focused on making the site feel more refined. I experimented with parallax effects and smoother animations to understand how small design choices change the overall experience. I also created an SVG character of myself that shifts colors in light and dark mode, which made the site feel a bit more personal. At this point, the portfolio wasn’t just about showing projects—it was a way to see how my design and development skills had grown.",
     "domain": "Technology",
     "featured": false,
     "id": "55B14B05-726C-45BC-ACF6-7D21C943B78E",
     "images": {
+      "banner": "banner.png",
+      "poster": "poster.jpeg",
       "thumbnail": "thumbnail copy.png"
     },
     "isPublic": true,
     "mediums": [
       "Web"
     ],
-    "phase": "abandoned",
+    "phase": "Archived",
     "resources": [
       {
         "category": "repository",
@@ -214,14 +380,15 @@
         "url": "/projects/BB2F567C-B29C-4666-AABF-986E69AA9592"
       }
     ],
-    "status": "archived",
-    "story": "For the latest version, I focused on detail. I added parallax effects, smoother animations, and an SVG self-portrait that adapted to light and dark mode. It was a chance to connect everything I’d learned—Python, React, animation, and design—into one project that felt cohesive. Each version of this portfolio marks a stage in my learning, not just in coding, but in understanding how to build something that grows with me.",
+    "status": "done",
+    "story": "For this version, I spent time on the details. I added parallax scrolling, smoother animations, and an SVG self-portrait that adapts to light and dark mode. It let me pull together everything I’d learned—Python, React, design, and motion—into a single project that felt consistent. Each version ends up marking where I was in my learning, both in coding and in figuring out how to build something that keeps improving.",
     "subtitle": "Built with React",
-    "summary": "Focused on refined motion, polish, parallax effects, smoother animations, and an adaptive SVG avatar. It unified previous learning into a cohesive, expressive, and technically mature portfolio. The latest iteration emphasizes design and motion, introducing smooth parallax scrolling, layered animation effects, and a self-designed SVG character whose colors shift with light and dark mode. Built to merge aesthetic polish with technical depth, reflecting growth across development and design disciplines.",
+    "summary": "A design-driven update centered on smoother motion, subtle parallax effects, and an adaptive SVG avatar. Combined earlier technical and design skills into a more polished, cohesive, and expressive version of the portfolio.",
     "tags": [
       "Next.js",
       "Portfolio",
-      "React"
+      "React",
+      "TypeScript"
     ],
     "title": "ZSDynamics v4.0",
     "name": "ZSDynamics v4.0",
@@ -239,9 +406,9 @@
             "order": 0,
             "resource": {
               "category": "app",
-              "label": "Version 4",
+              "label": "",
               "type": "googlePlay",
-              "url": "https://zsturman.github.io/ZSDynamics-V4.0/ "
+              "url": ""
             },
             "summary": "The latest iteration emphasizing design and motion. Introduced smooth parallax scrolling, layered animation effects, and a self-designed SVG character whose colors shift dynamically with light and dark mode. Built to merge aesthetic polish with technical depth, reflecting growth across development and design disciplines.",
             "thumbnail": "thumbnail.png",
@@ -254,75 +421,89 @@
             "order": 1,
             "resource": {
               "category": "url",
-              "label": "Version 3.0",
+              "label": "",
               "type": "website",
-              "url": "https://zsturman.github.io/ZSDynamics-V4.0/ "
+              "url": ""
             },
-            "summary": "An experimental version exploring front-end flexibility and user customization. Added functionality for dynamic theme and font selection, enabling users to personalize the interface. Focused on React state management, component communication, and styling logic. Served as a sandbox for improving front-end fluency.",
             "thumbnail": "thumbnail.png",
             "type": "local-link",
             "url": "/projects/F9E04D0A-42AB-4091-8856-CC612DDBE276"
+          },
+          {
+            "id": "A7B0239D-D7B7-49C0-A656-1C70413B53D4",
+            "label": "Version 2",
+            "order": 2,
+            "resource": {
+              "category": "app",
+              "label": "",
+              "type": "googlePlay",
+              "url": ""
+            },
+            "thumbnail": "thumbnail.png",
+            "type": "local-link",
+            "url": "/projects/B998390B-405B-4D50-BA41-B9E4C5D124CC"
+          },
+          {
+            "id": "3E56C901-0CB7-4C2E-B6C9-C1636323B2A8",
+            "label": "Version 1.1",
+            "order": 3,
+            "resource": {
+              "category": "app",
+              "label": "",
+              "type": "googlePlay",
+              "url": ""
+            },
+            "thumbnail": "thumbnail.png",
+            "type": "local-link",
+            "url": "/projects/8D5D9392-990D-4431-82B5-5997F094FBA3"
+          },
+          {
+            "id": "DCE4E0B0-8038-4986-9ED6-95374DF59D84",
+            "label": "Version 1",
+            "order": 4,
+            "resource": {
+              "category": "app",
+              "label": "",
+              "type": "googlePlay",
+              "url": ""
+            },
+            "thumbnail": "thumbnail.png",
+            "type": "local-link",
+            "url": "/projects/B062E7E0-387F-4D08-B0B6-A75410AACCE1"
           }
         ]
       }
     },
-    "createdAt": 785734268.088934,
-    "description": "Across these versions, the portfolio moves from early experiments with web servers and deployment to a more deliberate exploration of interaction and user experience. What began as a way to learn the basics of web development gradually became a study in how software grows through iteration. Each update introduced something new—whether a backend feature, a visualization tool, or an experiment with motion and layout—and together they form a record of learning that values progress over perfection. The result is less a single polished site and more a map of how understanding takes shape through making, breaking, and rebuilding.",
+    "createdAt": 628572668.088934,
+    "description": "Across these versions, you can see me going from basic experiments with servers and deployment to paying more attention to how things actually feel to use. What started as me trying to learn the fundamentals turned into a steady process of trying something, seeing what worked, and adjusting. Each version added a small piece—a backend tweak, a visual idea, a different layout—and the whole set basically shows how I learn by building, fixing, and trying again.",
     "domain": "Technology",
     "featured": true,
     "id": "BB2F567C-B29C-4666-AABF-986E69AA9592",
     "images": {
+      "banner": "banner.png",
+      "poster": "poster.png",
       "thumbnail": "thumbnail.png"
     },
     "isPublic": true,
     "mediums": [
       "Web"
     ],
-    "resources": [
-      {
-        "category": "folio",
-        "label": "Version 4",
-        "type": "local-link",
-        "url": "/projects/55B14B05-726C-45BC-ACF6-7D21C943B78E"
-      },
-      {
-        "category": "folio",
-        "label": "Version 3",
-        "type": "local-link",
-        "url": "/projects/F9E04D0A-42AB-4091-8856-CC612DDBE276"
-      },
-      {
-        "category": "folio",
-        "label": "Version 2",
-        "type": "local-link",
-        "url": "/projects/B998390B-405B-4D50-BA41-B9E4C5D124CC"
-      },
-      {
-        "category": "folio",
-        "label": "Version 1.1",
-        "type": "local-link",
-        "url": "/projects/8D5D9392-990D-4431-82B5-5997F094FBA3"
-      },
-      {
-        "category": "folio",
-        "label": "Version 1.0",
-        "type": "local-link",
-        "url": "/projects/B062E7E0-387F-4D08-B0B6-A75410AACCE1"
-      }
-    ],
-    "status": "inProgress",
-    "story": "When I first started learning Python, I wanted a way to show what I could do, even if it wasn’t much. Building the portfolio gave me that space. The early versions were slow and uncertain, full of mistakes that later became lessons. Over time, each new version taught me something different—not just about frameworks or syntax, but about patience, problem-solving, and how design decisions can change the way a project feels to use. By the time I reached the latest version, the portfolio had become less about proving skill and more about documenting growth. It’s a record of learning in motion, shaped by curiosity and the steady work of figuring things out, one version at a time.",
+    "phase": "Developing",
+    "status": "In Progress",
+    "story": "When I first started learning Python, I wanted a place to put what I was figuring out, even if it wasn’t great yet. The early versions were rough, and I made a lot of mistakes, but working through them helped me understand what I was doing. Every version taught me something new—sometimes about code, sometimes about design, sometimes just about slowing down and solving one problem at a time. By the latest version, it wasn’t about proving anything; it was just a clear record of how my skills grew as I kept building.",
     "subtitle": "A collection of my previous portfolio pages",
-    "summary": "This collection showcases versions of my personal portfolio. Each version documents how my design, presentation style, skill and career path have evolved over time.",
+    "summary": "This collection brings together different versions of my portfolio, each one capturing how my design sense, presentation choices, technical skill, and even career direction have shifted and sharpened over time.",
     "tags": [
       "Portfolio",
       "Flask",
       "Next.js",
       "Python",
-      "React"
+      "React",
+      "TypeScript",
+      "JavaScript"
     ],
     "title": "ZSDynamics Collection",
-    "updatedAt": 785853703.854182,
+    "updatedAt": 786470654.806671,
     "name": "ZSDynamics Collection",
     "folderName": "zsdynamics_collection_BB2F567C-B29C-4666-AABF-986E69AA9592"
   }

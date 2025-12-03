@@ -37,7 +37,7 @@ const ProjectDetailsMediaDisplay = ({ project }: ProjectDetailsMediaDisplayProps
   const thumbnailSettings = project.imageSettings?.thumbnail;
 
   return (
-    <div className="bg-red-200 min-w-20 min-h-20">
+    <div className="mb-4">
       {poster && (
         <div className="overflow-hidden rounded-lg  relative">
           <MediaDisplay

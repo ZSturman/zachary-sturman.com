@@ -120,12 +120,29 @@ export function getCategory(type?: string, path?: string) {
  */
 export type DateFormatPreset = "year" | "shortMonthYear" | "long" | "iso"
 
+// Apple/Cocoa epoch starts on January 1, 2001 (in Unix seconds)
+const APPLE_EPOCH_OFFSET = 978307200
+
 export const formatDate = (
-  s?: string,
+  s?: string | number,
   formatter?: Intl.DateTimeFormatOptions | ((date: Date) => string) | DateFormatPreset | string
 ): string | null => {
-  if (!s) return null
-  const date = new Date(s)
+  if (s === undefined || s === null) return null
+  
+  let date: Date
+  
+  if (typeof s === "number") {
+    // Detect if this is an Apple/Cocoa timestamp (seconds since Jan 1, 2001)
+    // Apple timestamps for recent dates (2001-2030) are roughly 0 to 1 billion
+    // Unix timestamps for the same period are roughly 1 billion to 2 billion
+    // If the value is less than ~1 billion and adding Apple epoch gives a reasonable date, use Apple epoch
+    const unixSeconds = s < 1000000000 ? s + APPLE_EPOCH_OFFSET : s
+    const ms = unixSeconds * 1000
+    date = new Date(ms)
+  } else {
+    date = new Date(s)
+  }
+  
   if (isNaN(date.getTime())) return null
 
   // function formatter has highest precedence

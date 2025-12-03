@@ -15,7 +15,7 @@ import { CollectionItem, Project, Resource } from "@/types"
 import { ExternalLink, ArrowRight } from "lucide-react"
 import { CollectionFullscreen } from "./collection-item-fullscreen"
 import { cn } from "@/lib/utils"
-import ResourceButton from "../resource-button"
+//import ResourceButton from "../resource-button"
 
 // Helper function to get the item path from various possible formats
 function getItemPath(item: CollectionItem, folderName?: string, collectionName?: string): string | undefined {
@@ -163,7 +163,7 @@ function CollectionItemWrapper({ item, onRequestFullscreen, children, className,
   return (
     <Card 
       className={cn(
-        "overflow-hidden transition-shadow hover:shadow-lg flex flex-col h-full relative",
+        "overflow-hidden transition-shadow hover:shadow-lg flex flex-col h-full relative p-0",
         onRequestFullscreen && !disableClickToFullscreen && "cursor-pointer",
         className
       )}
@@ -189,13 +189,13 @@ function CollectionItemWrapper({ item, onRequestFullscreen, children, className,
               {item.summary}
             </p>
           )}
-          {resources.length > 0 && (
+          {/* {resources.length > 0 && (
             <div className="flex gap-0.5 flex-shrink-0">
               {resources.slice(0, 4).map((resource) => (
                 <ResourceButton key={resource.url} resource={resource} iconOnly className="h-6 w-6" />
               ))}
             </div>
-          )}
+          )} */}
         </div>
       )}
     </Card>
