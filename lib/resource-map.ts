@@ -73,6 +73,7 @@ const ICON_MAP: Record<ResourceType | string, string> = {
   image: "image",
   dataset: "dataset",
   download: "download",
+  "folio": "portfolio",
   "local-download": "download",
   "local-link": "website",
   website: "website",

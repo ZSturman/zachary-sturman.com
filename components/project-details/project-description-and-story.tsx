@@ -103,18 +103,24 @@ export function ProjectContent({ project }: ProjectContentProps) {
   if (!hasDescription && !hasStory) return null;
 
   return (
-    <div className="space-y-6 text-sm text-muted-foreground/80">
+    <article className="prose prose-gray dark:prose-invert max-w-none">
       {hasDescription && (
-        <div className="leading-relaxed whitespace-pre-wrap">
-          {formatTextWithNewlines(description)}
-        </div>
+        <section className="mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-foreground">Description</h2>
+          <div className="text-base md:text-lg leading-relaxed text-foreground/90 whitespace-pre-wrap">
+            {formatTextWithNewlines(description)}
+          </div>
+        </section>
       )}
 
-      {project.story && (
-        <div className="leading-relaxed whitespace-pre-wrap border-l-2 border-muted pl-4">
-          {formatTextWithNewlines(project.story)}
-        </div>
+      {hasStory && (
+        <section className="mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-foreground">Story</h2>
+          <div className="text-base md:text-lg leading-relaxed text-foreground/90 whitespace-pre-wrap border-l-4 border-primary/20 pl-6">
+            {formatTextWithNewlines(story)}
+          </div>
+        </section>
       )}
-    </div>
+    </article>
   );
 }

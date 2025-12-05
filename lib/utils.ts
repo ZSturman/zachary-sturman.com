@@ -32,7 +32,7 @@ export function isImageFile(path?: string | null): boolean {
  * @returns The path to the optimized version
  */
 export function getOptimizedMediaPath(filename: string | undefined, folderPath: string): string {
-  if (!filename) return "/placeholder.svg"
+  if (!filename || typeof filename !== 'string') return "/placeholder.svg"
   
   // If it's an external URL, return as-is
   if (filename.startsWith("http://") || filename.startsWith("https://")) {

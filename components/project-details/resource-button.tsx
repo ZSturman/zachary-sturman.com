@@ -3,27 +3,40 @@ import { Button } from "../ui/button";
 import { bestIconPath } from "@/lib/resource-map";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useBreadcrumb } from "@/lib/breadcrumb-context";
 
 export default function ResourceButton({
   resource,
   className,
   iconOnly = false,
   showLabelOnMd = false,
+  iconSize = 16,
+  currentProject
 }: {
   resource: Resource;
   className?: string;
   iconOnly?: boolean;
   showLabelOnMd?: boolean;
+  iconSize?: number;
+  currentProject?: { id: string; title?: string; name?: string };
 }) {
+
   const router = useRouter();
-  const icon = bestIconPath(resource.type);
+  const { setPreviousPath } = useBreadcrumb();
+
+    // Check if this is a folio resource (local project link)
+  const isFolio = resource.type === "folio" || resource.type === "Folio" || (typeof resource.url === "string" && resource.url.startsWith("/projects/"));
+
+  const icon = bestIconPath(isFolio ? "folio" : resource.type);
   
-  // Check if this is a folio resource (local project link)
-  const isFolio = resource.type === "folio" || resource.type === "Folio" || resource.url.startsWith("/projects/");
   
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isFolio) {
+      // Set breadcrumb to current project before navigating to another project
+      if (currentProject) {
+        setPreviousPath(`/projects/${currentProject.id}`, currentProject.title || currentProject.name || 'Project');
+      }
       // Navigate to the local page without opening a new tab
       router.push(resource.url);
     } else {
@@ -45,8 +58,8 @@ export default function ResourceButton({
           className="dark:invert"
           src={icon}
           alt={resource.type}
-          width={20}
-          height={20}
+          width={iconSize}
+          height={iconSize}
         />
       </Button>
     );
@@ -57,7 +70,7 @@ export default function ResourceButton({
     return (
       <Button
         variant="ghost"
-        className={className || "h-8 w-8 md:h-auto md:w-auto md:px-3 md:py-1.5 shrink-0"}
+        className={className || "h-8 w-8 md:h-auto md:w-auto md:px-3 md:py-1.5 shrink-0 "}
         onClick={handleClick}
         title={resource.label}
       >
@@ -65,11 +78,11 @@ export default function ResourceButton({
           className="dark:invert shrink-0"
           src={icon}
           alt={resource.type}
-          width={16}
-          height={16}
+          width={iconSize}
+          height={iconSize}
         />
         <span className="hidden md:inline ml-1.5 text-xs font-medium truncate max-w-[120px]">
-          {resource.label}
+          {resource.label} {isFolio && " - project page"}
         </span>
       </Button>
     );
@@ -78,18 +91,18 @@ export default function ResourceButton({
   return (
     <Button
       variant="outline"
-      className={className || "justify-start gap-2 md:gap-3 h-auto p-2 md:px-4 px-3 bg-transparent w-auto max-w-full hover:cursor-pointer min-h-[44px]"}
+      className={className || "justify-start md:gap-3 h-auto md:px-4 px-3 py-1 bg-transparent w-auto max-w-full hover:cursor-pointer min-h-[22px] md:min-h-[36px] opacity-70 hover:opacity-100"}
       onClick={handleClick}
     >
       <Image
         className="dark:invert shrink-0"
         src={icon}
         alt={resource.type}
-        width={16}
-        height={16}
+        width={iconSize}
+        height={iconSize}
       />
       <div className="text-left truncate">
-        <div className="font-medium truncate text-xs md:text-sm">{resource.label}</div>
+        <div className="truncate text-xs md:text-xs">{resource.label} </div>
         {/* {!isFolio && (
           <div className="text-[10px] md:text-xs text-muted-foreground break-all truncate">{resource.url}</div>
         )} */}

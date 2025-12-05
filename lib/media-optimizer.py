@@ -113,19 +113,44 @@ def optimize_image(
     """
     try:
         with Image.open(src) as img:
-            # Convert to RGB if necessary (for WebP/JPEG)
-            if format.lower() in ('webp', 'jpeg') and img.mode in ('RGBA', 'LA', 'P'):
-                # Create white background for transparent images
+            # Preserve original mode for format checking
+            original_mode = img.mode
+            has_transparency = original_mode in ('RGBA', 'LA', 'P')
+            
+            # For PNG output, preserve alpha channel
+            if format.lower() == 'png':
+                # Convert palette images to RGBA if they have transparency
+                if img.mode == 'P':
+                    if 'transparency' in img.info:
+                        img = img.convert('RGBA')
+                    else:
+                        img = img.convert('RGB')
+                # Keep RGBA and LA modes as-is for PNG
+                # No conversion needed - PNG supports transparency
+            # For WebP, preserve alpha if possible
+            elif format.lower() == 'webp':
+                # WebP supports alpha, so convert appropriately
                 if img.mode == 'P':
                     img = img.convert('RGBA')
-                if img.mode in ('RGBA', 'LA'):
-                    background = Image.new('RGB', img.size, (255, 255, 255))
-                    if img.mode == 'RGBA':
-                        background.paste(img, mask=img.split()[3])
+                elif img.mode == 'LA':
+                    img = img.convert('RGBA')
+                # Keep RGBA for webp, it supports transparency
+            # For JPEG, must convert to RGB (no alpha support)
+            elif format.lower() == 'jpeg':
+                if has_transparency:
+                    # Create white background for transparent images
+                    if img.mode == 'P':
+                        img = img.convert('RGBA')
+                    if img.mode in ('RGBA', 'LA'):
+                        background = Image.new('RGB', img.size, (255, 255, 255))
+                        if img.mode == 'RGBA':
+                            background.paste(img, mask=img.split()[3])
+                        else:
+                            background.paste(img, mask=img.split()[1])
+                        img = background
                     else:
-                        background.paste(img, mask=img.split()[1])
-                    img = background
-                else:
+                        img = img.convert('RGB')
+                elif img.mode != 'RGB':
                     img = img.convert('RGB')
             
             # Resize if needed
@@ -136,6 +161,9 @@ def optimize_image(
             save_kwargs = {}
             if format.lower() == 'webp':
                 save_kwargs = {'quality': quality, 'method': 6}
+                # Ensure lossless alpha for webp if image has transparency
+                if img.mode in ('RGBA', 'LA'):
+                    save_kwargs['lossless'] = False  # Still use lossy but preserve alpha
             elif format.lower() == 'jpeg':
                 save_kwargs = {'quality': quality, 'optimize': True}
             elif format.lower() == 'png':
@@ -145,6 +173,77 @@ def optimize_image(
             return dest
     except Exception as e:
         print(f"Error optimizing image {src}: {e}", file=sys.stderr)
+        return None
+
+
+def optimize_animated_gif(
+    src: Path,
+    dest: Path,
+    max_dimension: Optional[int] = None,
+    quality: int = 85
+) -> Optional[Path]:
+    """
+    Optimize an animated GIF by converting to animated WebP.
+    
+    Args:
+        src: Source GIF path
+        dest: Destination WebP path
+        max_dimension: Maximum width or height (maintains aspect ratio)
+        quality: Quality setting (0-100)
+    
+    Returns:
+        Path to optimized animated WebP, or None on failure
+    """
+    try:
+        with Image.open(src) as img:
+            # Check if it's actually animated
+            is_animated = getattr(img, 'is_animated', False)
+            
+            if not is_animated:
+                # If not animated, use regular optimization
+                return optimize_image(src, dest, max_dimension, quality, 'webp')
+            
+            # Process all frames
+            frames = []
+            durations = []
+            
+            try:
+                for frame_num in range(img.n_frames):
+                    img.seek(frame_num)
+                    
+                    # Convert frame to RGBA
+                    frame = img.convert('RGBA')
+                    
+                    # Resize if needed
+                    if max_dimension:
+                        frame.thumbnail((max_dimension, max_dimension), Image.Resampling.LANCZOS)
+                    
+                    frames.append(frame.copy())
+                    
+                    # Get frame duration (in milliseconds)
+                    duration = img.info.get('duration', 100)
+                    durations.append(duration)
+            except EOFError:
+                pass  # End of frames
+            
+            if not frames:
+                return None
+            
+            # Save as animated WebP
+            frames[0].save(
+                dest,
+                format='WEBP',
+                save_all=True,
+                append_images=frames[1:],
+                duration=durations,
+                loop=img.info.get('loop', 0),
+                quality=quality,
+                method=6
+            )
+            
+            return dest
+    except Exception as e:
+        print(f"Error optimizing animated GIF {src}: {e}", file=sys.stderr)
         return None
 
 
@@ -162,6 +261,10 @@ def generate_blur_placeholder(src: Path, dest: Path, size: int = PLACEHOLDER_SIZ
     """
     try:
         with Image.open(src) as img:
+            # For animated images, use first frame
+            if getattr(img, 'is_animated', False):
+                img.seek(0)
+            
             # Convert to RGB
             if img.mode != 'RGB':
                 img = img.convert('RGB')
@@ -208,23 +311,34 @@ def optimize_image_full(src: Path, output_dir: Optional[Path] = None) -> Dict[st
     
     output_dir.mkdir(parents=True, exist_ok=True)
     stem = src.stem
+    is_gif = src.suffix.lower() == '.gif'
     
     results = {
         'original': src.name,
         'useCloudStorage': should_use_cloud_storage(src)
     }
     
-    # Generate optimized full-size WebP
+    # Generate optimized full-size WebP (use animated GIF handler for GIFs)
     optimized_path = output_dir / f"{stem}-optimized.webp"
-    if optimize_image(src, optimized_path, max_dimension=IMAGE_SIZES['large'], 
-                     quality=IMAGE_QUALITY['webp'], format='webp'):
-        results['optimized'] = optimized_path.name
+    if is_gif:
+        if optimize_animated_gif(src, optimized_path, max_dimension=IMAGE_SIZES['large'], 
+                                quality=IMAGE_QUALITY['webp']):
+            results['optimized'] = optimized_path.name
+    else:
+        if optimize_image(src, optimized_path, max_dimension=IMAGE_SIZES['large'], 
+                         quality=IMAGE_QUALITY['webp'], format='webp'):
+            results['optimized'] = optimized_path.name
     
-    # Generate thumbnail
+    # Generate thumbnail (use animated GIF handler for GIFs)
     thumb_path = output_dir / f"{stem}-thumb.webp"
-    if optimize_image(src, thumb_path, max_dimension=IMAGE_SIZES['thumbnail'],
-                     quality=IMAGE_QUALITY['webp'], format='webp'):
-        results['thumbnail'] = thumb_path.name
+    if is_gif:
+        if optimize_animated_gif(src, thumb_path, max_dimension=IMAGE_SIZES['thumbnail'],
+                                quality=IMAGE_QUALITY['webp']):
+            results['thumbnail'] = thumb_path.name
+    else:
+        if optimize_image(src, thumb_path, max_dimension=IMAGE_SIZES['thumbnail'],
+                         quality=IMAGE_QUALITY['webp'], format='webp'):
+            results['thumbnail'] = thumb_path.name
     
     # Generate blur placeholder
     placeholder_path = output_dir / f"{stem}-placeholder.jpg"
@@ -392,7 +506,7 @@ def optimize_video_full(src: Path, output_dir: Optional[Path] = None) -> Dict[st
 
 def batch_optimize_directory(
     directory: Path,
-    image_exts: set = {'.jpg', '.jpeg', '.png', '.webp'},
+    image_exts: set = {'.jpg', '.jpeg', '.png', '.webp', '.gif', '.tiff', '.tif', '.bmp', '.ico', '.heic', '.heif'},
     video_exts: set = {'.mp4', '.mov', '.webm'}
 ) -> Dict[str, Dict[str, str]]:
     """
@@ -486,7 +600,7 @@ if __name__ == "__main__":
     
     if path.is_file():
         ext = path.suffix.lower()
-        if ext in {'.jpg', '.jpeg', '.png', '.webp', '.gif'}:
+        if ext in {'.jpg', '.jpeg', '.png', '.webp', '.gif', '.tiff', '.tif', '.bmp', '.ico', '.heic', '.heif'}:
             result = optimize_image_full(path, output_dir)
         elif ext in {'.mp4', '.mov', '.webm', '.avi'}:
             result = optimize_video_full(path, output_dir)

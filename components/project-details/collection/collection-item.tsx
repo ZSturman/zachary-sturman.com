@@ -15,7 +15,26 @@ import { CollectionItem, Project, Resource } from "@/types"
 import { ExternalLink, ArrowRight } from "lucide-react"
 import { CollectionFullscreen } from "./collection-item-fullscreen"
 import { cn } from "@/lib/utils"
-//import ResourceButton from "../resource-button"
+import ResourceButton from "../resource-button"
+import { useBreadcrumb } from "@/lib/breadcrumb-context"
+
+// Helper function to extract thumbnail path from various formats (string or object)
+function getThumbnailPath(item: CollectionItem): string | undefined {
+  if (!item.thumbnail) return undefined;
+  
+  // Handle thumbnail as string
+  if (typeof item.thumbnail === 'string') {
+    return item.thumbnail;
+  }
+  
+  // Handle thumbnail as object with path property
+  if (typeof item.thumbnail === 'object' && 'path' in item.thumbnail) {
+    const thumbnailPath = (item.thumbnail as { path?: string }).path;
+    return thumbnailPath || undefined;
+  }
+  
+  return undefined;
+}
 
 // Helper function to get the item path from various possible formats
 function getItemPath(item: CollectionItem, folderName?: string, collectionName?: string): string | undefined {
@@ -35,25 +54,37 @@ function getItemPath(item: CollectionItem, folderName?: string, collectionName?:
   // First check for direct path
   if (item.path) {
     // If it's an external URL, return as-is
-    if (item.path.startsWith('http://') || item.path.startsWith('https://')) {
+    if (typeof item.path === 'string' && (item.path.startsWith('http://') || item.path.startsWith('https://'))) {
       return item.path;
     }
     // Otherwise build full path
-    return buildFullPath(item.path);
+    if (typeof item.path === 'string') {
+      return buildFullPath(item.path);
+    }
   }
   
-  // Then check for filePath (now simplified to string)
+  // Then check for filePath (can be string or object)
   if (item.filePath) {
-    const path = item.filePath;
+    let path: string | undefined;
     
-    if (!path) return undefined;
-    
-    // If it's an external URL, return as-is
-    if (path.startsWith('http://') || path.startsWith('https://')) {
-      return path;
+    // Handle filePath as string
+    if (typeof item.filePath === 'string') {
+      path = item.filePath;
     }
-    // Otherwise build full path
-    return buildFullPath(path);
+    // Handle filePath as object with path property
+    else if (typeof item.filePath === 'object' && 'path' in item.filePath) {
+      path = (item.filePath as { path?: string }).path;
+    }
+    
+    // If we got a valid path string
+    if (path && path !== '') {
+      // If it's an external URL, return as-is
+      if (path.startsWith('http://') || path.startsWith('https://')) {
+        return path;
+      }
+      // Otherwise build full path
+      return buildFullPath(path);
+    }
   }
   // If this is a URL/link item, prefer any explicit URL found in the item
   const extractUrlFromResources = (): string | undefined => {
@@ -82,13 +113,41 @@ function getItemPath(item: CollectionItem, folderName?: string, collectionName?:
   }
 
   // Check thumbnail as fallback
-  if (item.thumbnail) {
+  const thumbnailPath = getThumbnailPath(item);
+  if (thumbnailPath && thumbnailPath !== '') {
     // If it's an external URL, return as-is
-    if (item.thumbnail.startsWith('http://') || item.thumbnail.startsWith('https://')) {
-      return item.thumbnail;
+    if (thumbnailPath.startsWith('http://') || thumbnailPath.startsWith('https://')) {
+      return thumbnailPath;
     }
     // Otherwise build full path
-    return buildFullPath(item.thumbnail);
+    return buildFullPath(thumbnailPath);
+  }
+  
+  // If thumbnail.path is empty and this is an image type, use the main path/filePath instead
+  if (item.type === 'image' && (!thumbnailPath || thumbnailPath === '')) {
+    // Fall back to path or filePath for image types
+    if (item.path) {
+      return typeof item.path === 'string' && (item.path.startsWith('http://') || item.path.startsWith('https://'))
+        ? item.path
+        : buildFullPath(item.path);
+    }
+    if (item.filePath) {
+      // Handle filePath as string
+      if (typeof item.filePath === 'string') {
+        return item.filePath.startsWith('http://') || item.filePath.startsWith('https://')
+          ? item.filePath
+          : buildFullPath(item.filePath);
+      }
+      // Handle filePath as object with path property
+      if (typeof item.filePath === 'object' && 'path' in item.filePath) {
+        const filePathStr = (item.filePath as { path?: string }).path;
+        if (filePathStr && filePathStr !== '') {
+          return filePathStr.startsWith('http://') || filePathStr.startsWith('https://')
+            ? filePathStr
+            : buildFullPath(filePathStr);
+        }
+      }
+    }
   }
   
   return undefined;
@@ -108,7 +167,10 @@ function getItemResources(item: CollectionItem): Resource[] {
     resources.push(item.resource);
   }
   
-  return resources;
+  // Filter out resources with empty url or label
+  return resources.filter(resource => {
+    return resource.url && resource.url !== '' && resource.label && resource.label !== '';
+  });
 }
 
 interface CollectionItemViewerProps {
@@ -127,6 +189,7 @@ interface ExtendedCollectionItemViewerProps extends CollectionItemViewerProps {
   onRequestFullscreen?: () => void
   folderName?: string
   collectionName?: string
+  project?: Project
 }
 
 interface CollectionItemWrapperProps {
@@ -135,9 +198,10 @@ interface CollectionItemWrapperProps {
   children: React.ReactNode
   className?: string
   disableClickToFullscreen?: boolean
+  project?: Project
 }
 
-function CollectionItemWrapper({ item, onRequestFullscreen, children, className, disableClickToFullscreen }: CollectionItemWrapperProps) {
+function CollectionItemWrapper({ item, onRequestFullscreen, children, className, disableClickToFullscreen, project }: CollectionItemWrapperProps) {
   const resources = getItemResources(item);
   
   const handleCardClick = (e: React.MouseEvent) => {
@@ -169,33 +233,34 @@ function CollectionItemWrapper({ item, onRequestFullscreen, children, className,
       )}
       onClick={handleCardClick}
     >
-      {/* Label at top - above thumbnail */}
-      {item.label && (
-        <div className="p-2 pb-1 border-b bg-muted/30">
-          <h4 className="font-semibold text-sm line-clamp-1">{item.label}</h4>
-        </div>
-      )}
+
       
       {/* Content Area */}
       <div className="relative group aspect-video bg-muted">
         {children}
       </div>
+
+            {item.label && (
+        <div className="px-2 pt-2">
+          <h4 className="font-semibold text-sm line-clamp-1">{item.label}</h4>
+        </div>
+      )}
       
       {/* Summary Footer with resource buttons as icons */}
       {(item.summary || resources.length > 0) && (
-        <div className="p-2 pt-1.5 space-y-1.5 border-t bg-muted/30 flex-1 flex flex-col">
+        <div className="p-2 pt-1.5 space-y-1.5  flex-1 flex flex-col gap-2">
           {item.summary && (
             <p className="text-xs text-muted-foreground line-clamp-4 flex-1">
               {item.summary}
             </p>
           )}
-          {/* {resources.length > 0 && (
-            <div className="flex gap-0.5 flex-shrink-0">
-              {resources.slice(0, 4).map((resource) => (
-                <ResourceButton key={resource.url} resource={resource} iconOnly className="h-6 w-6" />
+          {resources.length > 0 && (
+            <div className="flex w-full justify-end gap-0.5 flex-shrink-0">
+              {resources.map((resource) => (
+                <ResourceButton key={resource.url} resource={resource} currentProject={project} iconSize={12} />
               ))}
             </div>
-          )} */}
+          )}
         </div>
       )}
     </Card>
@@ -205,6 +270,7 @@ function CollectionItemWrapper({ item, onRequestFullscreen, children, className,
 export default function CollectionItemCard({ item, project, inModal, folderName, collectionName }: ExtendedCollectionItemCardProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const router = useRouter()
+  const { setPreviousPath } = useBreadcrumb()
 
   const openFullscreen = () => setIsFullscreen(true)
   const closeFullscreen = () => setIsFullscreen(false)
@@ -234,13 +300,17 @@ export default function CollectionItemCard({ item, project, inModal, folderName,
   // Handle folio type - redirect directly to the page
   const handleFolioClick = () => {
     const itemPath = getItemPath(item, folderName, collectionName);
-    if (itemPath) {
+    if (itemPath && typeof itemPath === 'string') {
       // Check if it's a local path or external URL
       if (itemPath.startsWith('http://') || itemPath.startsWith('https://')) {
         // Check if it's the same host
         try {
           const linkUrl = new URL(itemPath, window.location.href);
           if (linkUrl.hostname === window.location.hostname) {
+            // Set breadcrumb to current project before navigating
+            if (project) {
+              setPreviousPath(`/projects/${project.id}`, project.title || 'Project');
+            }
             router.push(linkUrl.pathname);
           } else {
             window.open(itemPath, "_blank", "noopener,noreferrer");
@@ -249,6 +319,10 @@ export default function CollectionItemCard({ item, project, inModal, folderName,
           window.open(itemPath, "_blank", "noopener,noreferrer");
         }
       } else {
+        // Set breadcrumb to current project before navigating to another project
+        if (project && typeof itemPath === 'string' && itemPath.startsWith('/projects/')) {
+          setPreviousPath(`/projects/${project.id}`, project.title || 'Project');
+        }
         router.push(itemPath);
       }
     }
@@ -257,26 +331,26 @@ export default function CollectionItemCard({ item, project, inModal, folderName,
   function renderInline() {
     // For folio type, render a clickable card that redirects
     if (item.type === "folio") {
-      return <FolioViewer item={item} onRequestFullscreen={handleFolioClick} folderName={folderName} collectionName={collectionName} />;
+      return <FolioViewer item={item} onRequestFullscreen={handleFolioClick} folderName={folderName} collectionName={collectionName} project={project} />;
     }
     
     switch (item.type) {
       case "image":
-        return <ImageViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} />
+        return <ImageViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} project={project} />
       case "url-link":
-        return <UrlLinkViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} />
+        return <UrlLinkViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} project={project} />
       case "video":
-        return <VideoViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} />
+        return <VideoViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} project={project} />
       case "3d-model":
-        return <ModelViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} />
+        return <ModelViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} project={project} />
       case "game":
-        return <GameViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} />
+        return <GameViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} project={project} />
       case "text":
-        return <TextViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} />
+        return <TextViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} project={project} />
       case "audio":
-        return <AudioViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} />
+        return <AudioViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} project={project} />
       default:
-        return <UnsupportedTypeViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} />
+        return <UnsupportedTypeViewer item={item} onRequestFullscreen={openFullscreen} folderName={folderName} collectionName={collectionName} project={project} />
     }
   }
   
@@ -294,7 +368,7 @@ export default function CollectionItemCard({ item, project, inModal, folderName,
   )
 }
 
-function UrlLinkViewer({ item, onRequestFullscreen, folderName, collectionName }: ExtendedCollectionItemViewerProps) {
+function UrlLinkViewer({ item, onRequestFullscreen, folderName, collectionName, project }: ExtendedCollectionItemViewerProps) {
   // embed state: null = loading, true = allowed, false = blocked
   const [embedAllowed, setEmbedAllowed] = useState<boolean | null>(null)
   const timeoutRef = useRef<number | null>(null)
@@ -302,7 +376,7 @@ function UrlLinkViewer({ item, onRequestFullscreen, folderName, collectionName }
   const rawPath = getItemPath(item, folderName, collectionName);
   // Prefer optimized video file when available, fall back to original
   const getOptimizedVideoPath = (path: string | undefined): string | undefined => {
-    if (!path) return undefined;
+    if (!path || typeof path !== 'string') return undefined;
     if (path.startsWith('http://') || path.startsWith('https://')) return path;
     if (path.includes('-optimized') || path.includes('-thumb') || path.includes('-placeholder')) return path;
     if (path.match(/\.(mp4|mov|webm|avi)$/i)) {
@@ -314,11 +388,12 @@ function UrlLinkViewer({ item, onRequestFullscreen, folderName, collectionName }
   
   // Helper to get optimized thumbnail path
   const getOptimizedThumbnail = (): string | undefined => {
-    if (!item.thumbnail) return undefined;
+    const thumbnailPath = getThumbnailPath(item);
+    if (!thumbnailPath || thumbnailPath === '') return undefined;
     
     // If it's an external URL, return as-is
-    if (item.thumbnail.startsWith('http://') || item.thumbnail.startsWith('https://')) {
-      return item.thumbnail;
+    if (thumbnailPath.startsWith('http://') || thumbnailPath.startsWith('https://')) {
+      return thumbnailPath;
     }
     
     // Build the full path with collection structure
@@ -332,7 +407,7 @@ function UrlLinkViewer({ item, onRequestFullscreen, folderName, collectionName }
       return `/projects/${folderName}/${relativePath}`;
     };
     
-    const fullPath = buildFullPath(item.thumbnail);
+    const fullPath = buildFullPath(thumbnailPath);
     
     // If already optimized, use as-is
     if (fullPath.includes('-optimized') || fullPath.includes('-thumb')) {
@@ -374,8 +449,8 @@ function UrlLinkViewer({ item, onRequestFullscreen, folderName, collectionName }
     return videoExts.some(ext => thumbnail.toLowerCase().endsWith(ext))
   }
 
-  const hasThumbnail = !!item.thumbnail
-  const thumbnailIsVideo = isVideoThumbnail(item.thumbnail)
+  const hasThumbnail = !!getThumbnailPath(item)
+  const thumbnailIsVideo = isVideoThumbnail(getThumbnailPath(item))
 
   useEffect(() => {
     // Only set up embed timeout if we don't have a thumbnail
@@ -409,6 +484,7 @@ function UrlLinkViewer({ item, onRequestFullscreen, folderName, collectionName }
       <CollectionItemWrapper 
         item={item} 
         onRequestFullscreen={onRequestFullscreen}
+        project={project}
       >
         <div className="relative aspect-video bg-muted overflow-hidden cursor-pointer" onClick={(e) => { e.stopPropagation(); handleOpen(); }}>
           {thumbnailIsVideo ? (
@@ -485,14 +561,15 @@ function UrlLinkViewer({ item, onRequestFullscreen, folderName, collectionName }
   )
 }
 
-function FolioViewer({ item, onRequestFullscreen, folderName, collectionName }: ExtendedCollectionItemViewerProps) {
+function FolioViewer({ item, onRequestFullscreen, folderName, collectionName, project }: ExtendedCollectionItemViewerProps) {
   // Helper to get optimized thumbnail path
   const getOptimizedThumbnail = (): string | undefined => {
-    if (!item.thumbnail) return undefined;
+    const thumbnailPath = getThumbnailPath(item);
+    if (!thumbnailPath || thumbnailPath === '') return undefined;
     
     // If it's an external URL, return as-is
-    if (item.thumbnail.startsWith('http://') || item.thumbnail.startsWith('https://')) {
-      return item.thumbnail;
+    if (thumbnailPath.startsWith('http://') || thumbnailPath.startsWith('https://')) {
+      return thumbnailPath;
     }
     
     // Build the full path with collection structure
@@ -506,7 +583,7 @@ function FolioViewer({ item, onRequestFullscreen, folderName, collectionName }: 
       return `/projects/${folderName}/${relativePath}`;
     };
     
-    const fullPath = buildFullPath(item.thumbnail);
+    const fullPath = buildFullPath(thumbnailPath);
     
     // If already optimized, use as-is
     if (fullPath.includes('-optimized') || fullPath.includes('-thumb')) {
@@ -527,14 +604,15 @@ function FolioViewer({ item, onRequestFullscreen, folderName, collectionName }: 
     return videoExts.some(ext => thumbnail.toLowerCase().endsWith(ext))
   }
 
-  const hasThumbnail = !!item.thumbnail
-  const thumbnailIsVideo = isVideoThumbnail(item.thumbnail)
+  const hasThumbnail = !!getThumbnailPath(item)
+  const thumbnailIsVideo = isVideoThumbnail(getThumbnailPath(item))
 
   return (
     <CollectionItemWrapper 
       item={item} 
       onRequestFullscreen={onRequestFullscreen}
       disableClickToFullscreen={false}
+      project={project}
     >
       <div className="relative aspect-video bg-muted overflow-hidden cursor-pointer" onClick={(e) => { e.stopPropagation(); onRequestFullscreen?.(); }}>
         {hasThumbnail ? (
@@ -574,12 +652,12 @@ function FolioViewer({ item, onRequestFullscreen, folderName, collectionName }: 
   )
 }
 
-function ImageViewer({ item, onRequestFullscreen, folderName, collectionName }: ExtendedCollectionItemViewerProps) {
+function ImageViewer({ item, onRequestFullscreen, folderName, collectionName, project }: ExtendedCollectionItemViewerProps) {
   const itemPath = getItemPath(item, folderName, collectionName);
   
   // Helper to get optimized image path
   const getOptimizedPath = (path: string | undefined): string => {
-    if (!path) return "/placeholder.svg";
+    if (!path || typeof path !== 'string') return "/placeholder.svg";
     
     // If it's an external URL, return as-is
     if (path.startsWith('http://') || path.startsWith('https://')) {
@@ -591,7 +669,12 @@ function ImageViewer({ item, onRequestFullscreen, folderName, collectionName }: 
       return path;
     }
     
-    // Convert to optimized version
+    // For .bin files (which are often images), don't apply optimization - use as-is
+    if (path.toLowerCase().endsWith('.bin')) {
+      return path;
+    }
+    
+    // Convert to optimized version for standard image formats
     const withoutExt = path.replace(/\.[^.]+$/, '');
     return `${withoutExt}-optimized.webp`;
   };
@@ -599,7 +682,7 @@ function ImageViewer({ item, onRequestFullscreen, folderName, collectionName }: 
   const imageSrc = getOptimizedPath(itemPath);
   
   return (
-    <CollectionItemWrapper item={item} onRequestFullscreen={onRequestFullscreen}>
+    <CollectionItemWrapper item={item} onRequestFullscreen={onRequestFullscreen} project={project}>
       <Image 
         src={imageSrc} 
         alt={item.label || "Image"} 
@@ -610,7 +693,7 @@ function ImageViewer({ item, onRequestFullscreen, folderName, collectionName }: 
   )
 }
 
-function VideoViewer({ item, onRequestFullscreen, folderName, collectionName }: ExtendedCollectionItemViewerProps) {
+function VideoViewer({ item, onRequestFullscreen, folderName, collectionName, project }: ExtendedCollectionItemViewerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
@@ -619,7 +702,7 @@ function VideoViewer({ item, onRequestFullscreen, folderName, collectionName }: 
   
   // Helper to get optimized video path
   const getOptimizedVideoPath = (path: string | undefined): string | undefined => {
-    if (!path) return undefined;
+    if (!path || typeof path !== 'string') return undefined;
     
     // If it's an external URL, return as-is
     if (path.startsWith('http://') || path.startsWith('https://')) {
@@ -661,11 +744,12 @@ function VideoViewer({ item, onRequestFullscreen, folderName, collectionName }: 
 
   // Helper to get optimized thumbnail path for poster
   const getOptimizedPoster = (): string | undefined => {
-    if (!item.thumbnail) return undefined;
+    const thumbnailPath = getThumbnailPath(item);
+    if (!thumbnailPath || thumbnailPath === '') return undefined;
     
     // If it's an external URL, return as-is
-    if (item.thumbnail.startsWith('http://') || item.thumbnail.startsWith('https://')) {
-      return item.thumbnail;
+    if (thumbnailPath.startsWith('http://') || thumbnailPath.startsWith('https://')) {
+      return thumbnailPath;
     }
     
     // Build the full path with collection structure
@@ -679,7 +763,7 @@ function VideoViewer({ item, onRequestFullscreen, folderName, collectionName }: 
       return `/projects/${folderName}/${relativePath}`;
     };
     
-    const fullPath = buildFullPath(item.thumbnail);
+    const fullPath = buildFullPath(thumbnailPath);
     
     // If already optimized, use as-is
     if (fullPath.includes('-optimized') || fullPath.includes('-thumb')) {
@@ -699,7 +783,7 @@ function VideoViewer({ item, onRequestFullscreen, folderName, collectionName }: 
   const shouldLoop = item.loop !== false;
 
   return (
-    <CollectionItemWrapper item={item} onRequestFullscreen={onRequestFullscreen}>
+    <CollectionItemWrapper item={item} onRequestFullscreen={onRequestFullscreen} project={project}>
       <video
         ref={videoRef}
         src={itemPath}
@@ -728,7 +812,7 @@ function VideoViewer({ item, onRequestFullscreen, folderName, collectionName }: 
   )
 }
 
-function ModelViewer({ item, onRequestFullscreen, folderName, collectionName }: ExtendedCollectionItemViewerProps) {
+function ModelViewer({ item, onRequestFullscreen, folderName, collectionName, project }: ExtendedCollectionItemViewerProps) {
   // Default to true for autoPlay unless explicitly set to false
   const shouldAutoPlay = item.autoPlay !== false;
   const [isPlaying, setIsPlaying] = useState(shouldAutoPlay)
@@ -742,7 +826,7 @@ function ModelViewer({ item, onRequestFullscreen, folderName, collectionName }: 
   };
 
   return (
-    <CollectionItemWrapper item={item} onRequestFullscreen={onRequestFullscreen}>
+    <CollectionItemWrapper item={item} onRequestFullscreen={onRequestFullscreen} project={project}>
       <div className="w-full h-full bg-muted">
         <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
           <ambientLight intensity={0.5} />
@@ -807,11 +891,11 @@ function Model3D({ path, isPlaying, loop, onAnimationsDetected }: Model3DProps) 
   return <primitive ref={group} object={scene} />
 }
 
-function GameViewer({ item, onRequestFullscreen, folderName, collectionName }: ExtendedCollectionItemViewerProps) {
+function GameViewer({ item, onRequestFullscreen, folderName, collectionName, project }: ExtendedCollectionItemViewerProps) {
   const itemPath = getItemPath(item, folderName, collectionName);
   
   return (
-    <CollectionItemWrapper item={item} onRequestFullscreen={onRequestFullscreen}>
+    <CollectionItemWrapper item={item} onRequestFullscreen={onRequestFullscreen} project={project}>
       <div className="aspect-video bg-muted">
         <iframe
           src={itemPath}
@@ -824,16 +908,17 @@ function GameViewer({ item, onRequestFullscreen, folderName, collectionName }: E
   )
 }
 
-function TextViewer({ item, onRequestFullscreen, folderName, collectionName }: ExtendedCollectionItemViewerProps) {
+function TextViewer({ item, onRequestFullscreen, folderName, collectionName, project }: ExtendedCollectionItemViewerProps) {
   const itemPath = getItemPath(item, folderName, collectionName);
 
   // Helper to get optimized thumbnail path
   const getOptimizedThumbnail = (): string | undefined => {
-    if (!item.thumbnail) return undefined;
+    const thumbnailPath = getThumbnailPath(item);
+    if (!thumbnailPath || thumbnailPath === '') return undefined;
     
     // If it's an external URL, return as-is
-    if (item.thumbnail.startsWith('http://') || item.thumbnail.startsWith('https://')) {
-      return item.thumbnail;
+    if (thumbnailPath.startsWith('http://') || thumbnailPath.startsWith('https://')) {
+      return thumbnailPath;
     }
     
     // Build the full path with collection structure
@@ -847,7 +932,7 @@ function TextViewer({ item, onRequestFullscreen, folderName, collectionName }: E
       return `/projects/${folderName}/${relativePath}`;
     };
     
-    const fullPath = buildFullPath(item.thumbnail);
+    const fullPath = buildFullPath(thumbnailPath);
     
     // If already optimized, use as-is
     if (fullPath.includes('-optimized') || fullPath.includes('-thumb')) {
@@ -868,6 +953,7 @@ function TextViewer({ item, onRequestFullscreen, folderName, collectionName }: E
     <CollectionItemWrapper 
       item={item} 
       onRequestFullscreen={onRequestFullscreen}
+      project={project}
     >
       <div className="w-full h-full">
         {thumbnailPath ? (
@@ -920,14 +1006,15 @@ function TextViewer({ item, onRequestFullscreen, folderName, collectionName }: E
   )
 }
 
-function UnsupportedTypeViewer({ item, onRequestFullscreen, folderName, collectionName }: ExtendedCollectionItemViewerProps) {
+function UnsupportedTypeViewer({ item, onRequestFullscreen, folderName, collectionName, project }: ExtendedCollectionItemViewerProps) {
   // Helper to get optimized thumbnail path
   const getOptimizedThumbnail = (): string | undefined => {
-    if (!item.thumbnail) return undefined;
+    const thumbnailPath = getThumbnailPath(item);
+    if (!thumbnailPath || thumbnailPath === '') return undefined;
     
     // If it's an external URL, return as-is
-    if (item.thumbnail.startsWith('http://') || item.thumbnail.startsWith('https://')) {
-      return item.thumbnail;
+    if (thumbnailPath.startsWith('http://') || thumbnailPath.startsWith('https://')) {
+      return thumbnailPath;
     }
     
     // Build the full path with collection structure
@@ -941,7 +1028,7 @@ function UnsupportedTypeViewer({ item, onRequestFullscreen, folderName, collecti
       return `/projects/${folderName}/${relativePath}`;
     };
     
-    const fullPath = buildFullPath(item.thumbnail);
+    const fullPath = buildFullPath(thumbnailPath);
     
     // If already optimized, use as-is
     if (fullPath.includes('-optimized') || fullPath.includes('-thumb')) {
@@ -956,7 +1043,7 @@ function UnsupportedTypeViewer({ item, onRequestFullscreen, folderName, collecti
   const thumbnailPath = getOptimizedThumbnail();
 
   return (
-    <CollectionItemWrapper item={item} onRequestFullscreen={onRequestFullscreen}>
+    <CollectionItemWrapper item={item} onRequestFullscreen={onRequestFullscreen} project={project}>
       {thumbnailPath ? (
         <div className="aspect-video bg-muted relative overflow-hidden">
           <Image 
@@ -975,7 +1062,7 @@ function UnsupportedTypeViewer({ item, onRequestFullscreen, folderName, collecti
   )
 }
 
-function AudioViewer({ item, onRequestFullscreen, folderName, collectionName }: ExtendedCollectionItemViewerProps) {
+function AudioViewer({ item, onRequestFullscreen, folderName, collectionName, project }: ExtendedCollectionItemViewerProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -1029,7 +1116,7 @@ function AudioViewer({ item, onRequestFullscreen, folderName, collectionName }: 
   }
 
   return (
-    <CollectionItemWrapper item={item} onRequestFullscreen={onRequestFullscreen}>
+    <CollectionItemWrapper item={item} onRequestFullscreen={onRequestFullscreen} project={project}>
       <div className="bg-muted p-8">
         <audio
           ref={audioRef}

@@ -10,6 +10,9 @@ interface ProjectDetailsMediaDisplayProps {
 const ProjectDetailsMediaDisplay = ({ project }: ProjectDetailsMediaDisplayProps) => {
   const folderName = project.folderName || project.id;
   const folderPath = `/projects/${folderName}`;
+  
+  const thumbnailPath = getOptimizedMediaPath(project.images?.thumbnail, folderPath);
+  const thumbnailSettings = project.imageSettings?.thumbnail;
 
   const poster =
     project.images?.posterPortrait ||
@@ -20,10 +23,6 @@ const ProjectDetailsMediaDisplay = ({ project }: ProjectDetailsMediaDisplayProps
     : "landscape";
 
   const posterPath = getOptimizedMediaPath(poster, folderPath);
-  const thumbnailPath = getOptimizedMediaPath(
-    project.images?.thumbnail,
-    folderPath
-  );
 
   // Get video settings for poster and thumbnail
   const posterSettings = poster
@@ -34,12 +33,11 @@ const ProjectDetailsMediaDisplay = ({ project }: ProjectDetailsMediaDisplayProps
       : project.imageSettings?.poster
     : undefined;
 
-  const thumbnailSettings = project.imageSettings?.thumbnail;
 
   return (
-    <div className="mb-4">
+    <div>
       {poster && (
-        <div className="overflow-hidden rounded-lg  relative">
+        <div className="overflow-hidden rounded-lg relative">
           <MediaDisplay
             src={posterPath}
             alt={`${project.title} poster`}

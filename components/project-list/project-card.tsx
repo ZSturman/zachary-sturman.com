@@ -7,7 +7,6 @@ import { MediaDisplay } from "@/components/ui/media-display";
 import { Project } from "@/types";
 import { STATUS_COLOR } from "@/lib/resource-map";
 import ProjectMediums from "../project-details/project-mediums";
-import PrimaryActionButton from "./primary-action-button";
 import { formatDate, getOptimizedMediaPath } from "@/lib/utils";
 import ResourceButton from "../project-details/resource-button";
 
@@ -30,19 +29,14 @@ export function ProjectCard({
 
   // Get status value and check if it should be displayed
   const statusValue = project.status || "";
-  const showStatusBadge = statusValue && statusValue.trim() !== "";
+  const showStatusBadge = statusValue && statusValue.trim() !== "" && statusValue.toLowerCase() !== "done";
 
   return (
     <Card
       className="group cursor-pointer transition-all duration-200 hover:shadow-lg md:hover:scale-[1.01] bg-card border-border max-w-full overflow-hidden flex flex-col h-full p-0"
       onClick={onClick}
     >
-      {/* Label at top - above thumbnail (matching Collection Item style) */}
-      <div className="p-2 md:p-3 pb-1 md:pb-2  bg-muted/30">
-        <h3 className="font-semibold text-xs md:text-sm text-card-foreground leading-tight group-hover:text-primary transition-colors break-words">
-          {project.title}
-        </h3>
-      </div>
+
 
       <CardHeader className="p-0">
         {/* Thumbnail with aspect-video to match Collection Items */}
@@ -91,11 +85,19 @@ export function ProjectCard({
         </div>
       </CardHeader>
 
-      <CardContent className="p-2 md:p-3 space-y-1.5 md:space-y-2 flex-1 flex flex-col max-w-full">
+      <CardContent className="p-2  space-y-1.5 md:space-y-2 flex-1 flex flex-col max-w-full">
+     
+<div className="flex flex-col gap-4">
+
+        <h3 className="font-semibold text-xs md:text-sm text-card-foreground leading-tight group-hover:text-primary transition-colors break-words">
+          {project.title}
+        </h3>
+    
         {/* Summary */}
         <p className="text-[10px] md:text-xs text-muted-foreground leading-relaxed line-clamp-2 break-words flex-1">
           {project.summary}
         </p>
+</div>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-0.5 md:gap-1">

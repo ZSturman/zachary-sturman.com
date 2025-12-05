@@ -11,9 +11,10 @@ import type { Project } from "@/types"
 interface ProjectListProps {
   viewMode?: "grid" | "list"
   projects: Project[]
+  sortField?: "title" | "createdAt" | "updatedAt"
 }
 
-export function ProjectList({ viewMode = "list", projects }: ProjectListProps) {
+export function ProjectList({ viewMode = "list", projects, sortField = "updatedAt" }: ProjectListProps) {
   const router = useRouter()
   const { setPreviousPath } = useBreadcrumb()
   const [isMobile, setIsMobile] = useState(false)
@@ -61,6 +62,7 @@ export function ProjectList({ viewMode = "list", projects }: ProjectListProps) {
               key={project.id + idx}
               project={project}
               onClick={() => handleClick(project)}
+              sortField={sortField}
             />
           ))}
         </div>

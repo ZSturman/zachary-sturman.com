@@ -3,7 +3,6 @@ import { notFound, useRouter } from "next/navigation";
 import { ProjectHeader } from "./project-details/project-banner";
 import { ProjectContent } from "./project-details/project-description-and-story";
 import { ProjectMetadata } from "./project-details/project-metadata";
-import ResourceButtons from "./project-details/resource-buttons";
 import { Project } from "@/types";
 import { Collection } from "./project-details/collection/collection";
 import { useBreadcrumb } from "@/lib/breadcrumb-context";
@@ -15,19 +14,26 @@ interface ProjectDetailsProps {
   project: Project;
 }
 
-function HomeLink() {
+function HomeLink({ project }: { project: Project }) {
   const { previousPath, previousLabel } = useBreadcrumb();
   const router = useRouter();
 
   const handleBack = () => {
-    if (previousPath) {
+    // Check if previousPath is the same as current project path (circular navigation)
+    const currentPath = `/projects/${project.id}`;
+    const isCircular = previousPath === currentPath;
+    
+    if (previousPath && !isCircular) {
       router.push(previousPath);
     } else {
       router.push("/");
     }
   };
 
-  const label = previousLabel || "Home";
+  // If previousPath is circular, show "Home" instead of the previous label
+  const currentPath = `/projects/${project.id}`;
+  const isCircular = previousPath === currentPath;
+  const label = (previousPath && !isCircular) ? (previousLabel || "Home") : "Home";
 
   return (
     <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm">
@@ -53,12 +59,12 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <HomeLink />
+      <HomeLink project={project} />
 
-      <div className="mx-auto max-w-7xl px-6 py-12 md:px-8 md:py-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 md:px-8 md:py-12 lg:py-16">
         <ProjectHeader project={project} />
 
-        <div className="mt-12 space-y-8">
+        <div className="mt-8 md:mt-12 space-y-8">
           {/* Priority: Collection/Media first */}
           {project.collection && (
             <div>
@@ -66,12 +72,6 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
             </div>
           )}
 
-          {/* Resources section */}
-          {project.resources && project.resources.length > 0 && (
-            <div>
-              <ResourceButtons project={project} />
-            </div>
-          )}
 
           {/* Metadata and About/Story arranged responsively in a grid.
               If there's no description/story, show metadata full-width. */}
@@ -90,23 +90,24 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
             }
 
             return (
-              <div className="grid gap-6 grid-cols-1 md:grid-cols-[1fr_320px] items-start md:items-stretch">
-                <div className="min-w-0 h-full">
-                  <div className="h-full flex flex-col">
-                    <ProjectContent project={project} />
+              <div className="grid gap-6 lg:gap-8 grid-cols-1 lg:grid-cols-[1fr_320px] items-start">
+                <div className="min-w-0 space-y-6">
+                  {/* Show metadata first on mobile */}
+                  <div className="lg:hidden">
+                    <ProjectMetadata project={project} />
                   </div>
-                  <div className="block md:hidden">
+                  
+                  <ProjectContent project={project} />
+                  
+                  {/* Media display on mobile */}
+                  <div className="lg:hidden">
                     <ProjectDetailsMediaDisplay project={project} />
                   </div>
                 </div>
 
-                <aside className="min-w-[280px] md:min-w-[320px]">
-                  <div className="h-full">
-                    <div className="hidden md:block">
-                      <ProjectDetailsMediaDisplay project={project} />
-                    </div>
-                    <ProjectMetadata project={project} />
-                  </div>
+                <aside className="hidden lg:block min-w-[320px] space-y-6 sticky top-20">
+                  <ProjectDetailsMediaDisplay project={project} />
+                  <ProjectMetadata project={project} />
                 </aside>
               </div>
             );

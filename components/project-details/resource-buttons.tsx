@@ -5,7 +5,7 @@ export default function ResourceButtons({ project, showMessage = true }: { proje
   return project.resources?.length ? (
     <div className="flex flex-row flex-wrap gap-2">
       {project.resources.map((resource) => {
-        return <ResourceButton key={resource.url} resource={resource} />;
+        return <ResourceButton key={resource.url} resource={resource} currentProject={project} />;
       })}
     </div>
   ) : showMessage ? (

@@ -135,6 +135,72 @@ export function ProjectFilters({
     return Array.from(set)
   }, [projects])
 
+  //const totalProjects = projects.length
+
+  // Compute available mediums based on current filters (excluding medium filter itself)
+  const availableMediums = useMemo(() => {
+    const set = new Set<string>()
+    set.add("all") // "all" is always available
+    
+    projects.forEach((p) => {
+      // Apply current filters except medium filter
+      if (!showAll && !p.featured) return
+      
+      // domain filter
+      if (selectedDomains.length > 0 && !(selectedDomains.length === 1 && selectedDomains[0] === "all")) {
+        if (!selectedDomains.includes(String(p.domain))) return
+      }
+      
+      // status filter
+      if (selectedStatuses.length > 0 && !(selectedStatuses.length === 1 && selectedStatuses[0] === "all")) {
+        if (!selectedStatuses.includes(String(p.status))) return
+      }
+      
+      // If project passes filters, add its mediums
+      const maybeMediums = (p as unknown as { mediums?: unknown }).mediums
+      if (Array.isArray(maybeMediums)) (maybeMediums as string[]).forEach((m) => m && set.add(String(m)))
+      const maybeScript = (p as unknown as { scriptMediums?: unknown }).scriptMediums
+      if (Array.isArray(maybeScript)) (maybeScript as string[]).forEach((m) => m && set.add(String(m)))
+      const maybeGame = (p as unknown as { gameMediums?: unknown }).gameMediums
+      if (Array.isArray(maybeGame)) (maybeGame as string[]).forEach((m) => m && set.add(String(m)))
+    })
+    
+    return set
+  }, [projects, showAll, selectedDomains, selectedStatuses])
+
+  // Compute available statuses based on current filters (excluding status filter itself)
+  const availableStatuses = useMemo(() => {
+    const set = new Set<string>()
+    set.add("all") // "all" is always available
+    
+    projects.forEach((p) => {
+      // Apply current filters except status filter
+      if (!showAll && !p.featured) return
+      
+      // domain filter
+      if (selectedDomains.length > 0 && !(selectedDomains.length === 1 && selectedDomains[0] === "all")) {
+        if (!selectedDomains.includes(String(p.domain))) return
+      }
+      
+      // medium filter
+      if (selectedMediums.length > 0 && !(selectedMediums.length === 1 && selectedMediums[0] === "all")) {
+        const projectMediums = [
+          ...(p.mediums || []),
+          ...( (p as unknown as { scriptMediums?: string[] }).scriptMediums || [] ),
+          ...( (p as unknown as { gameMediums?: string[] }).gameMediums || [] ),
+        ].map(String)
+        const matchesMedium = selectedMediums.some((m) => projectMediums.includes(m))
+        if (!matchesMedium) return
+      }
+      
+      // If project passes filters, add its status
+      const s = (p as unknown as { status?: string })?.status
+      if (s) set.add(String(s))
+    })
+    
+    return set
+  }, [projects, showAll, selectedDomains, selectedMediums])
+
   const totalProjects = projects.length
 
   // compute filtered projects count using current UI filters
@@ -427,6 +493,7 @@ export function ProjectFilters({
                       checked={selectedMediums.includes(medium)}
                       onCheckedChange={() => toggleMedium(medium)}
                       className="text-xs"
+                      disabled={!availableMediums.has(medium)}
                     >
                       {medium === "all" ? "All Mediums" : medium}
                     </DropdownMenuCheckboxItem>
@@ -439,6 +506,7 @@ export function ProjectFilters({
                       checked={selectedStatuses.includes(status)}
                       onCheckedChange={() => toggleStatus(status)}
                       className="text-xs"
+                      disabled={!availableStatuses.has(status)}
                     >
                       {status === "all" ? "All Statuses" : status}
                     </DropdownMenuCheckboxItem>
@@ -494,6 +562,7 @@ export function ProjectFilters({
                       key={medium}
                       checked={selectedMediums.includes(medium)}
                       onCheckedChange={() => toggleMedium(medium)}
+                      disabled={!availableMediums.has(medium)}
                     >
                       {medium === "all" ? "Select All" : medium}
                     </DropdownMenuCheckboxItem>
@@ -522,6 +591,7 @@ export function ProjectFilters({
                       key={status}
                       checked={selectedStatuses.includes(status)}
                       onCheckedChange={() => toggleStatus(status)}
+                      disabled={!availableStatuses.has(status)}
                     >
                       {status === "all" ? "Select All" : status}
                     </DropdownMenuCheckboxItem>

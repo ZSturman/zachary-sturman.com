@@ -1,19 +1,17 @@
 "use client";
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import Link from "next/link";
-import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { Project } from "@/types";
-import { formatDate } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 import { ProjectHeader } from "./project-banner";
-import ProjectMediums from "./project-mediums";
-import ProjectTags from "./project-tags";
 import ProjectHero from "./project-hero";
 import { Collection } from "./collection/collection";
-import ProjectDescriptionAndStory from "./project-description-and-story"
+import ProjectDescriptionAndStory from "./project-description-and-story";
+import ResourceButtons from "./resource-buttons";
+import { ProjectSidebar } from "./project-sidebar";
+import { ProjectMetadata } from "./project-metadata";
 
 interface ProjectDetailsProps {
   project: Project;
@@ -45,6 +43,60 @@ function HomeLink({ projectTitle, isScrolled }: { projectTitle: string; isScroll
   );
 }
 
+/** Inline status badge for mobile - shown at top of content */
+function MobileStatusBadge({ project }: { project: Project }) {
+  const getStatusLabel = (status: string, subStatus?: string) => {
+    if (subStatus) {
+      return `${status} (${subStatus.replace(/_/g, " ")})`;
+    }
+    return status.replace(/_/g, " ");
+  };
+
+  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
+    switch (status.toLowerCase()) {
+      case "done":
+        return "default";
+      case "in_progress":
+      case "in progress":
+        return "secondary";
+      case "idea":
+        return "outline";
+      default:
+        return "secondary";
+    }
+  };
+
+  if (!project.status) return null;
+
+  return (
+    <div className="lg:hidden mb-4">
+      <Badge
+        variant={getStatusVariant(project.status)}
+        className="text-xs px-2 py-0.5"
+      >
+        {getStatusLabel(project.status, project.phase)}
+      </Badge>
+    </div>
+  );
+}
+
+/** Check if project has substantial content to warrant two-column layout */
+function hasSubstantialContent(project: Project): boolean {
+  const hasCollection = project.collection && Object.keys(project.collection).length > 0;
+  const hasDescription = project.description && project.description.trim().length > 0;
+  const hasStory = project.story && project.story.trim().length > 0;
+  const hasResources = project.resources && project.resources.length > 0;
+  
+  // Count how many content sections we have
+  let contentSections = 0;
+  if (hasCollection) contentSections++;
+  if (hasDescription) contentSections++;
+  if (hasStory) contentSections++;
+  if (hasResources) contentSections++;
+  
+  return contentSections >= 2;
+}
+
 export function ProjectDetails({ project }: ProjectDetailsProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -62,45 +114,99 @@ export function ProjectDetails({ project }: ProjectDetailsProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const hasCollection = project.collection && Object.keys(project.collection).length > 0;
+  const hasResources = project.resources && project.resources.length > 0;
+  const useTwoColumnLayout = hasSubstantialContent(project);
+
   return (
     <div className="min-h-screen bg-background">
-      {/* <ProjectBanner project={project} /> */}
-
       <HomeLink projectTitle={project.title} isScrolled={isScrolled} />
 
-      {/* Main Content - Adaptive Layout */}
+      {/* Main Content Container */}
       <main className="container mx-auto px-3 md:px-6 lg:px-8 py-6 md:py-12 lg:py-16">
-        {/* <ProjectHero project={project} /> */}
-
+        {/* Header Section - Always Full Width */}
         <div ref={headerRef}>
           <ProjectHeader project={project} />
         </div>
 
-        {/* Tags directly under header - no title */}
-        <ProjectTags project={project} />
+        {/* Mobile Status Badge - Only visible on smaller screens */}
+        <MobileStatusBadge project={project} />
 
-        <div className="mt-4 md:mt-8">
-          <ProjectDescriptionAndStory project={project}/>
-        </div>
+        {/* Two-Column Layout for lg+ screens when there's enough content */}
+        {useTwoColumnLayout ? (
+          <div className="mt-6 md:mt-8 lg:grid lg:grid-cols-[1fr_320px] lg:gap-8 xl:gap-12">
+            {/* Main Content Column */}
+            <div className="space-y-8 md:space-y-10">
+              {/* 1. Resource Buttons - Primary CTA */}
+              {hasResources && (
+                <section>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-3">Resources</h3>
+                  <ResourceButtons project={project} showMessage={false} />
+                </section>
+              )}
 
-        <ProjectMediums project={project} />
+              {/* 2. Project Hero/Media */}
+              <section>
+                <ProjectHero project={project} />
+              </section>
 
-        <Collection project={project} inModal={false} />
+              {/* 3. Collections */}
+              {hasCollection && (
+                <section>
+                  <Collection project={project} inModal={false} />
+                </section>
+              )}
 
-        {/* Story section at the very bottom */}
-        {project.story && (
-          <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t">
-            <details className="group">
-              <summary className="cursor-pointer text-base md:text-lg font-semibold text-foreground hover:text-primary transition-colors list-none flex items-center gap-2">
-                <span className="text-muted-foreground group-open:rotate-90 transition-transform">▶</span>
-                Story
-              </summary>
-              <div className="mt-3 md:mt-4 pl-4 md:pl-6 border-l-2 border-muted">
-                <p className="text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                  {project.story}
-                </p>
+              {/* 4. Description & Story */}
+              <section>
+                <ProjectDescriptionAndStory project={project} />
+              </section>
+
+              {/* Mobile-only: Show metadata at bottom on smaller screens */}
+              <div className="lg:hidden">
+                <ProjectMetadata project={project} />
               </div>
-            </details>
+            </div>
+
+            {/* Sidebar Column - Sticky on desktop */}
+            <aside className="hidden lg:block">
+              <div className="sticky top-24">
+                <ProjectSidebar project={project} />
+              </div>
+            </aside>
+          </div>
+        ) : (
+          /* Single Column Layout for simpler projects */
+          <div className="mt-6 md:mt-8 max-w-3xl mx-auto space-y-8 md:space-y-10">
+            {/* 1. Resource Buttons */}
+            {hasResources && (
+              <section>
+                <h3 className="text-sm font-medium text-muted-foreground mb-3">Resources</h3>
+                <ResourceButtons project={project} showMessage={false} />
+              </section>
+            )}
+
+            {/* 2. Project Hero/Media */}
+            <section>
+              <ProjectHero project={project} />
+            </section>
+
+            {/* 3. Collections */}
+            {hasCollection && (
+              <section>
+                <Collection project={project} inModal={false} />
+              </section>
+            )}
+
+            {/* 4. Description & Story */}
+            <section>
+              <ProjectDescriptionAndStory project={project} />
+            </section>
+
+            {/* 5. Metadata - Full width in single column */}
+            <section>
+              <ProjectMetadata project={project} />
+            </section>
           </div>
         )}
       </main>

@@ -2,7 +2,7 @@ import React from 'react'
 
 const ProjectDetailsFooter = () => {
   return (
-           <footer className="mt-16 pt-8 border-t border-border text-center">
+           <footer className="mt-12 md:mt-16 pt-6 md:pt-8 border-t border-border text-center">
           <p className="text-sm text-muted-foreground">
             For more details, reach out to me at{" "}
             <a

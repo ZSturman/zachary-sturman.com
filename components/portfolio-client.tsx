@@ -294,12 +294,12 @@ export function PortfolioClient({ projects }: PortfolioClientProps) {
     switch (sort) {
       case "newest":
         return copy.sort((a, b) =>
-          // newest first -> compare numeric timestamps
-          toTimestamp(b.createdAt) - toTimestamp(a.createdAt)
+          // newest first -> compare numeric timestamps using updatedAt
+          toTimestamp(b.updatedAt) - toTimestamp(a.updatedAt)
         );
       case "oldest":
         return copy.sort((a, b) =>
-          // oldest first -> ascending timestamps
+          // oldest first -> ascending timestamps using createdAt
           toTimestamp(a.createdAt) - toTimestamp(b.createdAt)
         );
       case "title-asc":
@@ -366,7 +366,17 @@ export function PortfolioClient({ projects }: PortfolioClientProps) {
           initialSearchScope={searchScope}
         />
       ) : null}
-      <ProjectList viewMode={viewMode} projects={sortedProjects} />
+      <ProjectList 
+        viewMode={viewMode} 
+        projects={sortedProjects}
+        sortField={
+          sort === "title-asc" || sort === "title-desc" 
+            ? "title" 
+            : sort === "newest"
+              ? "updatedAt"
+              : "createdAt"
+        }
+      />
     </>
   );
 }

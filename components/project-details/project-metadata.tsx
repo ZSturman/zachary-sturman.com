@@ -1,19 +1,17 @@
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/utils";
 import { Project } from "@/types";
-import { Calendar, AlertCircle } from "lucide-react";
+import { Calendar, AlertCircle, Clock, Archive } from "lucide-react";
 
 interface ProjectMetadataProps {
   project: Project;
+  /** Compact mode hides status/dates (used when sidebar is visible) */
+  compact?: boolean;
 }
 
-export function ProjectMetadata({ project }: ProjectMetadataProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+export function ProjectMetadata({ project, compact = false }: ProjectMetadataProps) {
+  // Determine if the project is archived (done and has a phase indicating archived)
+  const isArchived = project.status === "done" && project.phase?.toLowerCase().includes("archived");
 
   const getStatusLabel = (status: string, subStatus?: string) => {
     if (subStatus) {
@@ -22,110 +20,144 @@ export function ProjectMetadata({ project }: ProjectMetadataProps) {
     return status.replace(/_/g, " ");
   };
 
+  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
+    switch (status.toLowerCase()) {
+      case "done":
+        return "default";
+      case "in_progress":
+      case "in progress":
+        return "secondary";
+      case "idea":
+        return "outline";
+      default:
+        return "secondary";
+    }
+  };
+
   return (
-      <div className="rounded-lg border border-border bg-card p-6">
-        <div className="space-y-4">
-          {project.status && (
-            <div>
-              <p className="mb-2 text-sm text-muted-foreground">Status</p>
-              <Badge
-                variant={project.status === "done" ? "default" : "secondary"}
-              >
-                {getStatusLabel(project.status, project.phase)}
-              </Badge>
-            </div>
-          )}
-
-          {project.createdAt && (
-            <div>
-              <p className="mb-2 text-sm text-muted-foreground">Created</p>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-foreground">
-                  {formatDate(project.createdAt)}
-                </span>
+    <div className="rounded-lg border border-border bg-card p-4 md:p-6">
+      <div className="space-y-6">
+        {/* Status and Dates Section - Hidden in compact mode */}
+        {!compact && (
+          <div className="space-y-4">
+            {/* Status Badge with Follow-up */}
+            {project.status && (
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <Badge
+                  variant={getStatusVariant(project.status)}
+                  className="text-sm px-3 py-1"
+                >
+                  {getStatusLabel(project.status, project.phase)}
+                </Badge>
+                {project.requiresFollowUp && (
+                  <div className="flex items-center gap-1.5 rounded-md bg-amber-50 px-2 py-1 dark:bg-amber-950/20">
+                    <AlertCircle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                    <span className="text-xs text-amber-900 dark:text-amber-200">
+                      Follow-up needed
+                    </span>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            )}
 
-          {project.updatedAt && (
-            <div>
-              <p className="mb-2 text-sm text-muted-foreground">Last Updated</p>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-foreground">
-                  {formatDate(project.updatedAt)}
-                </span>
+            {/* Dates in a grid */}
+            <div className="grid grid-cols-2 gap-4">
+              {project.createdAt && (
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground">Created</span>
+                    <span className="text-sm text-foreground">
+                      {formatDate(project.createdAt, { month: "short", year: "numeric" })}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {project.updatedAt && (
+                <div className="flex items-center gap-2">
+                  {isArchived ? (
+                    <Archive className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  ) : (
+                    <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  )}
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground">
+                      {isArchived ? "Archived" : "Updated"}
+                    </span>
+                    <span className="text-sm text-foreground">
+                      {formatDate(project.updatedAt, { month: "short", year: "numeric" })}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Category and Domain Grid */}
+        {(project.category || project.domain) && (
+          <div className="grid grid-cols-2 gap-4">
+            {project.category && (
+              <div>
+                <p className="text-xs text-muted-foreground mb-1.5">Category</p>
+                <Badge variant="secondary" className="text-xs">
+                  {project.category}
+                </Badge>
               </div>
-            </div>
-          )}
+            )}
 
-          {project.requiresFollowUp && (
-            <div className="flex items-start gap-2 rounded-md bg-amber-50 p-3 dark:bg-amber-950/20">
-              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-              <span className="text-sm text-amber-900 dark:text-amber-200">
-                Requires follow-up
-              </span>
-            </div>
-          )}
-
-          {project.category && (
-            <div>
-              <p className="mb-2 text-sm text-muted-foreground">Category</p>
-              <Badge variant="secondary" className="text-xs">
-                {project.category}
-              </Badge>
-            </div>
-          )}
-
-          {project.domain && (
-            <div>
-              <p className="mb-2 text-sm text-muted-foreground">Domain</p>
-              <Badge variant="outline" className="text-xs">
-                {project.domain}
-              </Badge>
-            </div>
-          )}
-
-          {project.genres && project.genres.length > 0 && (
-            <div>
-              <p className="mb-2 text-sm text-muted-foreground">Genres</p>
-              <div className="flex flex-wrap gap-1">
-                {project.genres.map((genre) => (
-                  <Badge key={genre} variant="outline" className="text-xs">
-                    {genre}
-                  </Badge>
-                ))}
+            {project.domain && (
+              <div>
+                <p className="text-xs text-muted-foreground mb-1.5">Domain</p>
+                <Badge variant="outline" className="text-xs">
+                  {project.domain}
+                </Badge>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+        )}
 
-          {project.mediums && project.mediums.length > 0 && (
-            <div>
-              <p className="mb-2 text-sm text-muted-foreground">Mediums</p>
-              <div className="flex flex-wrap gap-1">
-                {project.mediums.map((medium) => (
-                  <Badge key={medium} variant="secondary" className="text-xs">
-                    {medium}
-                  </Badge>
-                ))}
-              </div>
+        {/* Array-based metadata */}
+        {project.genres && project.genres.length > 0 && (
+          <div>
+            <p className="text-xs text-muted-foreground mb-1.5">Genres</p>
+            <div className="flex flex-wrap gap-1">
+              {project.genres.map((genre) => (
+                <Badge key={genre} variant="outline" className="text-xs">
+                  {genre}
+                </Badge>
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {project.tags && project.tags.length > 0 && (
-            <div>
-              <p className="mb-2 text-sm text-muted-foreground">Tags</p>
-              <div className="flex flex-wrap gap-1">
-                {project.tags.map((tag) => (
-                  <Badge key={tag} variant="outline" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
+        {project.mediums && project.mediums.length > 0 && (
+          <div>
+            <p className="text-xs text-muted-foreground mb-1.5">Mediums</p>
+            <div className="flex flex-wrap gap-1">
+              {project.mediums.map((medium) => (
+                <Badge key={medium} variant="secondary" className="text-xs">
+                  {medium}
+                </Badge>
+              ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {project.tags && project.tags.length > 0 && (
+          <div>
+            <p className="text-xs text-muted-foreground mb-1.5">Tags</p>
+            <div className="flex flex-wrap gap-1">
+              {project.tags.map((tag) => (
+                <Badge key={tag} variant="outline" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+    </div>
   );
 }

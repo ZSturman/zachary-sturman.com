@@ -3,6 +3,7 @@ import Image from "next/image";
 import React from "react";
 import { formatTextWithNewlines } from "@/lib/utils";
 import ResourceButton from "./resource-button";
+import ResourceButtons from "./resource-buttons";
 
 interface ProjectHeaderProps {
   project: Project
@@ -65,6 +66,14 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
       </div>
 
       <p className="text-pretty text-sm md:text-base leading-relaxed text-muted-foreground whitespace-pre-wrap">{formatTextWithNewlines(project.summary)}</p>
+
+
+          {/* Resources section */}
+          {project.resources && project.resources.length > 0 && (
+            <div>
+              <ResourceButtons project={project} />
+            </div>
+          )}
     </header>
   )
 }

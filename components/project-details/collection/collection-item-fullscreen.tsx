@@ -25,7 +25,10 @@ function getItemResources(item: CollectionItem): Resource[] {
     resources.push(item.resource);
   }
   
-  return resources;
+  // Filter out resources with empty url or label
+  return resources.filter(resource => {
+    return resource.url && resource.url !== '' && resource.label && resource.label !== '';
+  });
 }
 
 interface CollectionFullscreenProps {
@@ -132,7 +135,7 @@ export function CollectionFullscreen({
                 <div className="space-y-3">
                   <div className="space-y-2">
                     {resources.map((resource, idx) => (
-                      <ResourceButton key={idx} resource={resource} />
+                      <ResourceButton key={idx} resource={resource} currentProject={project} />
                     ))}
                   </div>
                 </div>

@@ -5,7 +5,6 @@ import { ProjectHeader } from "./project-details/project-banner";
 import { ProjectContent } from "./project-details/project-description-and-story";
 
 import { ProjectMetadata } from "./project-details/project-metadata";
-import ResourceButtons from "./project-details/resource-buttons";
 import { Collection } from "./project-details/collection/collection";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
@@ -44,7 +43,7 @@ export function ProjectModal({ project, isOpen, onClose }: ProjectModalProps) {
       </DialogTitle>
 
       <DialogContent className="max-h-[90vh] max-w-7xl p-0 flex flex-col overflow-hidden">
-        <div className="relative flex-1 min-h-0 overflow-y-auto px-4 pt-6">
+        <div className="relative flex-1 min-h-0 overflow-y-auto px-4 pt-6 pb-12">
           <ProjectHeader project={project} />
 
           {/* Responsive grid: left content, right metadata on md+.
@@ -87,12 +86,6 @@ export function ProjectModal({ project, isOpen, onClose }: ProjectModalProps) {
                     </div>
                   )}
 
-                  {/* Resources section */}
-                  {project.resources && project.resources.length > 0 && (
-                    <div>
-                      <ResourceButtons project={project} showMessage={false} />
-                    </div>
-                  )}
 
                   {/* About/Story content */}
                   <div>

@@ -826,12 +826,18 @@ def resolve_folio_resources(projects: list[dict], folio_url_to_id: Dict[str, str
                                 target_id = normalized_folio_map[norm_url]
                                 res['type'] = 'local-link'
                                 res['url'] = f'/projects/{target_id}'
-                                # Also update the item-level url if it exists
-                                if 'url' in item:
+                                # Only update the item-level url if it doesn't already have a valid external URL
+                                # This preserves external URLs (like GitHub Pages) while allowing folio links
+                                item_url = item.get('url', '')
+                                is_external_url = isinstance(item_url, str) and (
+                                    item_url.startswith('http://') or item_url.startswith('https://')
+                                )
+                                # If item has no URL or only has a local path, update it to the folio project link
+                                if not is_external_url:
                                     item['url'] = f'/projects/{target_id}'
                                 logger.info(f"Resolved folio resource in collection item of '{project_title}' to /projects/{target_id}")
                             else:
-                                warning = f"⚠️  Folio resource in collection item of '{project_title}' points to '{url}' which was not found or is private - resource removed"
+                                warning = f"⚠️  Folio resource in collection item of '{url}' points to '{url}' which was not found or is private - resource removed"
                                 warnings.append(warning)
                                 logger.warning(warning)
                                 # Remove the resource from the item
