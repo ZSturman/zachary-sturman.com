@@ -41,7 +41,7 @@ export function ProjectListItem({ project, onClick, sortField = "updatedAt" }: P
   // Note: no extra derived project shape needed here; `project` is used directly
   return (
     <Card
-      className="p-2 md:p-6 hover:shadow-md transition-all duration-200 cursor-pointer group mb-2 max-w-full overflow-hidden"
+      className="p-2 md:px-6 md:pb-4 md:pt-3 hover:shadow-md transition-all duration-200 cursor-pointer group mb-2 max-w-full overflow-hidden"
       onClick={onClick}
     >
       <div className="flex flex-row-reverse md:flex-row gap-2 md:gap-6 max-w-full">
@@ -62,7 +62,7 @@ export function ProjectListItem({ project, onClick, sortField = "updatedAt" }: P
         <div className="flex-1 min-w-0 max-w-full overflow-hidden relative">
           <div className="flex flex-row items-center justify-between gap-1 md:gap-4 mb-1 md:mb-3 me-1.5 max-w-full">
             <div className="flex flex-row items-start gap-0.5 md:gap-1 min-w-0 flex-1">
-              <h3 className="text-xs md:text-lg font-semibold text-foreground group-hover:text-primary transition-colors break-words">
+              <h3 className="text-xs md:text-lg font-semibold text-foreground group-hover:text-primary transition-colors break-words max-w-[calc(100%-4rem)] flex items-center">
                 {Boolean(
                   (project as unknown as { featured?: boolean }).featured
                 ) && (
@@ -72,17 +72,20 @@ export function ProjectListItem({ project, onClick, sortField = "updatedAt" }: P
                 )}
                 {project.title}
                 </h3>
+            
+
         {mediums.slice(0,4).map((m) => (
-          <Badge key={String(m)} variant="secondary" className="ml-2 text-[10px] md:text-xs opacity-80 truncate">
+          <Badge key={String(m)} variant="secondary" className="ml-2 text-[10px] md:text-xs opacity-80 truncate hidden md:inline-block">
             {m}
           </Badge>
         ))}
+     
 
             </div>
           </div>
 
           {/* Date positioned at top-right of the content area */}
-          <div className="absolute top-2 right-2 z-10 flex flex-col items-end gap-0.5">
+          <div className="absolute top-1  right-2 z-10 flex flex-col items-end gap-0.5">
             <span className="text-[8px] md:text-[10px] text-muted-foreground/70 font-medium uppercase tracking-wide hidden md:inline-block">
               {dateLabel}
             </span>
@@ -91,7 +94,7 @@ export function ProjectListItem({ project, onClick, sortField = "updatedAt" }: P
             </span>
           </div>
 
-          <p className="text-muted-foreground text-[10px] md:text-sm mb-1.5 md:mb-4 line-clamp-3 whitespace-pre-wrap break-words max-w-full">
+          <p className="text-muted-foreground text-[10px] md:text-sm mb-1.5 md:mb-4 pt-2 line-clamp-3 whitespace-pre-wrap break-words max-w-full">
             {formatTextWithNewlines(project.summary)}
           </p>
           
