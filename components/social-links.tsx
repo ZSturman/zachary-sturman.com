@@ -27,7 +27,10 @@ const SocialLinks = () => {
   ];
 
   return (
-    <div className="flex flex-wrap justify-center md:justify-start gap-4">
+    <div
+      className="flex flex-wrap justify-center md:justify-start gap-4"
+      data-nosnippet
+    >
       {socialLinks.map((link) => (
         <SocialLink
           key={link.url}
